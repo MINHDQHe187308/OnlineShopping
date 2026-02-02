@@ -1,0 +1,92 @@
+﻿
+<!-- jQuery -->
+<script src="~/lib/AdminLTE/plugins/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="~/lib/AdminLTE/plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>$.widget.bridge('uibutton', $.ui.button)</script>
+<!-- jquery ui: datetimepicker * timepicker -->
+<script src="~/js/jquery-ui-1.12.1.js"></script>
+<script src="~/js/jquery.ui.timepicker.js"></script>
+<!-- Bootstrap 4 -->
+<script src="~/lib/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- daterangepicker -->
+<script src="~/lib/AdminLTE/plugins/moment/moment.min.js"></script>
+<script src="~/lib/AdminLTE/plugins/daterangepicker/daterangepicker.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="~/lib/AdminLTE/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Select2 -->
+<script src="~/lib/AdminLTE/plugins/select2/js/select2.full.min.js"></script>
+<!-- Summernote -->
+<script src="~/lib/AdminLTE/plugins/summernote/summernote-bs4.min.js"></script>
+<!-- overlayScrollbars -->
+<script src="~/lib/AdminLTE/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="~/lib/AdminLTE/plugins/sweetalert2/sweetalert2.min.js"></script>
+<!-- Choices joshuajohnson -->
+<script src="~/lib/AdminLTE/plugins/choices/choices.min.js"></script>
+<!-- Bootstrap Switch -->
+<script src="~/lib/AdminLTE/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+<!-- color picker -->
+<script src="~/js/huebee.pkgd.min.js"></script>
+<!-- AdminLTE App -->
+<script src="~/lib/AdminLTE/dist/js/adminlte.js"></script>
+<partial name="../Shared/_ValidationScriptsPartial" />
+<!-- theme js -->
+<script src="~/js/admin-theme.js?@DateTime.Now.Ticks"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // select 2
+        $('.select2').select2({
+            placeholder: "-- Chọn --",
+            closeOnSelect: false,
+            allowClear: true
+        });
+        //
+        $('.select1').select2({
+            placeholder: "-- Chọn --",
+            //maximumSelectionLength: 1
+        });
+        $('.select-default').select2();
+        // Summernote
+        $('.textarea-note').summernote({
+            height: 300
+        })
+        // check box
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 5000
+        });
+        //
+        var chkmsType = "@TempData["mess-type"]";
+        if (chkmsType == "error"){
+            Toast.fire({
+            icon: "@TempData["mess-type"]",
+            title: "@TempData["mess-detail"]"
+            });
+        }
+        //
+        if (chkmsType == "success") {
+            Toast.fire({
+            icon: "@TempData["mess-type"]",
+            title: "@TempData["mess-detail"]"
+            });
+        }
+        //
+        if (chkmsType == "warning") {
+            Toast.fire({
+            icon: "@TempData["mess-type"]",
+            title: "@TempData["mess-detail"]"
+            });
+        }
+        // bootstrap switch
+        $("input[data-bootstrap-switch]").each(function () {
+            $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        });
+
+            // jQuery
+    });
+
+</script>

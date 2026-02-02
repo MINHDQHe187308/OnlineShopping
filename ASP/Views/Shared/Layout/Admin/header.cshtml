@@ -1,0 +1,50 @@
+﻿@using ASP.Models
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    var appTitle = Configuration["Application:AppTitle"];
+}
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>@ViewData["Title"] | @appTitle</title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+@await Component.InvokeAsync("HeaderStyle", new { isDone = false })
+<!-- Font Awesome -->
+<link rel="stylesheet" href="~/lib/AdminLTE/plugins/fontawesome-free/css/all.min.css">
+<!-- Ionicons -->
+@* <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"> *@
+<link rel="stylesheet" href="~/lib/fonts/ionicons.min.css">
+<!-- Tempusdominus Bbootstrap 4 -->
+<link rel="stylesheet" href="~/lib/AdminLTE/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+<!-- Select2 -->
+<link rel="stylesheet" href="~/lib/AdminLTE/plugins/select2/css/select2.min.css">
+<link rel="stylesheet" href="~/lib/AdminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+<!-- iCheck -->
+<link rel="stylesheet" href="~/lib/AdminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="~/lib/AdminLTE/dist/css/adminlte.min.css">
+<!-- overlayScrollbars -->
+<link rel="stylesheet" href="~/lib/AdminLTE/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+<!-- Daterange picker -->
+<link rel="stylesheet" href="~/lib/AdminLTE/plugins/daterangepicker/daterangepicker.css">
+<!-- SweetAlert2 -->
+<link rel="stylesheet" href="~/lib/AdminLTE/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+
+<!-- Choices joshuajohnson -->
+<link rel="stylesheet" href="~/lib/AdminLTE/plugins/choices/choices.min.css">
+<!-- iCheck -->
+<link rel="stylesheet" href="~/lib/AdminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+<!-- summernote -->
+<link rel="stylesheet" href="~/lib/AdminLTE/plugins/summernote/summernote-bs4.css">
+<!-- Google Font: Source Sans Pro -->
+@* <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet"> *@
+<link href="~/lib/fonts/google-fonts.css" rel="stylesheet">
+<!-- jquery ui: datetimepicker * timepicker -->
+<link rel="stylesheet" href="~/css/jquery-ui-1.12.1.css">
+<link rel="stylesheet" href="~/css/jquery.ui.timepicker.css">
+<!-- color picker -->
+<link rel="stylesheet" href="~/css/huebee.min.css">
+<!-- theme css -->
+<link rel="stylesheet" href="~/css/admin-style.css">

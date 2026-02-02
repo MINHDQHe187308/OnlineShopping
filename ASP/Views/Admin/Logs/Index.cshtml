@@ -1,0 +1,156 @@
+﻿@using ASP.Models
+@using ReflectionIT.Mvc.Paging
+@addTagHelper *, ReflectionIT.Mvc.Paging
+@model ReflectionIT.Mvc.Paging.PagingList<ASP.Models.Admin.Logs.Log>
+
+@{
+    ViewData["Title"] = "Log";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+
+<style type="text/css">
+    fieldset {
+        min-width: 0;
+        padding: 0 5px;
+        margin: 0;
+        border: 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    legend {
+        display: block;
+        width: inherit;
+        max-width: 100%;
+        padding: 0 10px;
+        margin-bottom: .5rem;
+        font-size: 1.1rem;
+        line-height: inherit;
+        color: inherit;
+        white-space: normal;
+        margin-left: 18px;
+    }
+
+    .box-message span.badge {
+        margin-right: 5px;
+    }
+
+    #example1 thead th {
+        vertical-align: middle;
+        text-align: center;
+    }
+</style>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper" style="min-height: 422px;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a asp-route="admin.dashboard"><i class="fas fa-home"></i> Home</a></li>
+                                <li class="breadcrumb-item active">Logs</li>
+                            </ol>
+                        </div><!-- /.col -->
+                    </div>
+                </div>
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-xs-12">
+                    <div class="box">
+                        <!-- /.box-header -->
+                        <div class="clearfix box-body p-2">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <form method="get" class="search-form">
+                                        <div class="input-group">
+                                            @Html.DropDownList("filter", ViewBag.vblogs, "-- Tất cả --", new { @class = "form-control select2" })
+                                            <input class="form-control" id="psize" name="psize" type="hidden" value="@Model.RouteValue["psize"]">
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-info">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- /.input-group -->
+                                    </form>
+                                    <h1 class="clearfix"></h1>
+                                </div>
+                            </div>
+                            <section class="sct-pagination">
+                                <span class="page-count">Trang @Model.PageIndex / @Model.PageCount</span><span>, &nbsp;&nbsp;Tổng số bản ghi: @Model.TotalRecordCount</span>
+                                <span>, &nbsp;&nbsp;Số bản ghi/trang</span>
+                                <select asp-itemStockControle()" asp-for="@Model.RouteValue["psize"]" class="slt-psize" name="slt-psize">
+                                    <option value="">-- Any --</option>
+                                </select>
+                                <div class="pagination pagination-sm m-0 float-right">
+                                    <nav aria-label="Products navigation example">
+                                        <vc:pager paging-list="@Model" />
+                                    </nav>
+                                </div>
+                            </section>
+                            <table id="example1" class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">@Html.SortableHeaderFor(model => model.ID)</th>
+                                        <th>@Html.SortableHeaderFor(model => model.LogType)</th>
+                                        <th>@Html.DisplayNameFor(model => model.Content)</th>
+                                        <th>@Html.DisplayNameFor(model => model.Author)</th>
+                                        <th>@Html.DisplayNameFor(model => model.Author)</th>
+                                        <th>@Html.DisplayNameFor(model => model.IP)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.ID</td>
+                                            <td>@item.LogType</td>
+                                            <td>@Html.Raw(item.Content)</td>
+                                            <td>@item.Author</td>
+                                            <td>@item.IP</td>
+                                            <td>@item.CreatedDate</td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                            <section class="sct-pagination">
+                                <span class="page-count">Trang @Model.PageIndex / @Model.PageIndex</span><span>, &nbsp;&nbsp;Tổng số bản ghi: @Model.PageCount</span>
+                                <span>, &nbsp;&nbsp;Số bản ghi/trang</span>
+                                <select asp-items="@ASP.BaseCommon.BaseController.BasePageSize()" asp-for="@Model.RouteValue["psize"]" class="slt-psize" name="slt-psize">
+                                    <option value="">-- Any --</option>
+                                </select>
+                                <div class="pagination pagination-sm m-0 float-right">
+                                    <nav aria-label="Products navigation example">
+                                        <vc:pager paging-list="@Model" />
+                                    </nav>
+                                </div>
+                            </section>
+
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+@section Scripts {
+<script>
+    
+</script>
+}

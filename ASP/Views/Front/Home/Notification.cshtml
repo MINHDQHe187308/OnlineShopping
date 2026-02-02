@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "../Shared/Layout/Front/_Layout";
+}
+<div class="row">
+    <div class="col-12">
+        <h2>Notify</h2>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <ul id="messages-list"></ul>
+    </div>
+</div>
+@section Scripts {
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script type="text/javascript">
+        var messagesList = document.getElementById("messages-list");
+        function appendMessage(content) {
+            var li = document.createElement("li");
+            li.innerText = content;
+            messagesList.appendChild(li);
+            if(content == 'Primary'){
+                location.reload();
+            }
+        }
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("@Url.RouteUrl("front.home.Notify")")//~/notificationHub
+            .build();
+        connection.on("Notify", function (message) {
+            // nhan value tu server
+            appendMessage(message)
+            
+        });
+        connection.start();
+        
+    </script>
+}

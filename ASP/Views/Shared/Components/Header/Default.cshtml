@@ -1,0 +1,197 @@
+﻿@{
+    @model IEnumerable<ASP.Models.Admin.Menus.MenuDetail>
+    string controller = ViewContext.RouteData.Values["Controller"].ToString();
+    string action = ViewContext.RouteData.Values["Action"].ToString();
+}
+@using ASP.Models
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.AspNetCore.Http.Features
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
+
+@functions{
+    // Return a Font Awesome class based on the menu name or url
+    public string IconFor(string name, string url){
+        if(string.IsNullOrEmpty(name)) return "fas fa-circle";
+        var key = name.ToLowerInvariant();
+        if(key.Contains("delivery") || key.Contains("ship") || key.Contains("transport")) return "fas fa-truck";
+        if(key.Contains("order")) return "fas fa-box-open";
+        if(key.Contains("customer") || key.Contains("client")) return "fas fa-users";
+        if(key.Contains("statistic") || key.Contains("stat") || key.Contains("report") || key.Contains("chart")) return "fas fa-chart-line";
+        if(key.Contains("manage") || key.Contains("management")) return "fas fa-tasks";
+        if(key.Contains("setting") || key.Contains("admin") || key.Contains("config")) return "fas fa-cog";
+        if(key.Contains("login") || key.Contains("auth")) return "fas fa-sign-in-alt";
+        if(!string.IsNullOrEmpty(url) && url.ToLowerInvariant().Contains("/admin")) return "fas fa-user-shield";
+        return "fas fa-circle";
+    }
+}
+<header>
+    <style>
+        /* Header background (subtle gradient & blur for a modern look) */
+        #head-menu {
+            background: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(245,246,250,0.95) 50%, rgba(255,255,255,0.95) 100%);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-bottom: 1px solid rgba(16,24,40,0.06);
+        }
+        /* Header menu: increase menu font size and make text bold black */
+        #head-menu .navbar-nav .nav-link {
+            font-size: 1.05rem !important; /* slightly larger, modest */
+            font-weight: 600 !important;   /* semibold */
+            color: #0b1220 !important;      /* dark charcoal */
+            padding: 0.55rem 0.85rem;
+            border-radius: 8px;
+            transition: transform 180ms cubic-bezier(.2,.8,.2,1), color 150ms ease, background-color 180ms ease, box-shadow 180ms ease;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+        }
+        /* Dropdown items (some are rendered as .nav-link inside dropdown-menu in this project) */
+        #head-menu .dropdown-menu .nav-link,
+        #head-menu .dropdown-menu .dropdown-item {
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            color: #0b1220 !important;
+            padding: .45rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+        /* Ensure hover/active states remain readable */
+        #head-menu .navbar-nav .nav-link:hover,
+        #head-menu .dropdown-menu .nav-link:hover,
+        #head-menu .dropdown-menu .dropdown-item:hover {
+            color: #0b1220 !important;
+            text-decoration: none;
+        }
+        /* Toggler (mobile) menu links keep same style when collapsed */
+        #head-menu .navbar-collapse .nav-link {
+            font-size: 1.05rem !important;
+            font-weight: 600 !important;
+            color: #0b1220 !important;
+        }
+        /* Hover animation / interaction: subtle lift, shadow and animated underline */
+        #head-menu .navbar-nav .nav-link {
+            position: relative;
+            will-change: transform, box-shadow;
+            -webkit-font-smoothing: antialiased;
+        }
+        #head-menu .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 8px;
+            right: 8px;
+            bottom: 6px;
+            height: 2px;
+            background: rgba(11,18,32,0.12);
+            width: 0%;
+            transition: width 200ms ease;
+            border-radius: 2px;
+            opacity: 0.9;
+        }
+        #head-menu .navbar-nav .nav-link:hover,
+        #head-menu .navbar-nav .nav-link:focus {
+            transform: translateY(-3px) scale(1.02);
+            background-color: rgba(11,18,32,0.04) !important;
+            box-shadow: 0 8px 22px rgba(11,18,32,0.06) !important;
+            color: #0b1220 !important;
+            text-decoration: none !important;
+        }
+        #head-menu .navbar-nav .nav-link:hover::after,
+        #head-menu .navbar-nav .nav-link:focus::after {
+            width: calc(100% - 16px);
+        }
+        /* Dropdown items animation (block-level) */
+        #head-menu .dropdown-menu .dropdown-item,
+        #head-menu .dropdown-menu .nav-link {
+            transition: background-color 150ms ease, color 150ms ease, padding-left 180ms ease, transform 160ms ease;
+        }
+        #head-menu .dropdown-menu .dropdown-item:hover,
+        #head-menu .dropdown-menu .nav-link:hover {
+            background-color: rgba(11,18,32,0.03);
+            color: #0b1220 !important;
+            padding-left: 10px;
+            transform: translateX(3px);
+        }
+        /* Icons color and size inside menu */
+        #head-menu .navbar-nav .nav-link i,
+        #head-menu .dropdown-menu .dropdown-item i,
+        #head-menu .dropdown-menu .nav-link i {
+            color: #0b1220;
+            width: 18px;
+            text-align: center;
+            font-size: .95rem;
+        }
+        /* Slightly emphasize active/selected menu */
+        #head-menu .navbar-nav .nav-item.active > .nav-link,
+        #head-menu .navbar-nav .nav-link.active {
+            background: linear-gradient(90deg, rgba(14,165,233,0.08), rgba(14,165,233,0.04));
+            box-shadow: 0 6px 18px rgba(14,165,233,0.06);
+        }
+    </style>
+    <nav id="head-menu" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="~/assets/themeoptions/DENSO_logo.png" alt="Denso Viet Nam" width="140" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <!-- Menu bên trái -->
+                <ul class="navbar-nav me-auto">
+                    @foreach (var item in Model)
+                    {
+                        bool chkChildren = (item.children != null);
+                        var strActive = chkChildren ? "dropdown" : "";
+                        <li class="nav-item @strActive">
+                            @if (chkChildren)
+                            {
+                                <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="@IconFor(item.name, item.url) me-2"></i>@item.name</a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    @foreach (var item2 in item.children)
+                                    {
+                                        <li>
+                                            <a class="nav-link text-dark" href="~/@item2.url" target="@item2.target"><i class="@IconFor(item2.name, item2.url) me-2"></i>@item2.name</a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <a class="nav-link text-dark" href="~/@item.url" target="@item.target"><i class="@IconFor(item.name, item.url) me-2"></i>@item.name</a>
+                            }
+                        </li>
+                    }
+                </ul>
+
+                <!-- Menu bên phải -->
+                <ul class="navbar-nav ms-auto">
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-route="admin.auths.login">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> Hello (@User.Identity.Name)
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                                <li><a class="dropdown-item" href="~/admin"><i class="fas fa-cog me-1"></i> Admin page</a></li>
+                                <li><a class="dropdown-item" asp-route="admin.auth.logout"><i class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+</header>

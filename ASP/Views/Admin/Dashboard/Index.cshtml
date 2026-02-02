@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+@using ASP.Models
+@using ASP.Models.Admin.Accounts
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManage
+<!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Dashboard</h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Dashboard</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <!-- Main row -->
+                <!-- Small boxes (Stat box) -->
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-aqua"><i style="padding: 22px;" class="ion ion-ios-gear-outline"></i></span>
+                            <div class="info-box-content">
+                                <span class="">Xin Chào</span>
+                                <span class="info-box-number">@UserManage.FindByNameAsync(UserManage.GetUserName(User)).Result.FullName</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+<!-- /.content-wrapper -->

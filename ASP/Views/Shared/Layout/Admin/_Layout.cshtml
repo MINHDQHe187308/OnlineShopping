@@ -1,0 +1,120 @@
+﻿@using ASP.Models
+@using ASP.Models.Admin.Accounts
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManage
+@{
+    var appName = Configuration["Application:AppName"];
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <partial name="../Shared/Layout/Admin/header" />
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div id="loading">
+        <div class="lds-ripple">
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <div class="wrapper">
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" id="btn-pushmenu" data-widget="pushmenu" data-auto-collapse-size="768" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+            </ul>
+
+            <!-- Right navbar links -->
+            <ul class="navbar-nav ml-auto">
+                <!-- front end -->
+                <li class="nav-item">
+                    <a title="Click here to view farmart.vn!" target="_blank" class="nav-link" href="~/">
+                        <i class="fas fa-eye"></i>
+                        <span class="">View site</span>
+                    </a>
+                </li>
+                <!-- front end -->
+                <li class="nav-item">
+                    <a title="Click to logout!" class="nav-link" asp-route="admin.auth.logout">
+                        <i class="fa fa-fw fa-power-off"></i>
+                        <span class="">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.navbar -->
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <!-- Brand Logo -->
+            <a asp-route="admin.dashboard" class="brand-link">
+                <img src="~/lib/AdminLTE/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+                     style="opacity: .8">
+                <span class="brand-text font-weight-light">@appName</span>
+            </a>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        @if (UserManage.FindByNameAsync(UserManage.GetUserName(User)).Result.Avatar != null)
+                        {
+                            <img src="~/assets/users/@UserManage.FindByNameAsync(UserManage.GetUserName(User)).Result.Avatar" class="img-circle elevation-2" alt="Image">
+                        }
+                        else
+                        {
+                            <span style="color:#fff;font-size:2em; color:#ff6a00"><i class="fas fa-user-tie"></i></span>
+                        }
+                    </div>
+                    <div class="info">
+                        <a href="#" class="d-block">@UserManage.FindByNameAsync(UserManage.GetUserName(User)).Result.UserName</a>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        @await Component.InvokeAsync("MenuList", new { isDone = false })
+                    </ul>
+                </nav>
+                <!-- /.sidebar-menu -->
+            </div>
+            <!-- /.sidebar -->
+        </aside>
+
+        @RenderBody()
+        <footer class="main-footer">
+            <strong>Copyright &copy; 2024-2025 <a href="#">DMVN PC Div.</a>.</strong>
+            All rights reserved.
+            <div class="float-right d-none d-sm-inline-block">
+                <b>Version</b> 1.0.5
+            </div>
+        </footer>
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+
+    <!-- ./wrapper -->
+    <section id="sct-loading">
+        <button class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+        </button>
+    </section>
+
+    <partial name="../Shared/Layout/Admin/footer" />
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,111 @@
+﻿@using ASP.Models
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model ASP.Models.Admin.Auths.Login
+@{
+    ViewData["Title"] = "Login";
+    Layout = "";
+    var appName = Configuration["Application:AppName"];
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>TMOC | Đăng nhập</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @await Component.InvokeAsync("HeaderStyle", new { isDone = false })
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/lib/AdminLTE/plugins/fontawesome-free/css/all.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="~/lib/AdminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/lib/AdminLTE/dist/css/adminlte.min.css">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <style>
+        .login-logo, .register-log {
+            font-size: 1.4em;
+        }
+    </style>
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="~/"><b>@appName</b></a>
+        </div>
+        <!-- /.login-logo -->
+        <div class="card">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Thông tin đăng nhập</p>
+
+                <form asp-route="admin.auth.login" method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <div class="input-group mb-3">
+                        @*<div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon3" style="border: 1px solid #ced4da;border-radius:0;border-right:0;color:#495057">dmvn</span>
+                            </div>*@
+                        <input asp-for="UserName" class="form-control" required placeholder="Tài khoản">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-laptop"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p><span asp-validation-for="UserName" class="text-danger"></span></p>
+                    <div class="input-group mb-3">
+                        <input asp-for="PassWord" type="password" class="form-control" required placeholder="Mật khẩu">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p><span asp-validation-for="PassWord" class="text-danger"></span></p>
+                    <div class="row">
+                        <div class="col-7">
+                            <div class="icheck-primary">
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-5">
+                            <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </form>
+                <p class="mb-0">
+                    <a asp-route="admin.auths.register" class="text-center">Đăng ký thành viên</a>
+                </p>
+            </div>
+            <!-- /.login-card-body -->
+        </div>
+        <div>
+            <p>Thông tin tài khoản đăng nhập hệ thống</p>
+            <ul>
+                <li>
+                    <p>Tài khoản (APAD): <strong><i>vn + mã nhân viên</i></strong>, ví dụ: vn970637; mật khẩu APAD hoặc mật khẩu tài khoản Microsoft 365.</p>
+                </li>
+                <li>
+                    <p>Tài khoản (hệ thống): <strong><i>mã nhân viên</i></strong>, ví dụ: 970637; mật khẩu đăng ký trên hệ thống.</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /.login-box -->
+    <!-- jQuery -->
+    <script src="~/lib/AdminLTE/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/lib/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/lib/AdminLTE/dist/js/adminlte.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#UserName').focus();
+        });
+    </script>
+</body>
+</html>

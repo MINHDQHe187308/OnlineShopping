@@ -1,0 +1,145 @@
+﻿@{
+    Layout = "";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>FileBrowse</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/lib/AdminLTE/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<style type="text/css">
+    .box-thumbnail {
+        background-color: #f7f8f9;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+        .box-thumbnail:hover .box-thumbnail-1 {
+            visibility: visible;
+            right: 0px;
+            transition: all .35s ease-in-out;
+        }
+
+    .box-thumbnail-2:hover {
+        background-color: #fae2d1;
+        cursor: pointer;
+    }
+
+    .box-thumbnail-1 {
+        position: absolute;
+        top: 0px;
+        right: -10px;
+        padding: 2px 6px;
+        color: #b3d7ff;
+        background-color: #363636;
+        cursor: pointer;
+        visibility: hidden;
+    }
+
+        .box-thumbnail-1:hover {
+            color: #ff0000;
+        }
+
+    .box-thumbnail .box-img {
+        height: 170px;
+        overflow: hidden
+    }
+
+        .box-thumbnail .box-img img {
+            width: auto;
+            height: 100%
+        }
+
+    .box-thumbnail p {
+        height: 100px;
+        font-size: 13px;
+        overflow: hidden;
+    }
+</style>
+<body>
+    <h1></h1>
+
+    <div id="fileExplorer" class="container-fluid">
+        <div class="row">
+            <div class="col-sm-9 col-md-9">
+                @*<button type="button" class="btn btn-primary"><i class="fas fa-upload"></i>Upload</button>*@
+            </div>
+            <div class="col-sm-3 col-md-3">
+                <div class="form-group">
+                    <form action="~/CkGallery/FileBrowse" method="GET">
+                        <input type="hidden" name="CKEditor" value="editor1" />
+                        <input type="hidden" name="CKEditorFuncNum" value="3" />
+                        <input type="hidden" name="langCode" value="en" />
+                        <div class="input-group">
+                            <input placeholder="Tìm kiếm theo: Tên ..." class="form-control" name="fname" type="text" value="@ViewBag.fname">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-info">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            @foreach (var fileItem in ViewBag.fileInfos)
+            {
+                <div class="col-sm-2">
+                    <div class="clearfix box-thumbnail">
+                        <div class="box-thumbnail-1" title="Remove image:@fileItem.Name" data-filename="@fileItem.Name">
+                            <i class="fas fa-trash-alt"></i>
+                        </div><!-- .box-thumbnail-1 -->
+                        <div class="box-thumbnail-2" title="@fileItem.Name">
+                            <div class="box-img">
+                                <img title="@fileItem.Name" class="text-center rounded mx-auto d-block" src="~/assets/ckgallery/@fileItem.Name" alt="Photo">
+                            </div>
+                            <p class="clearfix">@fileItem.Name</p>
+                        </div><!-- .box-thumbnail-2 -->
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+        var funcNum = @(Context.Request.Query["CKEditorFuncNum"] + ";")
+            $(document).ready(function () {
+                // add to editor
+                $('#fileExplorer').on('click', '.box-thumbnail-2', function () {
+                    var fileUrl = "@Url.Content("~/")assets/ckgallery/" + $(this).attr('title');
+                    window.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
+                    window.close();
+                });
+                // remove file
+                $(".box-thumbnail-1").click(function () {
+                    var confirm1 = confirm('Bạn muốn xóa bản ghi này?');
+                    if (confirm1) {
+                        var fileUrl = $(this).attr('data-filename');
+                        //"~/Admin/CkGallery/RemoveImage"
+                        $.ajax("@Url.RouteUrl("admin.ckgallery.removeimage")", {
+                            type: 'GET',  // http method
+                            data: { fileUrl: fileUrl },  // data to submit
+                            success: function (data, status, xhr) {
+                                alert(data.message);
+                                location.reload();
+                            },
+                            error: function (jqXhr, textStatus, errorMessage) {
+                                alert('Error' + errorMessage);
+                            }
+                        });
+                    }
+                    //
+                });
+                //
+            });
+    </script>
+</body>
+</html>

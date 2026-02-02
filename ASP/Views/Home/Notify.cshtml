@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "../Shared/Layout/Front/_Layout";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="#">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<h2>Notify</h2>
+<ul id="messages-list"></ul>
+@section Scripts {
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script type="text/javascript">
+        var messagesList = document.getElementById("messages-list");
+        function appendMessage(content) {
+            var li = document.createElement("li");
+            li.innerText = content;
+            messagesList.appendChild(li);
+        }
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("~/notificationHub")
+            .build();
+        connection.on("Notify", function (message) {
+            debugger;
+            appendMessage(message)
+        });
+        connection.start();
+    </script>
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "ASP\\ASP.csproj",
+        "Action": "Start",
+        "DebugTarget": "IIS Express"
+      },
+      {
+        "Path": "OrderSyncWorker\\DensoWorkerService.csproj",
+        "Action": "Start",
+        "DebugTarget": "OrderSyncWorker"
+      }
+    ]
+  }
+]

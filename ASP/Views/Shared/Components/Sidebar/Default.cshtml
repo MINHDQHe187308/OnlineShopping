@@ -1,0 +1,10 @@
+﻿@{
+    @model IEnumerable<ASP.Models.Admin.Menus.MenuDetail>
+    string controller = ViewContext.RouteData.Values["Controller"].ToString();
+    string action = ViewContext.RouteData.Values["Action"].ToString();
+}
+
+@foreach (var item in Model)
+{
+    <li><a href="@item.url"><i class="fas fa-caret-right"></i>@item.name</a></li>
+}

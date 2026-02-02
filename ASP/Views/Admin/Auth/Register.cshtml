@@ -1,0 +1,117 @@
+﻿@using ASP.Models
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model ASP.Models.Admin.Auths.Register
+@{
+    ViewData["Title"] = "Register";
+    Layout = "";
+    var appName = Configuration["Application:AppName"];
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <partial name="../Shared/Layout/Admin/header" />
+    <style>
+        .login-logo, .register-logo {
+            font-size: 1.4em;
+        }
+    </style>
+</head>
+<body class="hold-transition login-page">
+    <div class="register-box">
+        <div class="register-logo">
+            <a href="~/"><b>@appName</b></a>
+        </div>
+        <div class="card">
+            <div class="card-body register-card-body">
+                <p class="login-box-msg">Đăng ký thành viên mới</p>
+                <form asp-route="admin.auths.store" method="post">
+                    <div class="input-group">
+                        <input asp-for="UserName" class="form-control" placeholder="Tài khoản">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-block mb-3">
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    <div class="input-group">
+                        <input asp-for="PassWord" type="password" class="form-control" placeholder="Mật khẩu">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-block mb-3">
+                        <span asp-validation-for="PassWord" class="text-danger"></span>
+                    </div>
+                    <div class="input-group">
+                        <input asp-for="RePassWord" type="password" class="form-control" placeholder="Nhập lại mật khẩu">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-block mb-3">
+                        <span asp-validation-for="RePassWord" class="text-danger"></span>
+                    </div>
+                    <div class="input-group">
+                        <input asp-for="FullName" class="form-control" placeholder="Họ tên">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-signature"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-block mb-3">
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="input-group">
+                        <input asp-for="Email" class="form-control" placeholder="Email">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-block mb-3">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="agreeTerms" name="terms" value="agree" required="required" >
+                                <label for="agreeTerms">
+                                    Tôi đồng ý với các <a href="#">điều khoản</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">Đăng ký</button>
+                        </div>
+
+                    </div>
+                </form>
+                <div class="social-auth-links text-center">
+                    <p>- HOẶC -</p>
+                </div>
+                <a asp-route="admin.auths.login" class="text-center">Tôi đã có tài khoản trên hệ thống</a>
+            </div>
+
+        </div>
+    </div>
+    <!-- /.register-box -->
+    <partial name="../Shared/Layout/Admin/footer" />
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#UserName').focus();
+        });
+    </script>
+</body>
+</html>

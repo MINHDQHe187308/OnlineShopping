@@ -1,0 +1,245 @@
+﻿@using ASP.Models
+@using ASP.Models.Admin.Menus
+@model ASP.Models.Admin.Menus.Menu
+@{
+    ViewData["Title"] = "Menu - Thêm mới";
+    Layout = "../Shared/Layout/Admin/_Layout";
+    var listMenu = ViewBag.MenuStatics as IEnumerable<MenuDetail>;
+}
+<div class="content-wrapper" style="min-height: 422px;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-route="admin.menus"><i class="fas fa-bars"></i> Menu</a></li>
+                        <li class="breadcrumb-item active"> Thêm mới</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="box box-primary card-body">
+                <!-- /.box-header -->
+                <form method="POST" asp-controller="Menu" asp-action="Create" accept-charset="UTF-8" class="" id="editMenu" enctype="multipart/form-data">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group ">
+                                    <label asp-for="Name">Tiêu đề</label>
+                                    <input asp-for="Name" placeholder="Name ..." class="form-control" value="@Model.Name" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-md-4">
+                                <div class="form-group ">
+                                    <label asp-for="Description">Mô tả</label>
+                                    <input asp-for="Description" value="@Model.Description" placeholder="Mô tả ..." class="form-control" />
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-md-4">
+                                <div class="form-group ">
+                                    <label asp-for="Language">Ngôn ngữ</label>
+                                    <select asp-for="Language" asp-items="@ASP.BaseCommon.BaseController.LangOptions()" class="form-control" required>
+                                    </select>
+                                    <span asp-validation-for="Language" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-md-12">
+                            </div>
+                            <div class="col-md-5">
+                                <div class="accordion" id="accordionExample">
+                                    <div class="card">
+                                        <div class="card-header" id="headingOne">
+                                            <h2 class="mb-0">
+                                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                    Trang tĩnh <span class="float-right"><i class="fas fa-caret-down"></i></span>
+                                                </button>
+                                            </h2>
+                                        </div>
+
+                                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                <table id="exampleRight-page" class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center checkbox-all" style="width: 40px;">
+                                                                <input autocomplete="off" type="checkbox" name="checkedAll" class="checkedAll" data-tblID="exampleRight-page" style="cursor: pointer;">
+                                                            </th>
+                                                            <th>
+                                                                <span>Tên menu</span>
+                                                                <button id="btnAddRole-page" data-tblID="exampleRight-page" class="btn btn-dark btn-sm float-right" type="button">
+                                                                    Thêm <i class="fas fa-long-arrow-alt-right"></i>
+                                                                </button>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{
+                                                            int countM = 0;
+                                                        }
+                                                        @foreach (var mnu in listMenu)
+                                                        {
+                                                            countM++;
+                                                            <tr role="row">
+                                                                <td class="text-center checkbox-single">
+                                                                    <input autocomplete="off" type="checkbox" name="checkAll" class="checkSingle" data-tblID="exampleRight-page" style="cursor: pointer;">
+                                                                </td>
+                                                                <td>
+                                                                    <div data-id="pmnu-@countM" data-name="@mnu.name" data-excerpt="@mnu.excerpt" data-thumbnail="@mnu.thumbnail" data-url="@mnu.url" data-target="@mnu.target" data-languagekey="@mnu.languagekey">@mnu.name</div>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div><!-- .card -->
+                                </div><!-- /col -->
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="panel panel-default">
+                                    <table class="table table-bordered mb-0 border-bottom-0">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <span>Menu</span>
+                                                    <button id="btnAddRow" type="button" class="btn btn-primary float-right">
+                                                        <i class="fas fa-plus"></i>Thêm menu
+                                                    </button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                    <div class="panel-body" id="cont">
+                                        <ul id="myList" class="sortableLists list-group" style="min-height: 300px;">
+                                        </ul>
+                                    </div>
+                                </div>
+                                <label for="out" class="d-none">
+                                    Output:
+                                </label>
+                                <textarea id="out_menu" name="out_menu" class="form-control d-none" cols="50" rows="10"></textarea>
+                                <div class="text-right">
+                                    <h1>
+                                    </h1>
+                                    <a class="btn btn-default" asp-route="admin.menus"><i class="fas fa-arrow-circle-left"></i> Quay lại</a>
+                                    <button type="button" id="btnSubmitFrm" class="btn btn-success" data-url="" data-url-home=""><i class="fas fa-save"></i> Lưu</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                    <!-- /.box-body -->
+                </form>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+@section Scripts {
+<script type="text/javascript" src="~/js/menu-editor/bootstrap-iconpicker.js"></script>
+<script type="text/javascript" src="~/js/menu-editor/jquery-menu-editor.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // event selected in table left
+        $(".checkedAll").change(function () {
+            var tblID = $(this).attr('data-tblID');
+            if (this.checked) {
+                // check all
+                $("#" + tblID + " .checkSingle").each(function () {
+                    this.checked = true;
+                    $("#" + tblID + " tbody tr").addClass("row-selected").css({
+                        'background-color': '#58c0e0',
+                        'color': '#fff'
+                    });
+                });
+            } else {
+                // uncheck all
+                $("#" + tblID + " .checkSingle").each(function () {
+                    this.checked = false;
+                    $("#" + tblID + " tbody tr").removeClass("row-selected").css({
+                        'background-color': '#fff',
+                        'color': '#363636'
+                    });
+                });
+            }
+        });
+
+        $(".checkSingle").click(function () {
+            var tblID = $(this).attr('data-tblID');
+            if ($(this).is(":checked")) {
+                // checked
+                $(this).parents('tr').addClass("row-selected").css({
+                    'background-color': '#58c0e0',
+                    'color': '#fff'
+                });
+                var isAllChecked = 0;
+                $("#" + tblID + " .checkSingle").each(function () {
+                    if (!this.checked)
+                        isAllChecked = 1;
+                });
+                if (isAllChecked == 0) {
+                    $("#" + tblID + " .checkedAll").prop("checked", true);
+                }
+            } else {
+                // uncheck
+                $(this).parents('tr').removeClass("row-selected").css({
+                    'background-color': '#fff',
+                    'color': '#363636'
+                });
+                $("#" + tblID + " .checkedAll").prop("checked", false);
+            }
+
+        });
+
+        // icon picker options
+        var iconPickerOpt = {};
+        // menu builder options
+        var options = {
+            hintCss: {
+                'border': '1px dashed #13981D'
+            },
+            placeholderCss: {
+                'background-color': 'gray'
+            },
+            ignoreClass: 'btn-act',
+            opener: {
+                active: true,
+                as: 'html',
+                close: '<i class="fa fa-minus"></i>',
+                open: '<i class="fa fa-plus"></i>',
+                openerCss: {
+                    'margin-right': '10px'
+                },
+                openerClass: 'btn btn-success btn-xs'
+            }
+        };
+
+        // initialize the menu builder
+        var arrMenu = new menuEditor('myList', {
+            listOptions: options,
+            iconPicker: iconPickerOpt,
+            labelEdit: 'Cập nhật',
+            labelRemove: 'X'
+        });
+        // submit form in file jquery-menu-editorjs
+
+        //end document ready;
+    });
+</script>
+}

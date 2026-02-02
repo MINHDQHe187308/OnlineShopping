@@ -1,0 +1,14 @@
+﻿#frmPendingList {
+    margin-bottom: 5px;
+}
+
+#pendingPrint {
+    width: 100%;
+    padding-bottom: 5px;
+}
+
+#pendingPrint thead th {
+    vertical-align: middle;
+    text-align: center;
+    background-color: lavender;
+}

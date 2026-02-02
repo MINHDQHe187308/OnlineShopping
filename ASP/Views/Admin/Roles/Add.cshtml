@@ -1,0 +1,119 @@
+﻿@model ASP.Models.Admin.Roles.Role
+@{
+    ViewData["Title"] = "Vai trò - Thêm mới";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+<div class="content-wrapper" style="min-height: 371px;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-route="admin.roles"><i class="fas fa-users-cog"></i> Vai trò</a></li>
+                        <li class="breadcrumb-item active">Tạo mới</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="box box-primary card-body">
+                <!-- form start -->
+                <form method="POST" asp-controller="Role" asp-action="Create" accept-charset="UTF-8" class="form-horizontal permission" enctype="multipart/form-data">
+                    <div class="box-footer">
+                        <div class="form-group">
+                            <!-- <label class="control-label col-sm-2">&nbsp;</label> -->
+                            <div class="col-sm-12 text-right">
+                                <a class="btn btn-default" asp-route="admin.roles">Quay lại</a>
+                                <button class="btn btn-success" type="submit">Lưu</button>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <!-- /.box-footer -->
+                    <input asp-for="Content" value="init" type="hidden" />
+                    <div class="box-body">
+                        <div class="form-group ">
+                            <label asp-for="Name" class="col-sm-12 control-label"></label>
+                            <div class="col-sm-12">
+                                <input asp-for="Name" class="form-control">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label asp-for="DefaultRole" class="col-sm-12 control-label"></label>
+                            <div class="col-sm-12">
+                                <input asp-for="DefaultRole" class="">
+                                <span asp-validation-for="DefaultRole" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label asp-for="Status" class="col-sm-12 control-label"></label>
+                            <div class="col-sm-12">
+                                @Html.DropDownList("Status", Html.GetEnumSelectList<ASP.BaseCommon.EnumStatusUser>(), "-- Chọn --", new { @class = "form-control" })
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <h3 class="col-sm-12">
+                                <p class="p-2 bg-dark">Phân quyền</p>
+                            </h3>
+                            <div id="permission" class="col-sm-12">
+
+                                @foreach (var item in ViewBag.Permissions)
+                                {
+                                    <div class="permission-item">
+                                        <fieldset class="clearfix field_set_role">
+                                            <legend class="border-bottom">@item.Ptitle</legend>
+                                            <div class="row clear_fix row-role-detail">
+                                                @foreach (var item2 in item.Pdetail)
+                                                {
+                                                    <div class="col-lg-2 col-md-2 col-xs-2">
+                                                        <label class="control-label clearfix">@item2.Pvalue</label>
+                                                        <div class="clearfix radio icheck-success">
+                                                            <input id="@item.Pname@item2.Pkey-allow" class="flat-red" name="@item.Pname@item2.Pkey" type="radio" value="1">
+                                                            <label for="@item.Pname@item2.Pkey-allow">
+                                                                <span class="font-weight-normal">Cho phép</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="clearfix radio icheck-success">
+                                                            <input id="@item.Pname@item2.Pkey-deny" class="flat-red" checked="checked" name="@item.Pname@item2.Pkey" type="radio" value="0">
+                                                            <label for="@item.Pname@item2.Pkey-deny" class="lbl-deny" onclick="">
+                                                                <span class="font-weight-normal">Từ chối</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </fieldset>
+                                        <h1 class="clearfix"></h1>
+                                    </div>
+
+                                    <!-- .permission-item -->
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <div class="form-group">
+                            <!-- <label class="control-label col-sm-2">&nbsp;</label> -->
+                            <div class="col-sm-12 text-right">
+                                <a class="btn btn-default" asp-route="admin.roles"><i class="fas fa-arrow-circle-left"></i> Quay lại</a>
+                                <button class="btn btn-success" type="submit"><i class="fas fa-save"></i> Lưu</button>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <!-- /.box-footer -->
+                </form>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>

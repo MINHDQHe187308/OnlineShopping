@@ -1,0 +1,143 @@
+﻿@using ASP.Models
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    var appTitle = Configuration["Application:AppTitle"];
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @appTitle</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @await Component.InvokeAsync("HeaderStyle", new { isDone = false })
+    <link rel="stylesheet" href="~/lib/AdminLTE/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- jquery ui: datetimepicker * timepicker -->
+    <link rel="stylesheet" href="~/css/jquery-ui-1.12.1.css">
+    <link rel="stylesheet" href="~/css/jquery.ui.timepicker.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="~/css/select2-bs5/select2.min.css">
+    <link rel="stylesheet" href="~/css/select2-bs5/select2-bootstrap-5-theme.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="~/lib/AdminLTE/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <!-- Choices joshuajohnson -->
+    <link rel="stylesheet" href="~/lib/AdminLTE/plugins/choices/choices.min.css">
+    <!-- Font Awesome free -->
+    <link rel="stylesheet" href="~/lib/AdminLTE/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/front-style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
+
+    <style type="text/css">
+        .dropdown-menu {
+            max-width: 17rem !important;
+            min-width: 15rem !important;
+        }
+
+        .container-fluid .content-wrapper {
+            margin-left: 0 !important;
+            background-color: white !important;
+        }
+    </style>
+
+    @* Thêm dòng này để render section Styles từ các view con *@
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <div class="page-wrapper d-flex flex-column min-vh-100">
+        <!-- Header -->
+        @await Component.InvokeAsync("Header", new { isDone = false })
+
+        <!-- Main Content -->
+        <main role="main" class="flex-fill container-fluid pb-3">
+            @RenderBody()
+        </main>
+
+        <!-- Footer -->
+        <footer class="custom-footer mt-auto">
+            @await Component.InvokeAsync("Footer", new { isDone = false })
+        </footer>
+    </div>
+
+    <section id="sct-loading">
+        <button class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+        </button>
+    </section>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="~/lib/AdminLTE/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Select2 -->
+    <script src="~/js/select2-bs5/select2.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="~/lib/AdminLTE/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Choices joshuajohnson -->
+    <script src="~/lib/AdminLTE/plugins/choices/choices.min.js"></script>
+    <!-- Bootstrap Switch -->
+    <script src="~/lib/AdminLTE/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+    <!-- highchart -->
+    <script src="~/lib/AdminLTE/plugins/highchart/highcharts.js"></script>
+    <script src="~/lib/AdminLTE/plugins/highchart/broken-axis.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/front-theme.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script type="text/javascript">
+        // Application base path (includes virtual application path). Use this in client scripts
+        // so that absolute-looking URLs work when the app is deployed under a sub-path.
+        window.appBaseUrl = '@(Url.Content("~").TrimEnd('/') + "/")';
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // select 2
+            $('.select2').select2({
+                placeholder: "-- Choose --",
+                closeOnSelect: false,
+                allowClear: true,
+                theme: "bootstrap-5",
+            });
+            // check box
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000
+            });
+            //
+            var chkmsType = "@TempData["mess-type"]";
+            if (chkmsType == "error"){
+                Toast.fire({
+                icon: "@TempData["mess-type"]",
+                title: "@TempData["mess-detail"]"
+                });
+            }
+            //
+            if (chkmsType == "success") {
+                Toast.fire({
+                icon: "@TempData["mess-type"]",
+                title: "@TempData["mess-detail"]"
+                });
+            }
+            //
+            if (chkmsType == "warning") {
+                Toast.fire({
+                icon: "@TempData["mess-type"]",
+                title: "@TempData["mess-detail"]"
+                });
+            }
+            // bootstrap switch
+            $("input[data-bootstrap-switch]").each(function () {
+                $(this).bootstrapSwitch('state', $(this).prop('checked'));
+            });
+
+            // jQuery
+        });
+    </script>
+</body>
+</html>

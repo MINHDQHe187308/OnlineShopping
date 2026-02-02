@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StockControl</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @await Component.InvokeAsync("HeaderStyle", new { isDone = false })
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- jquery ui: datetimepicker * timepicker -->
+    <link rel="stylesheet" href="~/css/jquery-ui-1.12.1.css">
+    <link rel="stylesheet" href="~/css/jquery.ui.timepicker.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="~/css/select2-bs5/select2.min.css">
+    <link rel="stylesheet" href="~/css/select2-bs5/select2-bootstrap-5-theme.min.css">
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/front-style.css" asp-append-version="true" />
+    <style type="text/css">
+        .dropdown-menu {
+            max-width: 17rem !important;
+            min-width: 15rem !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <section id="sct-loading">
+        <button class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+        </button>
+    </section>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="~/lib/AdminLTE/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Select2 -->
+    <script src="~/js/select2-bs5/select2.min.js"></script>
+    <!-- highchart -->
+    <script src="~/lib/AdminLTE/plugins/highchart/highcharts.js"></script>
+    <script src="~/lib/AdminLTE/plugins/highchart/broken-axis.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // select 2
+            $('.select2').select2({
+                placeholder: "-- Choose --",
+                closeOnSelect: false,
+                allowClear: true,
+                theme: "bootstrap-5",
+            });
+            // jQuery
+        });
+
+    </script>
+</body>
+</html>

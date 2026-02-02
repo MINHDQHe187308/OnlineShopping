@@ -1,0 +1,216 @@
+﻿@using ASP.BaseCommon
+@using ASP.Controllers
+@using ASP.Models
+@using ASP.Policies
+@using Microsoft.AspNetCore.Authorization
+@using ReflectionIT.Mvc.Paging
+@inject IAuthorizationService AuthorizationService
+@addTagHelper *, ReflectionIT.Mvc.Paging
+@model ReflectionIT.Mvc.Paging.PagingList<ASP.Models.Admin.Accounts.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Thành viên";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+
+<style>
+    fieldset {
+        min-width: 0;
+        padding: 0 5px;
+        margin: 0;
+        border: 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    legend {
+        display: block;
+        width: inherit;
+        max-width: 100%;
+        padding: 0 10px;
+        margin-bottom: .5rem;
+        font-size: 1.1rem;
+        line-height: inherit;
+        color: inherit;
+        white-space: normal;
+        margin-left: 18px;
+    }
+
+    #example1 thead th {
+        vertical-align: middle;
+        text-align: center;
+    }
+</style>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper" style="min-height: 422px;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPUsersCreate)).Succeeded)
+                            {
+                                <a class="btn btn-success add-button" asp-route="admin.accounts.create"><i class="fas fa-plus-square"></i> Thêm mới</a>
+                            }
+                        </div><!-- /.col -->
+                        <div class="col-md-6 col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a asp-route="admin.dashboard"><i class="fas fa-home"></i> Home</a></li>
+                                <li class="breadcrumb-item active">Thành viên</li>
+                            </ol>
+                        </div><!-- /.col -->
+                    </div>
+                </div>
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-xs-12">
+                    <div class="box">
+                        <!-- /.box-header -->
+                        <div class="clearfix box-body p-2">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form method="get" class="search-form">
+                                        <fieldset>
+                                            <legend>Bộ lọc:</legend>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <div class="form-group">
+                                                        <label for="filter">Tài khoản</label>
+                                                        <input class="form-control" id="psize" name="psize" type="hidden" value="@Model.RouteValue["psize"]">
+                                                        <input placeholder="Tìm kiếm theo: Code ..." class="form-control" id="filter" name="filter" type="text" value="@Model.RouteValue["Filter"]">
+                                                    </div>
+                                                </div><!-- /col -->
+                                                <div class="col-sm-3">
+                                                    <div class="form-group">
+                                                        <label for="fLevelManage">Cấp quản trị HT</label>
+                                                        @Html.DropDownList("fLevelManage", Html.GetEnumSelectList<ASP.BaseCommon.EnumLevelManage>(), "--Tất cả --", new { @class = "form-control select2" })
+                                                    </div>
+                                                </div><!-- /col -->
+                                                <div class="col-sm-3">
+                                                    <div class="form-group">
+                                                        <label for="fRoleName">Vai trò</label>
+                                                        <select asp-items="@ViewBag.sltRoles" asp-for="@Model.RouteValue["fRoleName"]" id="fRoleName" name="fRoleName" class="form-control select2">
+                                                            <option value="">-- Tất cả --</option>
+                                                        </select>
+                                                    </div>
+                                                </div><!-- /col -->
+
+                                                <div class="col-sm-3">
+                                                    <div class="form-group">
+                                                        <label for="fLevelManage">Trạng thái</label>
+                                                        @Html.DropDownList("fStatus", Html.GetEnumSelectList<ASP.BaseCommon.EnumStatusUser>(), "--Tất cả --", new { @class = "form-control select2" })
+                                                    </div>
+                                                </div><!-- /col -->
+                                                <div class="col-sm-12 text-right">
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-info">
+                                                            <i class="fas fa-search"></i> Tìm kiếm
+                                                        </button>
+                                                    </div>
+                                                </div><!-- /col -->
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                    <h1 class="clearfix"></h1>
+                                </div>
+                            </div>
+                            <table id="example1" class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th class="text-center">Ảnh</th>
+                                        <th>@Html.SortableHeaderFor(model => model.UserName)</th>
+                                        <th>@Html.SortableHeaderFor(model => model.FullName, "FullName")</th>
+                                        <th>@Html.DisplayNameFor(model => model.Email)</th>
+                                        <th>@Html.DisplayNameFor(model => model.LevelManage)</th>
+                                        <th>@Html.DisplayNameFor(model => model.RoleName)</th>
+                                        <th>@Html.DisplayNameFor(model => model.Status)</th>
+                                        <th>@Html.SortableHeaderFor(model => model.UpdatedDate)</th>
+                                        <th>Tác vụ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 0;
+                                    }
+                                    @foreach (var item in Model)
+                                    {
+                                        count++;
+                                        <tr>
+                                            <td class="text-center">@count</td>
+                                            <td class="text-center td-thumb">
+                                                <img width="50px;" src="~/assets/users/@item.Avatar" alt="image">
+                                            </td>
+                                            <td>@item.UserName</td>
+                                            <td>@item.UserName</td>
+                                            <td>@item.FullName</td>
+                                            <td>
+                                                @{
+                                                    @Html.Raw(BaseController.GetTextEnumLevelManage(item.LevelManage));
+                                                }
+                                            </td>
+                                            <td>@item.RoleName</td>
+                                            <td>
+                                                @{
+                                                    @Html.Raw(BaseController.GetTextEnumLevelManage(item.LevelManage));
+                                                }
+                                            </td>
+                                            <td>@item.RoleName</td>
+                                            <td>
+                                                @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPUsersUpdate)).Succeeded)
+                                                {
+                                                    <a asp-route="admin.accounts.show" asp-route-id="@item.Id" class="badge badge-primary" title="Sửa!"><i class="fas fa-edit"></i> Sửa</a>
+                                                    <a asp-route="admin.accounts.resetpw" asp-route-id="@item.Id" class="badge badge-info" title="Reset Password!"><i class="fas fa-key"></i> Reset PW</a>
+                                                }
+                                                @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPUsersBanned)).Succeeded)
+                                                {
+                                                    if (item.Status != -5)
+                                                    {
+                                                        <a onclick="return confirm('Bạn muốn Khóa bản ghi này?')" asp-route="admin.accounts.banned" asp-route-id="@item.Id" class="badge badge-warning"><i class="fas fa-lock"></i> Khóa</a>
+                                                    }
+                                                }
+                                                @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPUsersDelete)).Succeeded)
+                                                {
+                                                    if (item.Status == -5)
+                                                    {
+                                                        <a onclick="return confirm('Dữ liệu ở chức năng Thành Viên không thể lấy lại! Bạn muốn Xóa bản ghi này?')" asp-route="admin.accounts.delete" asp-route-id="@item.Id" title="Xóa!" class="badge badge-danger"><i class="fas fa-trash-alt"></i> Xóa</a>
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                            <section class="sct-pagination">
+                                <span class="page-count">Trang @Model.PageIndex / @Model.PageCount</span><span>, &nbsp;&nbsp;Tổng số bản ghi: @Model.TotalRecordCount</span>
+                                <span>, &nbsp;&nbsp;Số bản ghi/trang</span>
+                                <select asp-items="@ASP.BaseCommon.BaseController.BasePageSize()" asp-for="@Model.RouteValue["psize"]" class="slt-psize" name="slt-psize">
+                                    <option value="">-- Any --</option>
+                                </select>
+                                <div class="pagination pagination-sm m-0 float-right">
+                                    <nav aria-label="Products navigation example">
+                                        <vc:pager paging-list="@Model" />
+                                    </nav>
+                                </div>
+                            </section>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

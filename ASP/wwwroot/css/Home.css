@@ -1,0 +1,136 @@
+﻿.h-button {
+    margin-top: 10px;
+}
+
+#table-visualize {
+    font-size: 22px;
+    text-align: center;
+}
+
+.breadcrumb {
+    float: right;
+}
+
+fieldset {
+    min-width: 0;
+    padding: 0 5px;
+    margin: 0;
+    border: 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+legend {
+    display: block;
+    width: inherit;
+    max-width: 100%;
+    padding: 0 10px;
+    margin-bottom: .5rem;
+    font-size: 1.1rem;
+    line-height: inherit;
+    color: inherit;
+    white-space: normal;
+    margin-left: 18px;
+}
+
+.box-message span.badge {
+    margin-right: 5px;
+}
+
+#example1 thead th {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table > :not(:last-child) > :last-child > * {
+    border-bottom-color: #dee2e6 !important;
+}
+
+.a-handle {
+    cursor: pointer;
+}
+
+.nested-table-row {
+    background-color: white;
+}
+
+.divShadow {
+    box-shadow: 0.5px 0.5px 0.5px 0.5px #999;
+}
+
+.sub-table {
+    margin-top: 10px;
+}
+
+    .sub-table thead th {
+        background-color: #b0c4de;
+    }
+
+    .sub-table tbody {
+        background-color: white;
+    }
+
+/* Welcome Section Styles - Simplified */
+.welcome-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px 0;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.welcome-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+    .welcome-title {
+        font-size: 2rem;
+    }
+}
+
+/* Override main cho trang Home để loại bỏ padding/margin */
+main.flex-fill.container-fluid {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Banner full height và sát cạnh */
+.warehouse-banner {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100% !important; /* Fill toàn bộ main */
+}
+
+    .warehouse-banner .container-fluid,
+    .warehouse-banner .row,
+    .warehouse-banner .col-12 {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100% !important;
+    }
+
+.warehouse-image {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    object-fit: cover; /* Giữ tỷ lệ ảnh, crop nếu cần để fill mà không méo */
+}
+
+/* Responsive: Điều chỉnh chiều cao dựa trên viewport nếu cần */
+@media (max-width: 768px) {
+    main.flex-fill.container-fluid {
+        min-height: calc(100vh - 120px); /* Giả sử height header + footer ~120px, điều chỉnh nếu cần */
+    }
+}
+
+@media (min-width: 1200px) {
+    main.flex-fill.container-fluid {
+        min-height: calc(100vh - 140px); /* Tăng cho desktop nếu header/footer lớn hơn */
+    }
+}

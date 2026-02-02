@@ -1,0 +1,274 @@
+﻿html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/*html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}*/
+/**
+    ** loading
+*/
+
+/**
+    ** loading
+*/
+#sct-loading {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    text-align: center;
+    background-color: #363636;
+    opacity: .7;
+    z-index: 9999;
+    display: none;
+}
+
+    #sct-loading button {
+        position: relative;
+        top: 45%;
+    }
+
+.note-editor img {
+    max-width: 100%;
+}
+
+.sp-language img {
+    max-width: 30px;
+    height: auto;
+    border: 1px solid #ccc;
+}
+
+.preview-image-user img {
+    max-width: 200px;
+}
+/**
+    animation
+    **/
+@keyframes flickerAnimation {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@-o-keyframes flickerAnimation {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes flickerAnimation {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes flickerAnimation {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.animate-flicker {
+    -webkit-animation: flickerAnimation 1s infinite;
+    -moz-animation: flickerAnimation 1s infinite;
+    -o-animation: flickerAnimation 1s infinite;
+    animation: flickerAnimation 1s infinite;
+}
+/* ===============================
+   Custom Footer Responsive
+   =============================== */
+html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    flex: 1; /* Đẩy footer xuống cuối */
+}
+
+.custom-footer {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #fff;
+    padding: 5px 0;
+    font-size: 14px;
+    width: 100%;
+}
+
+    .custom-footer a {
+        color: #ffdd57;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+        .custom-footer a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+    .custom-footer h5 {
+        margin-bottom: 15px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .custom-footer p {
+        margin: 5px 0;
+    }
+
+    .custom-footer .social-icons {
+        margin-top: 10px;
+    }
+
+        .custom-footer .social-icons a {
+            display: inline-block;
+            margin: 0 8px;
+            font-size: 20px;
+            color: #ffdd57;
+        }
+
+            .custom-footer .social-icons a:hover {
+                color: #fff;
+            }
+
+@media (max-width: 768px) {
+    .custom-footer .col-sm-12 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+}
+/* ============================
+   Custom Header / Navbar
+   ============================ */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1030; /* giữ header nổi trên các thành phần khác */
+}
+
+/* Navbar background & shadow */
+#head-menu {
+    background: linear-gradient(135deg, #ffffff, #f7f7f7);
+    border-bottom: 1px solid #e5e5e5;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 0.5rem 1rem;
+}
+
+    /* Logo */
+    #head-menu .navbar-brand img {
+        max-height: 50px;
+        transition: transform 0.2s ease;
+    }
+
+        #head-menu .navbar-brand img:hover {
+            transform: scale(1.05);
+        }
+
+    /* Navbar links */
+    #head-menu .nav-link {
+        color: #333 !important;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
+    }
+
+        #head-menu .nav-link:hover {
+            color: #007bff !important;
+            background-color: rgba(0,123,255,0.05);
+            border-radius: 4px;
+        }
+
+    /* Dropdown menu */
+    #head-menu .dropdown-menu {
+        border-radius: 6px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+        #head-menu .dropdown-menu .nav-link {
+            color: #333 !important;
+            padding: 0.5rem 1rem;
+        }
+
+            #head-menu .dropdown-menu .nav-link:hover {
+                background-color: #007bff;
+                color: #fff !important;
+                border-radius: 0;
+            }
+
+    /* User dropdown (Hello user) */
+    #head-menu .navbar-nav .dropdown-toggle {
+        font-weight: 600;
+        color: #444 !important;
+    }
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    #head-menu .navbar-brand img {
+        max-height: 40px;
+    }
+
+    #head-menu .nav-link {
+        padding: 0.5rem;
+        font-size: 14px;
+    }
+}
+/* User info menu */
+#head-menu .nav-item .fa-user-circle {
+    font-size: 20px;
+    color: #007bff;
+}
+
+#head-menu .dropdown-menu-end {
+    right: 0;
+    left: auto;
+}

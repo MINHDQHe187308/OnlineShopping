@@ -1,0 +1,591 @@
+﻿@{
+    ViewData["Title"] = "Denso Warehouse Calendar";
+    Layout = "../Shared/Layout/Front/_Layout";
+    var modelJson = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
+}
+
+<link type="text/css" href="~/css/Calendar.css" asp-append-version="true" />
+<style>
+    fieldset {
+        min-width: 0;
+        padding: 0 5px;
+        margin-bottom: 2px;
+        border: 0;
+        border-radius: 10px;
+        background: #f8f9fa;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        height: 99px;
+        gap: 10px;
+    }
+
+    legend {
+        display: block;
+        width: inherit;
+        max-width: 100%;
+        padding: 0 10px;
+        margin-bottom: .5rem;
+        font-size: 1.1rem;
+        line-height: inherit;
+        color: inherit;
+        white-space: normal;
+        margin-left: 18px;
+    }
+
+    .fc-scroller {
+        max-height: none;
+        overflow-y: visible;
+    }
+
+    .fc-timeline-event-harness {
+        align-self: anchor-center;
+    }
+
+    .fc-timeline-slot-cushion {
+        width: 100%;
+        font-size: 1.1rem;
+    }
+
+    .fc-datagrid-cell-cushion {
+        height: 100%;
+        width: 100%;
+        text-align: center;
+        align-content: center;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    .custom-gradient-box {
+        opacity: 0.4;
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+        width: 320px;
+        height: 320px;
+        border: none;
+        font: normal 100%/normal 'Meiryo UI', Meiryo, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        color: rgb(255, 255, 255);
+        -o-text-overflow: clip;
+        text-overflow: clip;
+        background: -webkit-linear-gradient(-45deg, rgba(84,84,84,0) 0, rgba(84,84,84,0) 40%, rgba(29,29,29,1) 40%, rgba(0,0,0,1) 59%, rgba(58,58,58,0) 59%, rgba(63,63,63,0) 100%), -webkit-linear-gradient(-45deg, rgba(0,0,0,1) 0, rgba(0,0,0,1) 7%, rgba(79,79,79,0) 7%, rgba(63,63,63,0) 100%), -webkit-linear-gradient(-225deg, rgba(0,0,0,1) 0, rgba(0,0,0,1) 7%, rgba(79,79,79,0) 7%, rgba(63,63,63,0) 100%), rgba(33,29,29,1);
+        background: -moz-linear-gradient(135deg, rgba(84,84,84,0) 0, rgba(84,84,84,0) 40%, rgba(29,29,29,1) 40%, rgba(0,0,0,1) 59%, rgba(58,58,58,0) 59%, rgba(63,63,63,0) 100%), -moz-linear-gradient(135deg, rgba(0,0,0,1) 0, rgba(0,0,0,1) 7%, rgba(79,79,79,0) 7%, rgba(63,63,63,0) 100%), -moz-linear-gradient(315deg, rgba(0,0,0,1) 0, rgba(0,0,0,1) 7%, rgba(79,79,79,0) 7%, rgba(63,63,63,0) 100%), rgba(33,29,29,1);
+        background: linear-gradient(135deg, rgba(84,84,84,0) 0, rgba(84,84,84,0) 40%, rgba(29,29,29,1) 40%, rgba(0,0,0,1) 59%, rgba(58,58,58,0) 59%, rgba(63,63,63,0) 100%), linear-gradient(135deg, rgba(0,0,0,1) 0, rgba(0,0,0,1) 7%, rgba(79,79,79,0) 7%, rgba(63,63,63,0) 100%), linear-gradient(315deg, rgba(0,0,0,1) 0, rgba(0,0,0,1) 7%, rgba(79,79,79,0) 7%, rgba(63,63,63,0) 100%), rgba(33,29,29,1);
+        -webkit-background-origin: padding-box;
+        background-origin: padding-box;
+        -webkit-background-clip: border-box;
+        background-clip: border-box;
+        -webkit-background-size: 10px 10px;
+        background-size: 10px 10px;
+    }
+
+    td .fc-datagrid-cell-frame {
+        height: 10vh !important;
+    }
+
+    td .fc-timeline-lane-frame, td .fc-timeline-event-harness {
+        height: 10vh !important;
+    }
+
+    td .fc-timeline-event {
+        margin-top: .5vh !important;
+        margin-bottom: .5vh !important;
+    }
+
+    #calendar {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .fc-h-event {
+        background: #808080;
+    }
+    /* Progress indicator background color */
+    .progress-indicator {
+        background-color: #F19C99;
+        color: darkblue; /* text color for fieldset */
+        height: 60%;
+        padding-top: 16px;
+        padding-bottom: 24px;
+    }
+
+    .order-preparation {
+        background-color: #f8f9fa;
+        color: darkblue; /* text color for fieldset */
+        height: 60%;
+        padding-top: 16px;
+        padding-bottom: 24px;
+    }
+
+    .progress-indicator label,
+    .progress-indicator table,
+    .progress-indicator th,
+    .progress-indicator td {
+        color: darkblue;
+    }
+
+    /* Legend moved outside fieldset - style to match previous legend look */
+    .progress-indicator-legend {
+        display: block;
+        padding: 0 10px;
+        margin-left: 18px;
+        margin-bottom: .5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .div-hidden {
+        display: none;
+    }
+
+    #btnFullScreen {
+        margin-top: 5px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-sm-12" align="right">
+        <button id="btnFullScreen" onclick="onClickFullScreen()"><i class="fas fa-expand-arrows-alt"></i></button>
+    </div>
+</div>
+
+<h1 class="calendar-title text-center mt-3"><span class="calendar-title-inner">Assy WareHouse Shipping Progress Visualization</span></h1>
+
+<div id="legend" class="row">
+    <div class="col-xl-12 table-responsive" style="display: inline-flex">
+        <div class="col-xl-7">
+            <div class="progress-indicator-legend">Order preparation</div>
+            <fieldset class="order-preparation">
+                @* <legend><label>Order preparation</label></legend> *@
+                <div class="row">
+                    <div class="col-sm-9" style="display: inline-flex">
+                        <div class="col-sm-3">
+                            <span class="legend-icon custom-gradient-box"></span>
+                            <span class="legend-text"><label>Plan</label></span>
+                        </div>
+                        <div class="col-sm-3">
+                            <span class="legend-icon" style="background-color: #007bff;"></span>
+                            <span class="legend-text"><label>Processing</label></span>
+                        </div>
+                        <div class="col-sm-3">
+                            <span class="legend-icon" style="background-color: #28a745;"></span>
+                            <span class="legend-text"><label>Finish</label></span>
+                        </div>
+                        <div class="col-sm-3">
+                            <span class="legend-icon" style="background-color: #ffc107;"></span>
+                            <span class="legend-text"><label>Advance</label></span>
+                        </div>
+                        <div class="col-sm-3">
+                            <span class="legend-icon" style="background-color: #ff0000;"></span>
+                            <span class="legend-text"><label>Delay</label></span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="col-xl-5">
+            <div class="progress-indicator-legend">Progress indicator</div>
+            <fieldset class="progress-indicator">
+                <div class="row">
+                    <table style="width: 100%;">
+                        <tr class="text-center">
+                            <th width="10%">TMV</th>
+                            <th width="22%">(40)</th>
+                            <th width="22%" style="border-right: 4.5px solid">40</th>
+                            <th width="22%" style="border-right: 4.5px solid">30</th>
+                            <th width="22%">20</th>
+                        </tr>
+                        <tr class="text-center">
+                            <td></td>
+                            <td>Tổng số PL</td>
+                            <td style="border-right: 4.5px solid">Thu thập</td>
+                            <td style="border-right: 4.5px solid">3 điểm check</td>
+                            <td>Cont loading</td>
+                        </tr>
+                    </table>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<!-- 🧭 Legend khu vực giải thích -->
+@* <div id="legend" style="margin: 20px auto; max-width: 100%; text-align: center;">
+    <!-- 🎨 Giải thích màu status -->
+    <div class="legend-container mb-4">
+        <h5 class="text-center mb-3">Order Status</h5>
+        <div class="legend-item">
+            <span class="legend-icon" style="background-color: #000000;"></span>
+            <span class="legend-text">Planned</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-icon" style="background-color: #007bff;"></span>
+            <span class="legend-text">Pending</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-icon" style="background-color: #28a745;"></span>
+            <span class="legend-text">Completed</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-icon" style="background-color: #ffc107;"></span>
+            <span class="legend-text">Shipped</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-icon" style="background-color: #ff0000;"></span>
+            <span class="legend-text">Delay</span>
+        </div>
+    </div>
+
+    <!-- 🧮 Giải thích Progress Metrics -->
+    <div class="legend-container">
+        <div class="legend-item">
+            <span class="legend-icon" style="background-color: #F19C99;"></span>
+            <span class="legend-text fw-bold" style="color: #000000;">Progress Order</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-text fw-bold" style="color: #000000;">Customer Code (Total Pallet)</span>
+        </div>
+        <div class="legend-item">        
+            <span class="legend-text fw-bold" style="color: #000000;">Collect Pallet</span>
+        </div>
+        <div class="legend-item">       
+            <span class="legend-text fw-bold" style="color: #000000;">Three Point Scan</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-text fw-bold" style="color: #000000;">Load Container</span>
+        </div>
+    </div>
+</div> *@
+
+<!-- 📅 Calendar -->
+<div id="calendar" style="max-width: 100%; height: auto; min-height: 700px; margin: 20px auto; margin-top: 0px"></div>
+
+<!-- Modal cho OrderDetails -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailsModalLabel">OrderDetail Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalLoading" class="text-center">Đang tải...</div>
+                <table class="table table-striped" id="orderDetailsTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Part No</th>
+                            <th>Quantity</th>
+                            <th>Total Pallet</th>
+                            <th> Pallet Size</th>
+                            <th>WareHouse</th>
+                            <th>ContNo</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderDetailsBody">
+                        <!-- Dữ liệu sẽ được load bằng JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal cho Delay Input -->
+<div class="modal fade" id="delayModal" tabindex="-1" aria-labelledby="delayModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-clock-history me-2 fs-4"></i>
+                    <h5 class="modal-title mb-0" id="delayModalLabel">Delay Information</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="delayForm">
+                    <div class="row">
+                        <!-- Delay Type -->
+                        <div class="col-md-6 mb-3">
+                            <label for="delayType" class="form-label fw-semibold text-dark">Delay Type <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-tags text-primary"></i>
+                                </span>
+                                <input type="number" class="form-control" id="delayType" name="DelayType" min="0" max="32767" placeholder="Enter delay type (0-32767)" required>
+                            </div>
+                        </div>
+
+                        <!-- Delay Time -->
+                        <div class="col-md-6 mb-3">
+                            <label for="delayTime" class="form-label fw-semibold text-dark">Delay Time (hours) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-stopwatch text-warning"></i>
+                                </span>
+                                <input type="number" class="form-control" id="delayTime" name="DelayTime" step="0.1" min="0" placeholder="0.0" required>
+                            </div>
+                            <small class="form-text text-muted">Enter delay hours (can be >24 for multi-day).</small>
+                        </div>
+
+                        <!-- Start Time - SỬA: Editable, default max(now, event.start) -->
+                        <div class="col-md-6 mb-3">
+                            <label for="startTime" class="form-label fw-semibold text-dark">Start Time <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-play-circle text-success"></i>
+                                </span>
+                                <input type="datetime-local" class="form-control" id="startTime" name="StartTime" required>
+                            </div>
+                            <small class="form-text text-muted">Set delay start time (future for planned events).</small>
+                        </div>
+
+
+
+                        <!-- Reason -->
+                        <div class="col-12 mb-3">
+                            <label for="reason" class="form-label fw-semibold text-dark">Reason <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-chat-text text-secondary"></i>
+                                </span>
+                                <textarea class="form-control" id="reason" name="Reason" maxlength="255" rows="4" placeholder="Enter the reason for the delay..." required></textarea>
+                            </div>
+                            <div class="form-text text-end">
+                                <small class="text-muted" id="reasonCounter">0 / 255</small>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="OrderId" />
+                </form>
+            </div>
+            <div class="modal-footer bg-light border-top">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="saveDelay">
+                    <i class="bi bi-check-circle me-1"></i>Save Delay
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FullCalendar CSS & JS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.15/index.global.min.js"></script>
+<!-- Bootstrap Icons cho icons trong progress -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<!--  THÊM SIGNALR LIBRARY -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+<!-- THÊM: Bootstrap JS nếu chưa có trong Layout (giả sử có) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Link to external CSS file -->
+<link rel="stylesheet" href="~/css/Calendar.css" />
+
+<!-- 📜 Custom JS -->
+<script>
+    // Gửi dữ liệu model (orders và customers) xuống JS
+    const modelData = @Html.Raw(modelJson);
+    // Use server-generated action URL to respect virtual application paths when published
+    const orderDetailsUrlTemplate = '@Url.Action("GetOrderDetails", "DensoWareHouse")';
+    const orders = modelData.Orders;
+    const customers = modelData.Customers;
+
+    function onClickFullScreen(){
+        if (isOnFullScreenMode()) {
+            exitOnFullScreenMode();
+        } else {
+            onFullScreenMode();
+        }
+    }
+
+    function isOnFullScreenMode() {
+        var res = document.fullscreenElement || document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.msIsFullScreen || (document.msFullscreenElement != null);
+        return res;
+    }
+    function exitOnFullScreenMode() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { /* Firefox */
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE/Edge */
+            document.msExitFullscreen();
+        }
+
+        const element = document.getElementById('head-menu');
+        if (element) {
+          element.classList.remove('div-hidden');
+        }
+    }
+    function onFullScreenMode() {
+        var elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) { /* Firefox */
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen();
+        }
+
+        const element = document.getElementById('head-menu');
+        if (element) {
+          element.classList.add('div-hidden');
+        }   
+    }
+</script>
+<script src="~/js/Calendar.js"></script>
+<script>
+    (function () {
+        // Adjust resource row min-height so rows with stacked/leveled events get enough vertical space.
+        function adjustResourceRowHeights() {
+            // FullCalendar resource row containers
+            var resourceRows = document.querySelectorAll('.fc-resource-timeline .fc-resource, .fc-resource-timeline .fc-resource-cell, .fc-resource');
+            if (!resourceRows || resourceRows.length === 0) return;
+
+            var labelCells = Array.from(document.querySelectorAll('.fc-datagrid .fc-datagrid-cell-frame'));
+            resourceRows.forEach(function (row, idx) {
+                // find the element that visually contains timeline events for this resource
+                var container = row.querySelector('.fc-timeline-lane-frame') || row.querySelector('.fc-resource-cell') || row;
+                if (!container) container = row;
+
+                // collect visible events that belong to this resource row
+                var events = row.querySelectorAll('.fc-event');
+                if (!events || events.length === 0) {
+                    // clear any inline height if no events
+                    container.style.minHeight = '';
+                    container.style.height = '';
+                    return;
+                }
+
+                // Determine stacking levels by unique 'top' offsets relative to container
+                var containerRect = container.getBoundingClientRect();
+                var tops = new Set();
+                events.forEach(function (ev) {
+                    var evRect = ev.getBoundingClientRect();
+                    // compute top offset relative to container
+                    var topOffset = Math.round(evRect.top - containerRect.top);
+                    // ignore invisible or zero-size elements
+                    if (evRect.width < 2 || evRect.height < 2) return;
+                    tops.add(topOffset);
+                });
+
+                var levels = Math.max(1, tops.size);
+
+                // Heuristics: compute per-level height from a sample event (fallback to 36px)
+                var sample = events[0].getBoundingClientRect();
+                var perLevel = (sample && sample.height > 8) ? Math.round(sample.height) : 36;
+
+                // Add small padding so items don't touch
+                var padding = 8;
+                var newMin = Math.max(56, levels * perLevel + padding);
+
+             
+                container.style.minHeight = newMin + 'px';
+                container.style.height = 'auto';
+
+              
+                try {
+                  
+                    var resourceId = row.getAttribute('data-resource-id') || (row.dataset && row.dataset.resourceId) || (row.querySelector('[data-resource-id]') && row.querySelector('[data-resource-id]').getAttribute('data-resource-id'));
+                    var leftCell = null;
+                    if (resourceId) {
+                        // First try to find any element in the page that carries this resource id
+                        var allMatches = document.querySelectorAll('[data-resource-id="' + resourceId + '"]');
+                        for (var m = 0; m < allMatches.length; m++) {
+                            var el = allMatches[m];
+                            if (!leftCell) {
+                                // prefer explicit frame element when present
+                                leftCell = el.querySelector('.fc-datagrid-cell-frame') || el.querySelector('.fc-datagrid-cell') || el;
+                            }
+                            // if the element itself looks like the label frame, take it
+                            if (el.classList && el.classList.contains('fc-datagrid-cell-frame')) {
+                                leftCell = el;
+                                break;
+                            }
+                        }
+
+                        // If still not found, try a few fallback selectors
+                        if (!leftCell) {
+                            var selectors = [
+                                '.fc-datagrid [data-resource-id="' + resourceId + '"] .fc-datagrid-cell-frame',
+                                '.fc-datagrid .fc-datagrid-row[data-resource-id="' + resourceId + '"] .fc-datagrid-cell-frame',
+                                '.fc-datagrid .fc-datagrid-cell[data-resource-id="' + resourceId + '"] .fc-datagrid-cell-frame',
+                                '.fc-datagrid [data-resource-id="' + resourceId + '"]',
+                                '.fc-datagrid .fc-datagrid-cell[data-resource-id="' + resourceId + '"]'
+                            ];
+                            for (var si = 0; si < selectors.length; si++) {
+                                try {
+                                    leftCell = document.querySelector(selectors[si]);
+                                    if (leftCell) break;
+                                } catch (ignore) { }
+                            }
+                        }
+                    }
+
+                    // Fallback: use same index if counts match or labelCells available
+                    if (!leftCell && labelCells && labelCells.length > idx) {
+                        leftCell = labelCells[idx];
+                    }
+
+                    if (leftCell) {
+                        // Apply to the found leftCell
+                        try {
+                            leftCell.style.minHeight = newMin + 'px';
+                            leftCell.style.height = 'auto';
+                        } catch (e) { }
+
+                        // Also apply to any other elements that mention the same data-resource-id
+                        try {
+                            var otherMatches = document.querySelectorAll('.fc-datagrid [data-resource-id="' + resourceId + '"] , [data-resource-id="' + resourceId + '"]');
+                            otherMatches.forEach(function (el) {
+                                try {
+                                    el.style.minHeight = newMin + 'px';
+                                    el.style.height = 'auto';
+                                    var parentRow = el.closest('tr, .fc-datagrid-row, .fc-datagrid-cell');
+                                    if (parentRow) {
+                                        parentRow.style.minHeight = newMin + 'px';
+                                        parentRow.style.height = 'auto';
+                                    }
+                                } catch (ignore) { }
+                            });
+                        } catch (ignoreAll) { }
+                    }
+                } catch (e) {
+                    // ignore errors in best-effort sync
+                }
+            });
+        }
+
+        function observeCalendar() {
+            var calendarEl = document.getElementById('calendar');
+            if (!calendarEl) return;
+
+            // Initial adjust after small delay to allow initial render
+            setTimeout(adjustResourceRowHeights, 250);
+
+            var mo = new MutationObserver(function () {
+                if (mo._timeout) clearTimeout(mo._timeout);
+                mo._timeout = setTimeout(function () {
+                    adjustResourceRowHeights();
+                }, 150);
+            });
+
+            mo.observe(calendarEl, { childList: true, subtree: true, attributes: true });
+
+            // Also update on window resize and orientation change
+            window.addEventListener('resize', function () { setTimeout(adjustResourceRowHeights, 150); });
+            window.addEventListener('orientationchange', function () { setTimeout(adjustResourceRowHeights, 150); });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', observeCalendar);
+        } else {
+            observeCalendar();
+        }
+    })();
+</script>

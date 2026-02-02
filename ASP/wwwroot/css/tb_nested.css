@@ -1,0 +1,19 @@
+﻿.sub-table {
+    margin-top: 10px;
+}
+
+.sub-table thead th {
+    background-color: #b0c4de;
+}
+
+.sub-table tbody {
+    background-color: white;
+}
+
+.nested-table-row {
+    background-color: white;
+}
+
+.recall-field {
+    background-color: seashell;
+}

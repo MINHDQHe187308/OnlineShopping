@@ -1,0 +1,98 @@
+﻿.breadcrumb {
+    float: right;
+}
+
+#frmImport .box-body .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -7.5px;
+    margin-right: -7.5px;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.sp-round {
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 0.5px solid #a9a9a9;
+    text-align: center;
+    align-items: center;
+    display: inline-block;
+}
+
+.content .container-fluid .card-body {
+    padding: 10px;
+    border: 0.5px solid #999;
+    border-radius: 10px;
+    box-shadow: 0.5px 0.5px 0.5px 0.5px #999;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.disabled-link {
+    pointer-events: none;
+}
+
+fieldset {
+    min-width: 0;
+    padding: 0 5px;
+    margin: 0;
+    border: 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+legend {
+    display: block;
+    width: inherit;
+    max-width: 100%;
+    padding: 0 10px;
+    margin-bottom: .5rem;
+    font-size: 1.1rem;
+    line-height: inherit;
+    color: inherit;
+    white-space: normal;
+    margin-left: 18px;
+}
+
+.box-message span.badge {
+    margin-right: 5px;
+}
+
+#example1 thead th {
+    vertical-align: middle;
+    text-align: center;
+    background-color: honeydew;
+}
+
+#example1 tbody td {
+    text-align: center;
+}
+
+.modal-header {
+    color: white;
+    background-color: darkgreen;
+}
+
+.table > :not(:last-child) > :last-child > * {
+    border-bottom-color: #dee2e6 !important;
+}
+
+.a-handle {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.divShadow {
+    box-shadow: 0.5px 0.5px 0.5px 0.5px #999;
+}
+
+.div-clearfix {
+    height: 10px;
+}

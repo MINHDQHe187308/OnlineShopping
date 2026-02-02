@@ -1,0 +1,179 @@
+﻿@model ASP.Models.Admin.Accounts.ApplicationUser
+@{
+    ViewData["Title"] = "Thành viên - Sửa";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+<style>
+
+</style>
+<div class="content-wrapper" style="min-height: 422px;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-route="admin.accounts"><i class="fa fa-users"></i> Thành viên</a></li>
+                        <li class="breadcrumb-item active"> Sửa</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="box box-primary card-body">
+                <!-- /.box-header -->
+                <form method="POST" asp-controller="Account" asp-action="Edit" asp-route-id="@Model.Id" accept-charset="UTF-8" class="" enctype="multipart/form-data">
+                    <input asp-for="Id" type="hidden" />
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label asp-for="UserName"></label>
+                                    <input asp-for="UserName" placeholder="Code ..." class="form-control" readonly value="@Model.UserName" />
+                                    <span asp-validation-for="UserName" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label asp-for="FullName"></label><span class="icheck-primary-loading"></span>
+                                    <input asp-for="FullName" value="@Model.FullName" placeholder="Họ tên ..." class="form-control" />
+                                    <span asp-validation-for="FullName" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <!-- /.col -->
+                            @* <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label asp-for="PassWord"></label>
+                                    <div class="form-group-eyes" style="position:relative;">
+                                        <input asp-for="PassWord" placeholder="Nhập Password" class="form-control" type="password" value="@Model.PasswordHash" />
+                                        <a title="Hiển thị PassWord!" class="input-group-addon2" style="position: absolute; right: 0px;top: 0px;height: 38px; padding: 6px 12px; background-color: #ccc;" href="#" onclick="myFunction2()">
+                                            <i id="Value2-i" class="fas fa-eye-slash"></i>
+                                        </a>
+                                    </div>
+                                    <span asp-validation-for="PassWord" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label asp-for="RePassWord"></label>
+                                    <input asp-for="RePassWord" placeholder="Nhập lại Password" class="form-control" type="password" value="@Model.PasswordHash" />
+                                    <span asp-validation-for="RePassWord" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div> *@
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label asp-for="LevelManage"></label>
+                                    @Html.DropDownList("LevelManage", Html.GetEnumSelectList<ASP.BaseCommon.EnumLevelManage>(), "-- Chọn --", new { @class = "form-control" })
+                                    <span asp-validation-for="LevelManage" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label asp-for="RoleId"></label>
+                                    <select asp-for="RoleId" class="form-control">
+                                        <option>-- Chọn --</option>
+                                        @foreach (var item in ViewBag.sltRoles)
+                                        {
+                                            if (item.Selected)
+                                            {
+                                                <option value="@item.Value" selected>@item.Text</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                        }
+                                    </select>
+                                    <span asp-validation-for="RoleId" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label asp-for="PhoneNumber"></label>
+                                    <input asp-for="PhoneNumber" placeholer="Số điện thoại" class="form-control" value="@Model.PhoneNumber" />
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label asp-for="Email"></label>
+                                    <input asp-for="Email" placeholder="Email" class="form-control" type="email" value="@Model.Email" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div><!-- /.col -->
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label asp-for="Status"></label>
+                                    @Html.DropDownList("Status", Html.GetEnumSelectList<ASP.BaseCommon.EnumStatusUser>(), "-- Chọn --", new { @class = "form-control" })                            
+                                    <span asp-validation-for="Status" class="text-danger"></span>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label>Ảnh đại diện (<small>300x300px</small>)</label>
+                                    <input asp-for="Avatar" class="form-control image-input" type="file" />
+                                    <span asp-validation-for="Avatar" class="text-danger"></span>
+
+                                </div>
+                                <!-- /.form-group -->
+                                <div class="form-group">
+                                    <div class="preview-image preview-image-user" style="position:relative; display:inline-block;">
+                                        <input type="hidden" name="rmavatar" value="" class="d-none rmavatar" />
+                                        <span title="Click để xóa avatar!" class="iconx-preview text-danger" style="position:absolute;top:0px;right:0px;cursor:pointer;border: 1px solid #ccc;background: #fff;"><i class="far fa-times-circle"></i></span>
+                                        <img class="image-preview" src="~/assets/users/@Model.Avatar" alt="image">
+                                    </div>
+                                </div>
+                                <!-- /.form-group -->
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <!-- /.row -->
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer text-right">
+                        <a class="btn btn-default" asp-route="admin.accounts"><i class="fas fa-arrow-circle-left"></i> Quay lại</a>
+                        <button class="btn btn-success" type="submit"><i class="fas fa-save"></i> Lưu</button>
+                    </div>
+                    <!-- /.box-footer -->
+                </form>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // jQuery
+        });
+        function myFunction2() {
+            var x = document.getElementById("PassWord");
+            if (x.type === "password") {
+                x.type = "text";
+                //fas fa-eye-slash
+                document.getElementById("Value2-i").className = "fas fa-eye";
+
+            } else {
+                x.type = "password";
+                document.getElementById("Value2-i").className = "fas fa-eye-slash";
+
+            }
+            //
+        }
+    </script>
+}

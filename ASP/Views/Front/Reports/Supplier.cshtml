@@ -1,0 +1,239 @@
+﻿@using ReflectionIT.Mvc.Paging
+@using ODCS.BaseCommon;
+@using Microsoft.AspNetCore.Authorization
+@using ODCS.Controllers.Admin
+@using ODCS.Policies
+@inject IAuthorizationService AuthorizationService
+@addTagHelper *, ReflectionIT.Mvc.Paging
+@model ODCS.Models.Front.Reports.ReportFactoryModel
+@{
+    ViewData["Title"] = "RPT LINH KIỆN";
+    Layout = "../Shared/Layout/Front/_Layout";
+    var fYear = "";//DateTime.Now.Year.ToString();
+    if (ViewContext.RouteData.Values["fYear"] != null)
+    {
+        fYear = ViewContext.RouteData.Values["fYear"].ToString();
+    }
+    var fSupplier = "";
+    if (ViewContext.RouteData.Values["fSupplier"] != null)
+    {
+        fSupplier = ViewContext.RouteData.Values["fSupplier"].ToString();
+    }
+}
+<style>
+    #chart-factory {
+        width: 100%;
+        position: relative;
+    }
+
+    .search-form {
+        border: 1px solid #ccc;
+        padding: 15px 10px;
+        position: relative;
+    }
+
+    legend {
+        position: absolute;
+        top: -21px;
+        left: 28px;
+        background: #fff;
+        display: inline-block;
+        max-width: 80px;
+        padding: 0px 10px;
+    }
+
+    .sect-right, .sect-left {
+        border: 1px solid #ccc;
+        border-radius: 15px;
+        /*min-height: 600px;*/
+        padding: 15px;
+        overflow: scroll;
+    }
+
+    .sect-right {
+        /*min-height: 625px;*/
+    }
+
+    #table-factory {
+        max-width: 100%;
+        overflow: scroll;
+        margin: 0px !important;
+    }
+
+        #table-factory table {
+            margin: 0px !important;
+        }
+
+        #table-factory th.active, #table-factory th:hover {
+            background-color: rgb(75, 192, 192);
+            cursor: pointer;
+        }
+
+    #chart-judge {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        display: inline-block;
+        /*z-index: 9999;*/
+        font-size: 1.7em;
+        border: 1px solid #ccc;
+        padding: 0 15px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container-fluid bd-example">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-xs-12">
+            <h2 style="margin-bottom: 15px;">INVENTORY OF <span>@ViewBag.CatName</span></h2>
+            <form method="get" class="search-form">
+                <fieldset>
+                    <legend>Filter:</legend>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="fYear" class="form-label">Year</label>
+                                <select asp-items="@ViewBag.sltYears" asp-for="@fYear" id="fYear" name="fYear" class="form-control" required>
+                                    <option value="">-- Choose --</option>
+                                </select>
+                            </div>
+                        </div><!-- /col -->
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="fSupplier" class="form-label">Supplier</label>
+                                <select asp-items="@ViewBag.sltTypeProduct" asp-for="@fSupplier" id="fSupplier" name="fSupplier" class="form-control select2">
+                                    <option value="">-- Choose --</option>
+                                </select>
+                            </div>
+                        </div><!-- /col -->
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="fYear" class="form-label" style="color: #fff;">.</label>
+                                <div class="text-start">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-primary add-button" data-toggle="modal" data-target=".bd-export-modal-lg" data-backdrop="static" id="btn-export">Export Excel</button>
+                                        <button type="submit" class="btn btn-info">
+                                            <i class="fas fa-search"></i> Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- /col -->
+                    </div>
+                </fieldset>
+            </form>
+            <h1 class="clearfix"></h1>
+        </div>
+        <!-- /.col -->
+    </div>
+    <div class="row justify-content-start">
+        <div class="col-12 text-center">
+            <div id="chart-factory" class="d-inline-block">
+                <div id="chart-judge">EVA: <span></span></div>
+                <div id="myChart" style="margin: 0 auto"></div>
+            </div>
+        </div><!-- /col 12-->
+    </div>
+</div>
+@section Scripts {
+    <script>
+        let xAxisCategories = @Html.Raw(ViewBag.xAxisCategories);
+        let series = @Html.Raw(ViewBag.series);
+        let seriesData = series.Series;
+        let catName = "@ViewBag.CatName";
+
+        Highcharts.chart('myChart', {
+            title: {
+                text: 'INVENTORY OF ' + catName
+            },
+            legend: {
+                enabled: true
+            },
+            xAxis: [{
+                categories: @Html.Raw(ViewBag.xAxisCategories)
+                    }],
+            yAxis: {
+                stackLabels: {
+                    enabled: true,
+                    style: {
+                        color: 'black'
+                    }
+                }
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal'
+                },
+                line: {
+                    dataLabels: {
+                        allowOverlap: true,
+                        enabled: false
+                    }
+                }
+            },
+            series: seriesData
+        });
+
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            // event export btn
+            $('#btn-export').click(function (e) {
+                e.preventDefault();
+                if ($('#fYear').val() == "") {
+                    alert("Năm không để trống.");
+                    return;
+                }
+                let confirmMsg = "Bạn muốn thực hiện tác vụ này?";
+                if (confirm(confirmMsg) == true) {
+                    // use ajax call back action
+                    $(this).prop("disabled", true);
+                    let url = "@Url.Action("ExportData", "Report")";
+                    $.ajax({
+                        type: 'GET',
+                        url: url,
+                        contentType: "application/json; charset=utf-8",
+                        //headers: { "RequestVerificationToken": $("form#frmExport").find("input[name=__RequestVerificationToken]").val() },
+                        data: {
+                            fYear: $('#fYear').val(),
+                            fSupplier: $('#fSupplier').val(),
+                        },
+                        beforeSend: function () {
+                            $('#sct-loading').show();
+                            $("#btn-export").removeAttr('disabled');
+                        },
+                        success: function (data) {
+                            $('.box-message-export').html(data.message);
+                            //
+                            //
+                            if (data.result == false) {
+                                alert(data.message);
+                            } else {
+                                if (data.fileName != "") {
+                                    window.location.href = "@Url.Action("DownloadEx", "Report")?file=" + data.fileName + "&rootsPath=" + data.rootsPath;
+                                }
+                            }
+                            //
+                            console.log(data);
+                        },
+                        complete: function () {
+                            //stop loading
+                            $("#btn-export").removeAttr('disabled');
+                            $('#sct-loading').hide();
+                        },
+                        error: function () {
+                            $("#btn-export").removeAttr('disabled');
+                            $('#sct-loading').hide();
+                            alert("error");
+                        }
+                    });
+                } else {
+                    console.log("You canceled!");
+                }
+                //
+            });
+            //
+        });
+    </script>
+}

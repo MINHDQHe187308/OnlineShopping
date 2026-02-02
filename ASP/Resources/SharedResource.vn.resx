@@ -1,0 +1,315 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="lbl_account" xml:space="preserve">
+    <value>Tài khoản</value>
+  </data>
+  <data name="lbl_account_type" xml:space="preserve">
+    <value>Loại tài khoản</value>
+  </data>
+  <data name="lbl_author" xml:space="preserve">
+    <value>Người tạo</value>
+  </data>
+  <data name="lbl_avatar" xml:space="preserve">
+    <value>Avatar</value>
+  </data>
+  <data name="lbl_content" xml:space="preserve">
+    <value>Nội dung</value>
+  </data>
+  <data name="lbl_created_date" xml:space="preserve">
+    <value>Ngày tạo</value>
+  </data>
+  <data name="lbl_day_off" xml:space="preserve">
+    <value>Ngày nghỉ</value>
+  </data>
+  <data name="lbl_description" xml:space="preserve">
+    <value>Mô tả</value>
+  </data>
+  <data name="lbl_email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="lbl_fullname" xml:space="preserve">
+    <value>Họ tên</value>
+  </data>
+  <data name="lbl_ip_address" xml:space="preserve">
+    <value>Địa chỉ IP</value>
+  </data>
+  <data name="lbl_issued_by" xml:space="preserve">
+    <value>Người tạo</value>
+  </data>
+  <data name="lbl_language" xml:space="preserve">
+    <value>Ngôn ngữ</value>
+  </data>
+  <data name="lbl_log_type" xml:space="preserve">
+    <value>Loại Log</value>
+  </data>
+  <data name="lbl_password" xml:space="preserve">
+    <value>Mật khẩu</value>
+  </data>
+  <data name="lbl_phone_number" xml:space="preserve">
+    <value>Số điện thoại</value>
+  </data>
+  <data name="lbl_from" xml:space="preserve">
+    <value>Từ</value>
+  </data>
+  <data name="lbl_reason" xml:space="preserve">
+    <value>Lý do</value>
+  </data>
+  <data name="lbl_re_password" xml:space="preserve">
+    <value>Nhập lại mật khẩu</value>
+  </data>
+  <data name="lbl_role" xml:space="preserve">
+    <value>Vai trò</value>
+  </data>
+  <data name="lbl_role_count_user" xml:space="preserve">
+    <value>Số lượng người dùng</value>
+  </data>
+  <data name="lbl_role_default" xml:space="preserve">
+    <value>Vai trò mặc định</value>
+  </data>
+  <data name="lbl_role_permission" xml:space="preserve">
+    <value>Quyền hạn</value>
+  </data>
+  <data name="lbl_status" xml:space="preserve">
+    <value>Trạng thái</value>
+  </data>
+  <data name="lbl_theme_name" xml:space="preserve">
+    <value>Tên Theme</value>
+  </data>
+  <data name="lbl_title" xml:space="preserve">
+    <value>Tiêu đề</value>
+  </data>
+  <data name="lbl_type_change" xml:space="preserve">
+    <value>Loại thay đổi</value>
+  </data>
+  <data name="lbl_updated_by" xml:space="preserve">
+    <value>Người cập nhật</value>
+  </data>
+  <data name="lbl_updated_date" xml:space="preserve">
+    <value>Ngày cập nhật</value>
+  </data>
+  <data name="lbl_to" xml:space="preserve">
+    <value>Đến</value>
+  </data>
+  <data name="lbl_enum_type_change_create" xml:space="preserve">
+    <value>Tạo mới</value>
+  </data>
+  <data name="lbl_enum_type_change_update" xml:space="preserve">
+    <value>Cập nhật</value>
+  </data>
+  <data name="lbl_enum_type_change_delete" xml:space="preserve">
+    <value>Xóa</value>
+  </data>
+  <data name="lbl_content_attachment" xml:space="preserve">
+    <value>File Content</value>
+  </data>
+  <data name="lbl_kanban_attachment" xml:space="preserve">
+    <value>File Kanban</value>
+  </data>
+  <data name="lbl_kanban_no" xml:space="preserve">
+    <value>Số Kanban</value>
+  </data>
+  <data name="lbl_quantity" xml:space="preserve">
+    <value>Số lượng</value>
+  </data>
+  <data name="lbl_enum_approval_rejected" xml:space="preserve">
+    <value>Bị từ chối</value>
+  </data>
+  <data name="lbl_enum_approval_cancel" xml:space="preserve">
+    <value>Chưa giao hàng</value>
+  </data>
+  <data name="lbl_sample_text" xml:space="preserve">
+    <value>Chuỗi mẫu</value>
+  </data>
+  <data name="lbl_enum_approval_approved" xml:space="preserve">
+    <value>Đã kiểm tra</value>
+  </data>
+  <data name="lbl_enum_approval_pending" xml:space="preserve">
+    <value>Chờ kiểm tra</value>
+  </data>
+  <data name="lbl_enum_location_mix" xml:space="preserve">
+    <value>MIX</value>
+  </data>
+  <data name="lbl_enum_location_warehouse" xml:space="preserve">
+    <value>W/H</value>
+  </data>
+  <data name="lbl_enum_location_wip" xml:space="preserve">
+    <value>WIP</value>
+  </data>
+  <data name="lbl_enum_status_user_active" xml:space="preserve">
+    <value>Hoạt động</value>
+  </data>
+  <data name="lbl_enum_status_user_in_active" xml:space="preserve">
+    <value>Không hoạt động</value>
+  </data>
+  <data name="lbl_enum_status_user_pending" xml:space="preserve">
+    <value>Chờ duyệt</value>
+  </data>
+  <data name="lbl_enum_status_active_disable" xml:space="preserve">
+    <value>Không hoạt động</value>
+  </data>
+  <data name="lbl_enum_status_active_active" xml:space="preserve">
+    <value>Hoạt động</value>
+  </data>
+  <data name="lbl_enum_user_type_none" xml:space="preserve">
+    <value>Thông thường</value>
+  </data>
+  <data name="lbl_enum_user_type_pc" xml:space="preserve">
+    <value>PC</value>
+  </data>
+  <data name="lbl_enum_user_type_acc" xml:space="preserve">
+    <value>ACC</value>
+  </data>
+  <data name="lbl_enum_user_type_pro" xml:space="preserve">
+    <value>PRO</value>
+  </data>
+  <data name="lbl_enum_level_approve_none" xml:space="preserve">
+    <value>Thông thường</value>
+  </data>
+  <data name="lbl_enum_level_approve_check" xml:space="preserve">
+    <value>Kiểm tra</value>
+  </data>
+  <data name="lbl_enum_level_approve_approve" xml:space="preserve">
+    <value>Phê duyệt</value>
+  </data>
+  <data name="lbl_group_mix_group_name" xml:space="preserve">
+    <value>Tên nhóm</value>
+  </data>
+  <data name="lbl_product_line_name" xml:space="preserve">
+    <value>Dây chuyền</value>
+  </data>
+  <data name="lbl_product_process_code" xml:space="preserve">
+    <value>Process Code</value>
+  </data>
+  <data name="lbl_product_location" xml:space="preserve">
+    <value>Khu vực</value>
+  </data>
+  <data name="lbl_product_part_no" xml:space="preserve">
+    <value>Mã L/K</value>
+  </data>
+  <data name="lbl_product_part_name" xml:space="preserve">
+    <value>Tên L/K</value>
+  </data>
+  <data name="lbl_product_unit_type" xml:space="preserve">
+    <value>Đơn vị</value>
+  </data>
+  <data name="lbl_product_box_size" xml:space="preserve">
+    <value>Số lượng chẵn hộp/ túi</value>
+  </data>
+</root>

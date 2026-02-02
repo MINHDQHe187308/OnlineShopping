@@ -1,0 +1,34 @@
+[
+  {
+    "ContainingType": "ASP.Controllers.Front.DelayHistoryController",
+    "Method": "GetByOrderId",
+    "RelativePath": "api/DelayHistory/{orderId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ASP.Controllers.Front.DelayHistoryController",
+    "Method": "SaveDelay",
+    "RelativePath": "api/DelayHistory/SaveDelay",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "delayDto",
+        "Type": "ASP.DTO.DensoDTO.DelaySaveDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

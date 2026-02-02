@@ -1,0 +1,253 @@
+﻿@using ODCS.BaseCommon;
+@using Microsoft.AspNetCore.Authorization
+@using ODCS.Controllers.Admin
+@using ODCS.Policies
+@inject IAuthorizationService AuthorizationService 
+@model ODCS.Models.Front.StockVisualizations.StockVisualization
+@{
+    ViewData["Title"] = "Visualization";
+    Layout = "../Shared/Layout/Front/_LayoutTv";
+    string strScaleTd = "";
+    if (ViewBag.TotalCats > 0)
+    {
+        double scaleTd = 84 / ViewBag.TotalCats;
+        strScaleTd = $"{scaleTd}%";
+    }
+    var dtNow = DateTime.Now.Date.ToString("MM/dd/yyyy");
+}
+<style>
+    .h-button {
+        margin-top: 10px;
+    }
+
+    #table-visualize {
+        font-size: 22px;
+        text-align: center;
+    }
+
+    .sct-visual {
+        text-align: center;
+    }
+
+        .sct-visual iframe {
+            height: 100vh;
+            width: 99vw;
+            max-width: 99%;
+        }
+    /*.sect-slides {
+                display: none;
+            }*/
+</style>
+<section class="sect-slides">
+    <section class="sct-slide sct-part">
+        <div class="row">
+            <div class="col-9">
+                <h1 class="text-center">Parts stock visualization</h1>
+            </div>
+            <div class="col-3">
+                <p class="text-end h-button">
+                    <button onclick="openFullscreen();">Fullscreen</button>
+                    <button onclick="closeFullscreen();">Exit</button>
+                    <button><a href="~/StockVisualization">Home</a></button>
+                </p>
+            </div>
+            <div class="col-12">
+                <div id="vbTrial">@Html.Raw(ViewBag.vbTrial)</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <main role="main" class="pb-3">
+                    <table class="table table-bordered table-dark table-striped" id="table-visualize">
+                        <thead>
+                            <tr>
+                                <th scope="col">KIND OF PARTS</th>
+                                @foreach (var item in Model.KindOfPart)
+                                {
+                                    <th scope="col" style="width:@strScaleTd">@item</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">STOCK</th>
+                                @foreach (var item in Model.Stocks)
+                                {
+                                    if (item.Value == (int)EnumStatusInventory.InActive)
+                                    {
+                                        <td>
+                                            <a href="~/InventoryInfo?fProductDate=@dtNow&fPartNo=&fTypeProduct=@item.Key&fSupplierCode=&fStatus=@item.Value">
+                                                <div class="bg-danger text-white rounded-circle animate-flicker" style="width: 100px;height: 100px;margin:0 auto;"></div>
+                                            </a>
+                                        </td>
+                                    }
+                                    else if (item.Value == (int)EnumStatusInventory.Pending)
+                                    {
+                                        <td>
+                                            <a href="~/InventoryInfo?fProductDate=@dtNow&fPartNo=&fTypeProduct=@item.Key&fSupplierCode=&fStatus=@item.Value">
+                                                <div class="bg-warning text-white rounded-circle" style="width: 100px;height: 100px;margin:0 auto;"></div>
+                                            </a>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <a href="~/InventoryInfo?fProductDate=@dtNow&fPartNo=&fTypeProduct=@item.Key&fSupplierCode=&fStatus=@item.Value">
+                                                <div class="bg-success text-white rounded-circle" style="width: 100px;height: 100px;margin:0 auto;"></div>
+                                            </a>
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                            <tr>
+                                <th scope="row">DOH</th>
+                                @foreach (var item in Model.Dohs)
+                                {
+                                    <td scope="col">@item</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th scope="row">PIC</th>
+                                @foreach (var item in Model.Pics)
+                                {
+                                    <td scope="col">@item</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th scope="row">Policy(PL)</th>
+                                @foreach (var item in Model.PolicyA)
+                                {
+                                    <td scope="col">@item</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th scope="row">WHA Actual</th>
+                                @foreach (var item in Model.ActualA)
+                                {
+                                    <td scope="col">@item</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th scope="row">WH1 Actual</th>
+                                @foreach (var item in Model.Actual1)
+                                {
+                                    <td scope="col">@item</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th scope="row">LINE SHORTAGE</th>
+                                @foreach (var item in Model.Lines)
+                                {
+                                    <td scope="col">@item</td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="box-remark">
+                    </div><!-- .box-remark -->
+                </main>
+            </div><!-- /col -->
+        </div><!-- /row -->
+        <div class="row align-items-start">
+            <div class="col">
+                <div class="item-remark">
+                    <span class="d-inline-block text-white rounded-circle" style="width: 28px;height: 28px;margin:0 auto;vertical-align:middle;"></span>
+                    <span>Tồn kho (Stock)</span>
+                </div><!-- .item-remark -->
+            </div>
+            <div class="col">
+                <div class="item-remark">
+                    <span class="d-inline-block bg-success text-white rounded-circle" style="width: 28px;height: 28px;margin:0 auto;vertical-align:middle;"></span>
+                    <span>Trong quy cách (follow policy)</span>
+                </div><!-- .item-remark -->
+            </div>
+            <div class="col">
+                <div class="item-remark">
+                    <span class="d-inline-block bg-warning text-white rounded-circle" style="width: 28px;height: 28px;margin:0 auto;vertical-align:middle;"></span>
+                    <span>Thừa kho (over Maximum)</span>
+                </div><!-- .item-remark -->
+            </div>
+            <div class="col">
+                <div class="item-remark">
+                    <span class="d-inline-block bg-danger text-white rounded-circle" style="width: 28px;height: 28px;margin:0 auto;vertical-align:middle;"></span>
+                    <span>Thiếu kho (thiếu xuất/less than Minimum)</span>
+                </div><!-- .item-remark -->
+            </div>
+        </div>
+    </section><!-- .sct-part -->
+    <section class="sct-slide sct-visual">
+        <iframe src="http://dmvnapp/visualizestock/" title="Iframe Example"></iframe>
+    </section><!-- .sct-visual -->
+</section><!-- .sect-slides -->
+@section Scripts {
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script type="text/javascript">
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl("~/notificationHub")
+        .build();
+    connection.on("Notify", function (message) {
+        if(message == 'Inventory'){
+            location.reload();
+        }else{
+            console.log("SignalR Worker Service: " + message);
+        }
+    });
+    connection.start();
+</script>
+<script>
+        var elem = document.documentElement;
+        function openFullscreen() {
+          if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+          } else if (elem.webkitRequestFullscreen) { /* Safari */
+            elem.webkitRequestFullscreen();
+          } else if (elem.msRequestFullscreen) { /* IE11 */
+            elem.msRequestFullscreen();
+          }
+          // an header: head-menu
+          document.getElementById("head-menu").style.display = "none";
+          //
+        }
+
+        function closeFullscreen() {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
+          }
+          // an header: head-menu
+          document.getElementById("head-menu").style.display = "block";
+        }
+        //
+        document.onkeydown = function(evt) {
+        evt = evt || window.event;
+        if (evt.keyCode == 27) {
+            // an header: head-menu
+          document.getElementById("head-menu").style.display = "block";
+        }
+    };
+</script>
+<script>
+    let slideIndex = 0;
+    showSlides();
+    function showSlides() {
+      let numTime = @ViewBag.vbTimeSlide;
+      if(numTime == 0 || numTime == '0'){
+          $('.sct-visual').hide();
+      }else{
+          let i;
+          let slides = document.getElementsByClassName("sct-slide");
+          for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+          }
+          slideIndex++;
+           if (slideIndex > slides.length) {slideIndex = 1}
+          slides[slideIndex-1].style.display = "block";
+          setTimeout(showSlides, numTime); // Change image every 2 seconds
+          }
+
+    }
+</script>
+}

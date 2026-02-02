@@ -1,0 +1,564 @@
+﻿@using ASP.BaseCommon
+@using ASP.Controllers.Admin
+@using ASP.Models
+@using ASP.Policies
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model IEnumerable<ASP.Models.Admin.ThemeOptions.ThemeOption>
+
+@{
+    ViewData["Title"] = "Thông tin chung";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+<style>
+    .c_action button {
+        margin-right: 5px;
+    }
+</style>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper" style="min-height: 459px;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a asp-route="admin.dashboard"><i class="fas fa-home"></i> Home</a></li>
+                                <li class="breadcrumb-item active">Thông tin chung</li>
+                            </ol>
+                        </div><!-- /.col -->
+                    </div>
+                </div>
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-xs-12">
+                    <div class="box">
+                        <!-- /.box-header -->
+                        <div class="box-body p-2">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#home" data-content="home">Cấu hình chung</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#menu2" data-content="menu2">Worker Service</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#inventory" data-content="inventory">Tham số Worker Service</a>
+                                </li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div id="home" class="tab-pane">
+                                    <br>
+                                    <form method="POST" asp-controller="ThemeOption" asp-action="Edit" accept-charset="UTF-8" class="frm" enctype="multipart/form-data">
+
+                                        <div class="box-footer p-2 text-right">
+                                            @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPThemoptionsUpdate)).Succeeded)
+                                            {
+                                                <button class="btn btn-success" type="submit">Lưu thông tin</button>
+                                            }
+                                            <button class="btn btn-success" type="submit">Lưu thông tin</button>
+                                        </div>
+                                        <input class="d-none" name="option_tab" type="text" value="home_tab">
+                                        <div class="row">
+                                            <p class="message-error hidden"></p>
+                                            @foreach (var item in Model)
+                                            {
+                                                if (item.Name == "_optLogo")
+                                                {
+                                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                                        <div class="form-group ">
+                                                            <label>Logo</label>
+                                                            <input class="form-control image-input image-input-user" name="_optLogo" type="file">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="preview-image preview-image-user" style="position:relative; display:inline-block;">
+                                                                <input type="hidden" name="rmavatar" value="" class="d-none rmavatar" />
+                                                                <span title="Click để xóa!" class="iconx-preview text-danger" style="position:absolute;top:0px;right:0px;cursor:pointer;border: 1px solid #ccc;background: #fff;"><i class="far fa-times-circle"></i></span>
+                                                                <img class="image-preview" src="~/assets/themeoptions/@item.Value" alt="image">
+                                                            </div>
+                                                        </div>
+                                                        <!-- /.form-group -->
+                                                    </div>
+                                                }
+                                                else if (item.Name == "_optFavicon")
+                                                {
+                                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                                        <div class="form-group ">
+                                                            <label>Favicon</label>
+                                                            <input class="form-control image-input2 image-input-user2" name="_optFavicon" type="file">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="preview-image2 preview-image-user2" style="position:relative; display:inline-block;">
+                                                                <input type="hidden" name="rmavatar2" value="" class="d-none rmavatar2" />
+                                                                <span title="Click để xóa!" class="iconx-preview2 text-danger" style="position:absolute;top:0px;right:0px;cursor:pointer;border: 1px solid #ccc;background: #fff;"><i class="far fa-times-circle"></i></span>
+                                                                <img class="image-preview2" src="~/assets/themeoptions/@item.Value" alt="image">
+                                                            </div>
+                                                        </div>
+                                                        <!-- /.form-group -->
+                                                    </div>
+                                                }
+                                                else if (item.Name == "_optTrialText")
+                                                {
+                                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                                        <div class="form-group ">
+                                                            <label>Tiêu đề Trial(màn hình TV)</label>
+                                                            <textarea id="_optTrialText" class="form-control" name="_optTrialText" rows="5" cols="40">@item.Value</textarea>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if (item.Name == "_optTimeSlide")
+                                                {
+                                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                                        <div class="form-group ">
+                                                            <label>Thời gian chuyển slide màn hình TV(Millisecond; 1s = 1000 ms)</label>
+                                                            <input class="form-control" name="_optTimeSlide" type="number" required="required" min="0" value="@item.Value">
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if (item.Name == "_optFooterContent")
+                                                {
+                                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                                        <div class="form-group ">
+                                                            <label>Footer</label>
+                                                            <textarea id="_optFooterContent" class="form-control" name="_optFooterContent" rows="5" cols="40">@item.Value</textarea>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if (item.Name == "_optguide")
+                                                {
+                                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                                        <div class="form-group ">
+                                                            <label>Hướng dẫn</label>
+                                                            <textarea id="_optguide" class="form-control" name="_optguide" rows="3" cols="40">@item.Value</textarea>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if (item.Name == "_optShowAllInventory")
+                                                {
+                                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                                        <div class="form-group ">
+                                                            <label>Hiển thị thông tin Sản lượng</label>
+                                                            <select name="_optShowAllInventory" id="_optShowAllInventory" class="form-control">
+                                                                @{
+                                                                    var cities = new Dictionary<string, string>() { { "1", "Hiển thị toàn bộ" }, { "0", "Hiển thị Tổng Kho 1, A" } };
+                                                                    foreach (var kvp in cities)
+                                                                    {
+                                                                        if (kvp.Key == item.Value)
+                                                                        {
+                                                                            <option value="@kvp.Key" selected>@kvp.Value</option>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="@kvp.Key">@kvp.Value</option>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+
+                                        </div><!-- .row -->
+                                        <div class="box-footer p-2 text-right">
+                                            @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPThemoptionsUpdate)).Succeeded)
+                                            {
+                                                <button class="btn btn-success" type="submit">Lưu thông tin</button>
+                                            }
+                                        </div>
+                                    </form>
+                                </div><!-- #home tab -->
+                                <div id="menu2" class="tab-pane">
+                                    <br>
+                                    <form method="POST" asp-controller="ThemeOption" asp-action="Edit" accept-charset="UTF-8" class="frm-worker-services" enctype="multipart/form-data">
+
+                                        <div class="box-footer p-2 text-right">
+                                            @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPThemoptionsUpdate)).Succeeded)
+                                            {
+                                                <button class="btn btn-success" type="submit">Lưu thông tin</button>
+                                            }
+                                        </div>
+                                        <input class="d-none" name="option_tab" type="text" value="worker_services_tab">
+                                        <div class="row">
+                                            <p class="message-error hidden"></p>
+                                            @foreach (var item in ViewBag.workerServices)
+                                            {
+                                                <div class="col-md-12 col-sm-12">
+                                                    <textarea name="_optWorkerService" cols="50" rows="10" class="form-control" id="_optWorkerService" hidden="hidden">@item.Value</textarea>
+                                                    <label>Danh sách Worker Services</label>
+                                                    <table id="tblAppendGrid" class="tbl-note-editor"></table>
+                                                    <p></p>
+                                                </div>
+                                                <!-- /col -->
+                                            }
+                                        </div><!-- .row -->
+                                        <div class="box-footer p-2 text-right">
+                                            @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPThemoptionsUpdate)).Succeeded)
+                                            {
+                                                <button class="btn btn-success" type="submit">Lưu thông tin</button>
+                                            }
+                                            <button class="btn btn-success" type="submit">Lưu thông tin</button>
+                                        </div>
+                                    </form>
+                                </div><!-- #menu2 -->
+                                <div id="inventory" class="tab-pane">
+                                    <br>
+                                    <form method="POST" asp-controller="ThemeOption" asp-action="Edit" accept-charset="UTF-8" class="frm-worker-services" enctype="multipart/form-data">
+
+                                        <div class="box-footer p-2 text-right">
+                                            @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPThemoptionsUpdate)).Succeeded)
+                                            {
+                                                <button class="btn btn-success" type="submit">Lưu thông tin</button>
+                                            }
+                                            <button class="btn btn-success" type="submit">Lưu thông tin</button>
+                                        </div>
+                                        <input class="d-none" name="option_tab" type="text" value="inventory_tab">
+                                        <div class="row">
+                                            <p class="message-error hidden"></p>
+                                            @foreach (var item in ViewBag.inventory)
+                                            {
+                                                if (item.Name == "_optTotalWorkingDay")
+                                                {
+                                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                                        <div class="form-group ">
+                                                            <label>Số ngày làm việc</label>
+                                                            <input class="form-control" name="_optTotalWorkingDay" type="number" required="required" min="0" value="@item.Value">
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if (item.Name == "_optTotalRequire30")
+                                                {
+                                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                                        <div class="form-group ">
+                                                            <label>Require sản xuất 30 ngày</label>
+                                                            <input class="form-control" name="_optTotalRequire30" type="number" required="required" min="0" value="@item.Value">
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if (item.Name == "_optTotalRequire120")
+                                                {
+                                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                                        <div class="form-group ">
+                                                            <label>Require sản xuất 120 ngày</label>
+                                                            <input class="form-control" name="_optTotalRequire120" type="number" required="required" min="0" value="@item.Value">
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if (item.Name == "_optNumKeepLog")
+                                                {
+                                                    <div class="col-lg-12 col-md-12 col-xs-12">
+                                                        <div class="form-group ">
+                                                            <label>Số ngày lưu Log hệ thống</label>
+                                                            <input class="form-control" name="_optNumKeepLog" type="number" required="required" min="0" value="@item.Value">
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        </div><!-- .row -->
+                                        <div class="box-footer p-2 text-right">
+                                            @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPThemoptionsUpdate)).Succeeded)
+                                            {
+                                                <button class="btn btn-success" type="submit">Lưu thông tin</button>
+                                            }
+                                            <button class="btn btn-success" type="submit">Lưu thông tin</button>
+                                        </div>
+                                    </form>
+                                </div><!-- #inventory -->
+                            </div><!-- .tab-content -->
+                        </div>
+                        <!-- /.box-body -->
+
+                    </div>
+
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+            <!-- /.col -->
+        </div>
+    </section>
+</div>
+<!-- /.content-wrapper -->
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".nav-tabs .nav-item a").click(function () {
+                // reset
+                $(".nav-tabs .nav-item a").removeClass("active")
+                $(".tab-pane").removeClass("active")
+                //
+                localStorage.selectedTab = $(this).attr('href');
+                $(this).addClass("active");
+                $(localStorage.selectedTab).addClass("active");
+                return false;
+            });
+            // search for local storage
+            if (localStorage.selectedTab) {
+                $("a[href='" + localStorage.selectedTab + "']").addClass("active");
+                $(localStorage.selectedTab).addClass("active");
+            } else {
+                $("a[href='#home']").addClass("active");
+                $("#home").addClass("active");
+            }
+            //
+        });
+    </script>
+    <script src="~/ckeditor/ckeditor.js"></script>
+    <script>
+        // Replace the <textarea id="editor1"> with a CKEditor 4
+        // instance, using default configuration.
+        CKEDITOR.replace('_optTrialText', {
+            uiColor: '#b0dcba',
+            language: 'vi',
+            height: '250',
+            removeDialogTabs: 'image:advanced;image:Link;link:advanced;link:upload',
+            filebrowserBrowseUrl: "@Url.Action("FileBrowse", "CkGallery")",
+            filebrowserImageUploadUrl: "@Url.RouteUrl("admin.ckgallery.uploadimage")"
+        });
+        // instance, using default configuration.
+        CKEDITOR.replace('_optguide', {
+            uiColor: '#b0dcba',
+            language: 'vi',
+            height: '450',
+            removeDialogTabs: 'image:advanced;image:Link;link:advanced;link:upload',
+            filebrowserBrowseUrl: "@Url.Action("FileBrowse", "CkGallery")",
+            filebrowserImageUploadUrl: "@Url.RouteUrl("admin.ckgallery.uploadimage")"
+        });
+        //_optFooterContent
+        CKEDITOR.replace('_optFooterContent', {
+            uiColor: '#b0dcba',
+            language: 'vi',
+            height: '450',
+            removeDialogTabs: 'image:advanced;image:Link;link:advanced;link:upload',
+            filebrowserBrowseUrl: "@Url.Action("FileBrowse", "CkGallery")",//'~/CkGallery/FileBrowse',
+            filebrowserImageUploadUrl: "@Url.RouteUrl("admin.ckgallery.uploadimage")"//'~/Admin/CkGallery/UploadImage',
+        });
+    </script>
+    <!--appendGrid JS library-->
+    <script src="~/lib/appendgrid/AppendGrid.js"></script>
+    <script>
+        $(document).ready(function () {
+            //
+            var myAppendGrid = new AppendGrid({
+                element: "tblAppendGrid",
+                uiFramework: "bootstrap4",
+                iconFramework: "fontawesome5",
+                initRows: 3,
+                hideButtons: {
+                    // Hide the move up and move down button on each row
+                    //moveUp: true,
+                    //moveDown: true,
+                    append: true,
+                    removeLast: true,
+                    insert: true,
+                    remove: true
+                },
+                columns: [
+                    {
+                        name: "code",
+                        display: "ID",
+                        ctrlAttr: {
+                            "disabled": "disabled"
+                        },
+                        //type:"hidden"
+                    },
+                    {
+                        name: "name",
+                        display: "Tên Service",
+                        ctrlAttr: {
+                            "disabled": "disabled"
+                        },
+                        //type:"hidden"
+                    },
+                    {
+                        name: "detail",
+                        display: "Mô tả"
+                    },
+                    {
+                        name: "time_start",
+                        display: "Thời gian bắt đầu",
+                        type: "time"
+                    },
+                    {
+                        name: "time_repeat",
+                        display: "Thời gian lặp(số phút)",
+                        type: "number",
+                        ctrlAttr: {
+                            "max": 1440,
+                            "min": 0,
+                        }
+                    },
+                    {
+                        name: "status",
+                        display: "Trạng thái",
+                        type: "select",
+                        ctrlOptions: { running: "Running", stopped: "Stopped" },
+                        ctrlAttr: {
+                            "disabled": "disabled"
+                        }
+                    },
+                    {
+                        name: "c_action",
+                        display: "Tác vụ",
+                        type: "custom",
+                        cellClass: "c_action",
+                        ctrlAttr: {
+                            "data-value": 100
+                        },
+                        customBuilder: function (parent, idPrefix, name, uniqueIndex) {
+                            let strCode = $('#tblAppendGrid_code_' + uniqueIndex).val();
+                            // Prepare input group which is a component of Bootstrap
+                            var inputGroup = document.createElement("div");
+                            inputGroup.classList.add("btn-group");
+                            inputGroup.classList.add("btn-group-sm");
+                            parent.appendChild(inputGroup);
+                            // Prepare input group prepend holder
+                            var inputGroupPrepend = document.createElement("div");
+                            inputGroupPrepend.classList.add("btn-group");
+                            inputGroupPrepend.classList.add("btn-group-sm");
+                            inputGroup.appendChild(inputGroupPrepend);
+                            // Create the input element
+                            var inputControl = document.createElement("button");
+                            inputControl.id = idPrefix + "_" + name + "_" + uniqueIndex + "_start";
+                            inputControl.name = inputControl.id;
+                            inputControl.type = "button";
+                            inputControl.innerText = "start";
+                            inputControl.classList.add("btn");
+                            inputControl.classList.add("btn-primary");
+                            inputControl.classList.add("btn-service");
+                            //
+                            inputControl.setAttribute("data-type", "start");
+                            inputControl.setAttribute("data-code", '#tblAppendGrid_code_' + uniqueIndex);
+                            inputControl.setAttribute("data-name", '#tblAppendGrid_name_' + uniqueIndex);
+                            inputGroup.appendChild(inputControl);
+                            //
+                            var inputControl2 = document.createElement("button");
+                            inputControl2.id = idPrefix + "_" + name + "_" + uniqueIndex + "_stop";
+                            inputControl2.name = inputControl.id;
+                            inputControl2.type = "button";
+                            inputControl2.innerText = "stop";
+                            inputControl2.classList.add("btn");
+                            inputControl2.classList.add("btn-danger");
+                            inputControl2.classList.add("btn-service");
+                            //
+                            inputControl2.setAttribute("data-type", "stop");
+                            inputControl2.setAttribute("data-code", '#tblAppendGrid_code_' + uniqueIndex);
+                            inputControl2.setAttribute("data-name", '#tblAppendGrid_name_' + uniqueIndex);
+                            inputGroup.appendChild(inputControl2);
+                        },
+                        customGetter: function (idPrefix, name, uniqueIndex) {
+                            // Get the value of input element
+                            var controlId = idPrefix + "_" + name + "_" + uniqueIndex;
+                            return "";
+                        },
+                        customSetter: function (idPrefix, name, uniqueIndex, value) {
+                            // Set the value of input element
+                            var controlId = idPrefix + "_" + name + "_" + uniqueIndex;
+                            //document.getElementById(controlId).value = "";
+                        }
+                    },
+                    {
+                        name: "uid",
+                        type: "hidden",
+                        value: "0"
+                    }
+                ],
+                rowDataLoaded: function (caller, record, rowIndex, uniqueIndex) {
+                    let strIDStart = "#tblAppendGrid_c_action_" + uniqueIndex + "_start";
+                    let strIDStop = "#tblAppendGrid_c_action_" + uniqueIndex + "_stop";
+                    if (record.status == "running") {
+                        $(strIDStart).prop("disabled", true);
+                    } else {
+                        $(strIDStop).prop("disabled", true);
+                    }
+                },
+                // Optional CSS classes, to make table slimmer!
+                sectionClasses: {
+                    table: "table-sm",
+                    control: "form-control-sm",
+                    buttonGroup: "btn-group-sm"
+                }
+            });
+            //
+            $('.frm-worker-services').on('submit', function (e) {
+                //e.preventDefault();
+                var output = document.getElementById("_optWorkerService");
+                output.classList.remove("d-none");
+                output.innerText = JSON.stringify(myAppendGrid.getAllValue(), null, "");
+            });
+            // Handle button click for loading sample data
+            if (@Html.Raw(ViewBag.jsonStr) != "[]") {
+                myAppendGrid.load(@Html.Raw(ViewBag.jsonStr));
+            }
+            //ajax worker service
+            $('.btn-service').click(function (e) {
+                e.preventDefault();
+                let confirmMsg = "Bạn muốn thực hiện tác vụ này?";
+                if (confirm(confirmMsg) == true) {
+                    // use ajax call back action
+                    let codeID = $(this).attr("data-code");
+                    let codeValue = $(codeID).val();
+                    // service name
+                    let nameID = $(this).attr("data-name");
+                    let nameValue = $(nameID).val();
+                    //
+                    let codeType = $(this).attr("data-type");
+                    console.log(codeType + "___" + codeValue);
+                    // let url = "~/admin/ThemeOption/RestartWindowsService";
+                    let url = "@Url.RouteUrl("admin.themoptions.restart")";
+                    $.ajax({
+                        type: 'GET',
+                        url: url,
+                        contentType: "application/json; charset=utf-8",
+                        data: {
+                            codeValue: codeValue,
+                            codeType: codeType,
+                            nameValue: nameValue
+                        },
+                        beforeSend: function () {
+                            $('#sct-loading').show();
+                            $("#btn-export").removeAttr('disabled');
+                        },
+                        success: function (data) {
+                            $('.box-message-export').html(data.message);
+                            //
+                            if (data.result == false) {
+                                alert(data.message);
+                            } else {
+                                alert("Thực hiện tác vụ thành công!");
+                                location.reload();
+                            }
+                            //
+                            console.log(data);
+                        },
+                        complete: function () {
+                            //stop loading
+                            $("#btn-export").removeAttr('disabled');
+                            $('#sct-loading').hide();
+                        },
+                        error: function () {
+                            $("#btn-export").removeAttr('disabled');
+                            $('#sct-loading').hide();
+                            alert("error");
+                        }
+                    });
+                } else {
+                    console.log("You canceled!");
+                }
+                //
+            });
+            //jQuery
+        });
+    </script>
+}

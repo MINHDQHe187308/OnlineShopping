@@ -1,0 +1,23 @@
+﻿@{
+    @model IEnumerable<ASP.ConfigCommon.PermissionDetail>
+
+    string controller = ViewContext.RouteData.Values["Controller"].ToString();
+    string action = ViewContext.RouteData.Values["Action"].ToString();
+}
+
+@foreach (var item in Model)
+{
+    var strActive = "";
+    if (item.Pcontroller == controller)
+    {
+        strActive = "active";
+    }
+    <li class="nav-item">
+        <a asp-route="@item.Proute" class="nav-link @strActive">
+            <i class="@item.Picon"></i>
+            <p>
+                @item.Ptitle
+            </p>
+        </a>
+    </li>
+}

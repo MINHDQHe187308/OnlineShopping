@@ -1,0 +1,89 @@
+﻿.brand-link {
+    font-size: 1em;
+}
+
+.table-bordered td, .table-bordered th {
+    vertical-align: middle;
+}
+
+.log-s, .log-key {
+    font-weight: bold;
+}
+
+.ui-timepicker-hours table.ui-timepicker tbody {
+    background-color: #04dbdb;
+}
+
+.ui-timepicker-minutes table.ui-timepicker tbody {
+    background-color: #fca506;
+}
+
+#permission .permission-item:hover {
+    background-color: #ffe4b1;
+}
+.icheck-success > input:first-child:checked + label.lbl-deny::before {
+    background-color: #f02525;
+    border-color: #f02525;
+}
+/** 
+   ** filter css
+*/
+fieldset {
+    min-width: 0;
+    padding: 0 5px;
+    margin: 0;
+    border: 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+legend {
+    display: block;
+    width: inherit;
+    max-width: 100%;
+    padding: 0 10px;
+    margin-bottom: .5rem;
+    font-size: 1.1rem;
+    line-height: inherit;
+    color: inherit;
+    white-space: normal;
+    margin-left: 18px;
+}
+/**
+    ** loading
+*/
+
+/**
+    ** loading
+*/
+#sct-loading {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    text-align: center;
+    background-color: #363636;
+    opacity: .7;
+    z-index: 9999;
+    display: none;
+}
+
+    #sct-loading button {
+        position: relative;
+        top: 45%;
+    }
+
+.note-editor img {
+    max-width: 100%;
+}
+
+.sp-language img {
+    max-width: 30px;
+    height: auto;
+    border: 1px solid #ccc;
+}
+
+.preview-image-user img {
+    max-width: 200px;
+}

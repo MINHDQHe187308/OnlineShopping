@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Guide";
+    Layout = "../Shared/Layout/Front/_Layout";
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-xs-12">
+            @if (ViewBag.vbGuide != null)
+            {
+                @Html.Raw(ViewBag.vbGuide)
+            }
+        </div>
+    </div>
+</div>
