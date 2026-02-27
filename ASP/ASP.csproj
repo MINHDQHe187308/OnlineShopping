@@ -22,10 +22,6 @@
 	  <Compile Remove="Views\Admin\StatisticalCats\**" />
 	  <Compile Remove="Views\Admin\StatisticalFactories\**" />
 	  <Compile Remove="Views\Admin\Stocks\**" />
-	  <Compile Remove="Views\Front\InventoryInfos\**" />
-	  <Compile Remove="Views\Front\InventoryInfo\**" />
-	  <Compile Remove="Views\Front\Reports\**" />
-	  <Compile Remove="Views\Front\StockVisualizations\**" />
 	  <Compile Remove="WorkerService\**" />
 	  <Compile Remove="wwwroot\Output\**" />
 	  <Compile Remove="wwwroot\UploadExcel\**" />
@@ -44,10 +40,6 @@
 	  <Content Remove="Views\Admin\StatisticalCats\**" />
 	  <Content Remove="Views\Admin\StatisticalFactories\**" />
 	  <Content Remove="Views\Admin\Stocks\**" />
-	  <Content Remove="Views\Front\InventoryInfos\**" />
-	  <Content Remove="Views\Front\InventoryInfo\**" />
-	  <Content Remove="Views\Front\Reports\**" />
-	  <Content Remove="Views\Front\StockVisualizations\**" />
 	  <Content Remove="WorkerService\**" />
 	  <Content Remove="wwwroot\Output\**" />
 	  <Content Remove="wwwroot\UploadExcel\**" />
@@ -66,10 +58,6 @@
 	  <EmbeddedResource Remove="Views\Admin\StatisticalCats\**" />
 	  <EmbeddedResource Remove="Views\Admin\StatisticalFactories\**" />
 	  <EmbeddedResource Remove="Views\Admin\Stocks\**" />
-	  <EmbeddedResource Remove="Views\Front\InventoryInfos\**" />
-	  <EmbeddedResource Remove="Views\Front\InventoryInfo\**" />
-	  <EmbeddedResource Remove="Views\Front\Reports\**" />
-	  <EmbeddedResource Remove="Views\Front\StockVisualizations\**" />
 	  <EmbeddedResource Remove="WorkerService\**" />
 	  <EmbeddedResource Remove="wwwroot\Output\**" />
 	  <EmbeddedResource Remove="wwwroot\UploadExcel\**" />
@@ -88,10 +76,6 @@
 	  <None Remove="Views\Admin\StatisticalCats\**" />
 	  <None Remove="Views\Admin\StatisticalFactories\**" />
 	  <None Remove="Views\Admin\Stocks\**" />
-	  <None Remove="Views\Front\InventoryInfos\**" />
-	  <None Remove="Views\Front\InventoryInfo\**" />
-	  <None Remove="Views\Front\Reports\**" />
-	  <None Remove="Views\Front\StockVisualizations\**" />
 	  <None Remove="WorkerService\**" />
 	  <None Remove="wwwroot\Output\**" />
 	  <None Remove="wwwroot\UploadExcel\**" />
@@ -110,7 +94,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Remove="Views\Front\Home\ShowTv.cshtml" />
 	  <Content Remove="Views\Shared\Layout\Front\_LayoutTv.cshtml" />
 	  <Content Remove="wwwroot\templates\export_excel\Excel_20220628084523.xlsx" />
 	  <Content Remove="wwwroot\templates\export_excel\Excel_20220628090942.xlsx" />
@@ -194,6 +177,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Controllers\Front\" />
 		<Folder Include="DTO\" />
 		<Folder Include="Logs\" />
 		<Folder Include="Models\Front\" />
