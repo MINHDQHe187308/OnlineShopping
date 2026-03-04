@@ -72,7 +72,7 @@ builder.Logging.AddSerilog(logger);
 builder.Services.AddControllersWithViews();
 #region connection database
 builder.Services.AddDbContextPool<ASPDbContext>(
-    options => { options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); }, poolSize: 32);
+    options => { options.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")); }, poolSize: 32);
 #endregion
 #region pagination 
 builder.Services.AddPaging(options =>
