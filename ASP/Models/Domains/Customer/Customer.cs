@@ -1,7 +1,7 @@
 ﻿using Spire.Presentation;
 using System.ComponentModel.DataAnnotations;
 
-namespace ASP.Models.Domains
+namespace ASP.Models.Domains.Customer
 {
     public class Customer
     {

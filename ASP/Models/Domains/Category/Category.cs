@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ASP.Models.Domains
+namespace ASP.Models.Domains.Category
 {
     public class Category
     {

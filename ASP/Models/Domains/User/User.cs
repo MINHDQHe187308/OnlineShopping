@@ -1,7 +1,8 @@
-﻿using Spire.Presentation;
+﻿using ASP.Models.Domains.Notificaton;
+using Spire.Presentation;
 using System.ComponentModel.DataAnnotations;
 
-namespace ASP.Models.Domains
+namespace ASP.Models.Domains.User
 {
     public class User
     {
