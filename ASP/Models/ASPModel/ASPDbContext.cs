@@ -144,7 +144,23 @@ namespace ASP.Models.ASPModel
                 .HasForeignKey(n => n.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Cart>()
+    .HasOne(c => c.Customer)
+    .WithMany()
+    .HasForeignKey(c => c.CustomerId)
+    .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.Cart)
+                .WithMany(c => c.CartItems)
+                .HasForeignKey(ci => ci.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.ProductVariant)
+                .WithMany()
+                .HasForeignKey(ci => ci.VariantId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         public DbSet<Log> Logs { get; set; }
@@ -162,7 +178,8 @@ namespace ASP.Models.ASPModel
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Notification> Notifications { get; set; }
-
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
 
 
 
