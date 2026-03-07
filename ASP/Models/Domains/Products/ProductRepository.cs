@@ -21,7 +21,7 @@ namespace ASP.Models.Domains
                 .OrderByDescending(p => p.ProductId)
                 .ToList();
         }
-      
+
         public IEnumerable<Product> GetBestSellingProducts(int take = 8)
         {
             return _context.Products
@@ -32,7 +32,7 @@ namespace ASP.Models.Domains
                 .Take(take)
                 .ToList();
         }
-         
+
         public IEnumerable<Product> GetNewArrivals(int take = 4)
         {
             return _context.Products
@@ -44,6 +44,15 @@ namespace ASP.Models.Domains
                 .Take(take)
                 .ToList();
         }
-    }
+    
+    public async Task<Product?> GetProductByIdAsync(int id)
+        {
+            return await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductVariants)
+                .FirstOrDefaultAsync(p => p.ProductId == id);
+        }
 
+    }
 }

@@ -1,0 +1,170 @@
+﻿@using ASP.Models.Domains
+@model ASP.Models.ViewModels.ProductDetailViewModel
+@{
+    ViewData["Title"] = $"{Model.Product.ProductName} - Fashion Shop";
+    Layout = "../Shared/Layout/Front/_Layout";
+}
+
+<link rel="stylesheet" href="~/css/ProductDetail.css" />
+
+<div class="container py-5" style="font-family: 'Roboto', sans-serif;">
+    <div class="row g-5">
+        <!-- Left: Images -->
+        <div class="col-lg-6">
+            <div class="product-main-image mb-4 shadow rounded-4 overflow-hidden">
+                <img src="@Model.MainImageUrl"
+                     alt="@Model.Product.ProductName"
+                     class="img-fluid w-100"
+                     id="mainImg">
+            </div>
+
+            @if (Model.Images.Any())
+            {
+                <div class="row g-2 thumbnails justify-content-center justify-content-lg-start">
+                    @foreach (var img in Model.Images)
+                    {
+                        <div class="col-3 col-sm-2 col-md-3">
+                            <img src="@img.ImageUrl"
+                                 alt="@Model.Product.ProductName thumbnail"
+                                 class="img-fluid rounded thumbnail @(img.IsMain ? "active" : "")"
+                                 data-full="@img.ImageUrl"
+                                 onclick="changeMainImage(this)">
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Right: Info -->
+        <div class="col-lg-6">
+            <h1 class="product-title mb-3 fw-bold">@Model.Product.ProductName</h1>
+
+            <!-- Price -->
+            <div class="price mb-4">
+                @if (Model.CurrentPrice > 0)
+                {
+                    <span class="current-price fw-bold fs-3 text-danger" id="currentPrice">
+                        @Model.CurrentPrice.ToString("N0") đ
+                    </span>
+                }
+                else
+                {
+                    <span class="text-muted fs-4">Liên hệ</span>
+                }
+            </div>
+
+            <!-- Description -->
+            <div class="description mb-5">
+                <h5 class="mb-3">Mô tả sản phẩm</h5>
+                @if (!string.IsNullOrWhiteSpace(Model.Product.Description))
+                {
+                    <div class="text-muted lh-lg">
+                        @Html.Raw(Model.Product.Description.Replace("\n", "<br />"))
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Chưa có mô tả chi tiết.</p>
+                }
+            </div>
+
+            <!-- Size selection -->
+            <div class="size-selection mb-4">
+                <h5 class="mb-3">Kích cỡ</h5>
+                <div class="btn-group flex-wrap gap-2" role="group">
+                    @foreach (var variant in Model.Product.ProductVariants ?? new List<ProductVariant>())
+                    {
+                        var isActive = variant.VariantId == Model.DefaultVariant?.VariantId;
+                        <button type="button"
+                                class="btn btn-outline-dark size-btn @(isActive ? "active" : "")"
+                                data-size="@variant.Size"
+                                data-price="@variant.Price">
+                            @variant.Size
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Quantity & Subtotal -->
+            <div class="d-flex flex-column flex-sm-row align-items-sm-center mb-4 gap-4">
+                <div class="quantity">
+                    <h5 class="mb-2">Số lượng</h5>
+                    <div class="input-group w-100" style="max-width: 140px;">
+                        <button class="btn btn-outline-secondary" type="button" onclick="changeQty(-1)">-</button>
+                        <input type="number" class="form-control text-center" id="quantity" value="1" min="1">
+                        <button class="btn btn-outline-secondary" type="button" onclick="changeQty(1)">+</button>
+                    </div>
+                </div>
+
+                <div class="price-total ms-sm-auto text-center text-sm-end">
+                    <small class="text-muted d-block">Tạm tính:</small>
+                    <span id="totalPrice" class="fs-4 fw-bold text-dark">@Model.CurrentPrice.ToString("N0") đ</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions d-flex flex-column flex-sm-row gap-3">
+                <button class="btn btn-warning btn-lg flex-grow-1 fw-bold py-3" id="addToCart">
+                    THÊM VÀO GIỎ HÀNG
+                </button>
+                <button class="btn btn-outline-danger btn-lg wishlist-btn px-4" title="Yêu thích">
+                    <i class="bi bi-heart fs-4"></i>
+                </button>
+            </div>
+
+            <div class="mt-4 text-muted small text-center text-sm-start">
+                <i class="bi bi-shield-check me-1"></i> Hàng shop bao đẹp - Đổi trả dễ dàng trong 7 ngày
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentPrice = @Model.CurrentPrice;
+
+        // Change main image
+        function changeMainImage(thumb) {
+            document.getElementById('mainImg').src = thumb.dataset.full;
+            document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+            thumb.classList.add('active');
+        }
+
+        // Change quantity & update total
+        function changeQty(delta) {
+            const qtyInput = document.getElementById('quantity');
+            let qty = parseInt(qtyInput.value) || 1;
+            qty = Math.max(1, qty + delta);
+            qtyInput.value = qty;
+            updateTotalPrice();
+        }
+
+        // Update total price
+        function updateTotalPrice() {
+            const qty = parseInt(document.getElementById('quantity').value) || 1;
+            const total = currentPrice * qty;
+            document.getElementById('totalPrice').textContent = total.toLocaleString('vi-VN') + ' đ';
+        }
+
+        // Size selection - update price
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                currentPrice = parseFloat(btn.dataset.price) || 0;
+                document.getElementById('currentPrice').textContent = currentPrice.toLocaleString('vi-VN') + ' đ';
+                updateTotalPrice();
+            });
+        });
+
+        // Add to cart (placeholder - sau này thay bằng AJAX)
+        document.getElementById('addToCart').addEventListener('click', () => {
+            const selectedSize = document.querySelector('.size-btn.active')?.dataset.size || 'Không chọn';
+            const qty = document.getElementById('quantity').value;
+
+            alert(`Đã thêm vào giỏ:\nSản phẩm: ${@Model.Product.ProductName}\nSize: ${selectedSize}\nSố lượng: ${qty}\nGiá: ${currentPrice.toLocaleString('vi-VN')} đ`);
+            // Thực tế: gửi fetch POST đến /Cart/Add
+        });
+    </script>
+}

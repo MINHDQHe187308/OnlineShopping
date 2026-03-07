@@ -150,13 +150,12 @@
 
                                             <!-- View detail -->
                                             <a asp-action="Details"
-                                               asp-route-id="@p.ProductId"
-                                               class="icon-btn view-btn"
-                                               title="Xem chi tiết">
-
-                                                <i class="bi bi-search"></i>
-
-                                            </a>
+   asp-controller="Product"
+   asp-route-id="@p.ProductId"
+   class="icon-btn view-btn"
+   title="Xem chi tiết">
+    <i class="bi bi-search"></i>
+</a>
                                             <!-- Add to cart -->
                                             <a href="#"
                                                class="icon-btn cart-btn"
