@@ -10,19 +10,50 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Options
 @functions {
-    // Return a Font Awesome class based on the menu name or url
+   
     public string IconFor(string name, string url)
     {
         if (string.IsNullOrEmpty(name)) return "fas fa-circle";
+
+       
         var key = name.ToLowerInvariant();
-        if (key.Contains("delivery") || key.Contains("ship") || key.Contains("transport")) return "fas fa-truck";
-        if (key.Contains("order")) return "fas fa-box-open";
-        if (key.Contains("customer") || key.Contains("client")) return "fas fa-users";
-        if (key.Contains("statistic") || key.Contains("stat") || key.Contains("report") || key.Contains("chart")) return "fas fa-chart-line";
-        if (key.Contains("manage") || key.Contains("management")) return "fas fa-tasks";
-        if (key.Contains("setting") || key.Contains("admin") || key.Contains("config")) return "fas fa-cog";
-        if (key.Contains("login") || key.Contains("auth")) return "fas fa-sign-in-alt";
-        if (!string.IsNullOrEmpty(url) && url.ToLowerInvariant().Contains("/admin")) return "fas fa-user-shield";
+        var urlLower = string.IsNullOrEmpty(url) ? "" : url.ToLowerInvariant();
+
+      
+        if (key.Contains("product") ||
+            key.Contains("sản phẩm") ||
+            key.Contains("view products") ||
+            urlLower.Contains("product/index") ||
+            urlLower.Contains("/product"))
+        {
+            return "bi bi-bag";   
+        }
+
+       
+        if (key.Contains("delivery") || key.Contains("ship") || key.Contains("transport"))
+            return "fas fa-truck";
+
+        if (key.Contains("order"))
+            return "fas fa-box-open";
+
+        if (key.Contains("customer") || key.Contains("client"))
+            return "fas fa-users";
+
+        if (key.Contains("statistic") || key.Contains("stat") || key.Contains("report") || key.Contains("chart"))
+            return "fas fa-chart-line";
+
+        if (key.Contains("manage") || key.Contains("management"))
+            return "fas fa-tasks";
+
+        if (key.Contains("setting") || key.Contains("admin") || key.Contains("config"))
+            return "fas fa-cog";
+
+        if (key.Contains("login") || key.Contains("auth"))
+            return "fas fa-sign-in-alt";
+
+        if (!string.IsNullOrEmpty(url) && urlLower.Contains("/admin"))
+            return "fas fa-user-shield";
+
         return "fas fa-circle";
     }
 }
