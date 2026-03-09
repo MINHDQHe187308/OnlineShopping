@@ -1,0 +1,287 @@
+﻿@{
+    ViewData["Title"] = "Thông tin giao hàng";
+    Layout = "~/Views/Shared/Layout/Front/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background: #f8f9fa;
+    }
+
+    .checkout-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .breadcrumb-custom {
+        font-size: 0.95rem;
+        color: #6c757d;
+    }
+
+        .breadcrumb-custom a {
+            color: #dc3545;
+            text-decoration: none;
+        }
+
+            .breadcrumb-custom a:hover {
+                text-decoration: underline;
+            }
+
+    .user-info {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 500;
+        margin: 2rem 0 1rem;
+        color: #212529;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .summary-box {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        position: sticky;
+        top: 20px;
+    }
+
+    .product-item {
+        border-bottom: 1px solid #eee;
+        padding: 1rem 0;
+        display: flex;
+        align-items: center;
+    }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+    .quantity-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 50%;
+        background: #dc3545;
+        color: white;
+        position: absolute;
+        top: -8px;
+        right: -8px;
+    }
+
+    .total-line {
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .grand-total {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #212529;
+    }
+
+    .payment-method {
+        border: 2px solid #dee2e6;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: white;
+    }
+
+        .payment-method:hover, .payment-method.active {
+            border-color: #000;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+        }
+
+    .payment-icon {
+        font-size: 2rem;
+        margin-right: 1rem;
+    }
+
+    .btn-complete-order {
+        background: #000;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 500;
+        padding: 0.8rem 2.5rem;
+        border-radius: 50px;
+        width: 100%;
+        margin-top: 1.5rem;
+    }
+
+        .btn-complete-order:hover {
+            background: #222;
+        }
+</style>
+
+<div class="checkout-container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-custom mb-4">
+        Giỏ hàng <span class="mx-2">›</span>
+        <strong>Thông tin giao hàng</strong>
+    </nav>
+
+    <div class="row g-5">
+        <!-- Bên trái: Thông tin giao hàng -->
+        <div class="col-lg-7">
+            <!-- User info -->
+            <div class="user-info">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-person-circle fs-3 me-3 text-primary"></i>
+                    <div>
+                        <h5 class="mb-0">Dương Minh</h5>
+                        <small class="text-muted">minhduongqh0311@gmail.com</small>
+                    </div>
+                    <a href="#" class="ms-auto text-danger small">Đăng xuất</a>
+                </div>
+            </div>
+
+            <h2 class="section-title">Thông tin giao hàng</h2>
+
+            <form>
+                <div class="mb-4">
+                    <label class="form-label">Địa chỉ</label>
+                    <input type="text" class="form-control form-control-lg" placeholder="Nhập địa chỉ chi tiết..." />
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Tỉnh / Thành phố</label>
+                        <select class="form-select form-select-lg">
+                            <option selected>Chọn tỉnh / thành</option>
+                            <option>Hà Nội</option>
+                            <option>TP. Hồ Chí Minh</option>
+                            <option>Đà Nẵng</option>
+                            <!-- Thêm các tỉnh khác khi cần -->
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Quận / Huyện</label>
+                        <select class="form-select form-select-lg">
+                            <option selected>Chọn quận / huyện</option>
+                            <!-- Load động sau -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="tel" class="form-control form-control-lg" placeholder="Ví dụ: 0987654321" />
+                </div>
+
+                <div class="mb-5">
+                    <label class="form-label">Ghi chú đơn hàng (tùy chọn)</label>
+                    <textarea class="form-control form-control-lg" rows="3" placeholder="Ghi chú cho shipper..."></textarea>
+                </div>
+
+                <!-- Phương thức vận chuyển -->
+                <h2 class="section-title">Phương thức vận chuyển</h2>
+                <div class="payment-method active d-flex align-items-center">
+                    <i class="bi bi-truck payment-icon text-primary"></i>
+                    <div>
+                        <h6 class="mb-1">Giao hàng tiêu chuẩn</h6>
+                        <small class="text-muted">2-5 ngày làm việc</small>
+                    </div>
+                    <span class="ms-auto fw-bold">Miễn phí</span>
+                </div>
+
+                <!-- Phương thức thanh toán -->
+                <h2 class="section-title mt-5">Phương thức thanh toán</h2>
+                <div class="payment-method active d-flex align-items-center mb-3">
+                    <i class="bi bi-box-seam payment-icon text-danger"></i>
+                    <div>
+                        <h6 class="mb-1">Thanh toán khi giao hàng (COD)</h6>
+                        <small class="text-muted">Thanh toán tiền mặt khi nhận hàng</small>
+                    </div>
+                </div>
+
+                <div class="payment-method d-flex align-items-center">
+                    <i class="bi bi-bank payment-icon text-primary"></i>
+                    <div>
+                        <h6 class="mb-1">Chuyển khoản qua ngân hàng</h6>
+                        <small class="text-muted">Chuyển khoản trước khi giao hàng</small>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-5">
+                    <a href="#" class="btn btn-outline-secondary btn-lg px-4">
+                        ← Quay lại giỏ hàng
+                    </a>
+                    <button type="button" class="btn btn-complete-order">
+                        Hoàn tất đơn hàng
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bên phải: Tóm tắt đơn hàng -->
+        <div class="col-lg-5">
+            <div class="summary-box">
+                <h2 class="section-title">Đơn hàng của bạn (1 sản phẩm)</h2>
+
+                <div class="product-item">
+                    <div class="position-relative me-3">
+                        <img src="https://via.placeholder.com/80x80?text=Ao+Khoac" alt="Sản phẩm" style="border-radius:8px;">
+                        <span class="quantity-badge">1</span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">Áo khoác kaki hai lớp mangto</h6>
+                        <small class="text-muted">Màu: Đen - Size: M</small>
+                    </div>
+                    <strong class="ms-3">425,000đ</strong>
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="d-flex justify-content-between total-line mb-3">
+                    <span>Tạm tính</span>
+                    <span>425,000đ</span>
+                </div>
+                <div class="d-flex justify-content-between total-line mb-3">
+                    <span>Phí vận chuyển</span>
+                    <span>—</span>
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="d-flex justify-content-between grand-total">
+                    <span>Tổng cộng</span>
+                    <strong>VND 425,000đ</strong>
+                </div>
+
+                <div class="mt-4">
+                    <input type="text" class="form-control form-control-lg mb-3" placeholder="Mã giảm giá" />
+                    <button class="btn btn-outline-dark btn-lg w-100">Sử dụng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Chỉ để demo chọn phương thức (giao diện)
+        document.querySelectorAll('.payment-method').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.payment-method').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+    </script>
+}
