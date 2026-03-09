@@ -6,178 +6,126 @@
 @{
     ViewData["Title"] = "Sản phẩm - Fashion Shop";
     Layout = "../Shared/Layout/Front/_Layout";
+
     var categories = CategoryRepo.GetAllCategories();
+    var allProductsUrl = Url.Action("Index", "Product");
 }
 
-<link rel="stylesheet" href="~/css/Product.css" />
-
-<!-- Font -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/Product.css" asp-append-version="true" />
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
 
 <div class="container py-5" style="font-family: 'Roboto', sans-serif;">
-
     <h1 class="text-center mb-5 d-lg-none animate__animated animate__fadeIn">
-        <i class="bi bi-bag-heart-fill text-danger me-2"></i>
-        Sản phẩm thời trang
+        <i class="bi bi-bag-heart-fill text-danger me-2"></i>Sản phẩm thời trang
     </h1>
 
-    <!-- Mobile filter -->
+    <!-- Mobile filter button -->
     <div class="d-lg-none mb-4 text-center">
-        <button class="btn btn-outline-primary btn-lg px-4"
+        <button class="btn btn-outline-primary btn-lg px-5"
                 type="button"
                 data-bs-toggle="offcanvas"
                 data-bs-target="#categorySidebar">
-            <i class="bi bi-filter-left me-2"></i>
-            Lọc theo danh mục
+            <i class="bi bi-filter-left me-2"></i>Lọc theo danh mục
         </button>
     </div>
 
     <div class="row g-4">
-
-        <!-- Sidebar -->
+        <!-- Sidebar (shared logic for mobile & desktop) -->
         <div class="col-lg-3">
-
-            <!-- Mobile sidebar -->
+            <!-- Mobile offcanvas -->
             <div class="offcanvas offcanvas-start" tabindex="-1" id="categorySidebar">
-
                 <div class="offcanvas-header border-bottom bg-dark text-white">
                     <h5 class="offcanvas-title">
                         <i class="bi bi-tags me-2"></i>Danh mục
                     </h5>
-
-                    <button type="button"
-                            class="btn-close btn-close-white"
-                            data-bs-dismiss="offcanvas">
-                    </button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
                 </div>
-
                 <div class="offcanvas-body px-0">
-
-                    <div class="list-group list-group-flush">
-
-                        <a href="@Url.Action("Index","Product")"
-                           class="list-group-item list-group-item-action py-3">
-                            <i class="bi bi-grid-3x3-gap me-2"></i>
-                            Tất cả sản phẩm
-                        </a>
-
-                        @foreach (var cat in categories)
-                        {
-                            <a href="@Url.Action("Index","Product",new {category = cat.CategoryId})"
-                               class="list-group-item list-group-item-action py-3">
-                                @cat.CategoryName
-                            </a>
-                        }
-
-                    </div>
-
+                    @await Html.PartialAsync(
+                    "~/Views/Front/Products/_CategoryList.cshtml",
+                                        categories,
+                                        new ViewDataDictionary(ViewData)
+                                        {
+                                            ["AllUrl"] = allProductsUrl
+                                        }
+                                        )
                 </div>
             </div>
 
-            <!-- Desktop sidebar -->
+            <!-- Desktop sticky sidebar -->
             <div class="d-none d-lg-block position-sticky top-80">
-
                 <div class="card shadow-sm rounded-4 border-0">
-
                     <div class="card-header bg-dark text-white">
-                        <i class="bi bi-tags me-2"></i>
-                        Danh mục
+                        <i class="bi bi-tags me-2"></i>Danh mục
                     </div>
-
-                    <div class="list-group list-group-flush">
-
-                        <a href="@Url.Action("Index","Product")"
-                           class="list-group-item list-group-item-action">
-                            Tất cả sản phẩm
-                        </a>
-
-                        @foreach (var cat in categories)
-                        {
-                            <a href="@Url.Action("Index","Product",new {category = cat.CategoryId})"
-                               class="list-group-item list-group-item-action">
-                                @cat.CategoryName
-                            </a>
-                        }
-
-                    </div>
-
+                    @await Html.PartialAsync(
+                                        "~/Views/Front/Products/_CategoryList.cshtml",
+                                        categories,
+                                        new ViewDataDictionary(ViewData)
+                                        {
+                                            ["AllUrl"] = allProductsUrl
+                                        }
+                                        )
                 </div>
-
             </div>
-
         </div>
 
-        <!-- Product list -->
+        <!-- Product grid -->
         <div class="col-lg-9">
-
             @if (!Model.Any())
             {
                 <div class="alert alert-info text-center py-5 rounded-4 shadow-sm">
                     <i class="bi bi-bag-x fs-1 mb-3 d-block"></i>
-                    <h4>Chưa có sản phẩm</h4>
+                    <h4>Chưa có sản phẩm nào</h4>
                 </div>
             }
             else
             {
-
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 product-grid">
-
-                    @foreach (var p in Model)
+                    @foreach (var product in Model)
                     {
-                        var price = p.ProductVariants?.FirstOrDefault()?.Price ?? 0;
-                        var mainImage = p.ProductImages?.FirstOrDefault(x => x.IsMain);
-                        var imageUrl = mainImage?.ImageUrl
-                        ?? p.ProductImages?.FirstOrDefault()?.ImageUrl
-                        ?? "/images/no-image.jpg";
+                        var price = product.ProductVariants?.FirstOrDefault()?.Price ?? 0m;
+                        var mainImg = product.ProductImages?.FirstOrDefault(x => x.IsMain)
+                        ?? product.ProductImages?.FirstOrDefault();
+                        var imgUrl = mainImg?.ImageUrl ?? "/images/no-image.jpg";
 
                         <div class="col">
-
                             <div class="card product-card h-100 border-0 shadow rounded-4">
-
-                                <div class="image-wrapper">
-
-                                    <img src="@imageUrl"
+                                <div class="image-wrapper position-relative">
+                                    <img src="@imgUrl"
                                          class="card-img-top"
-                                         alt="@p.ProductName">
+                                         alt="@product.ProductName"
+                                         loading="lazy">
 
-                                    <!-- Hover overlay -->
                                     <div class="image-overlay">
+                                        <div class="overlay-buttons d-flex justify-content-center gap-3">
+                                            <a asp-action="Details" asp-controller="Product" asp-route-id="@product.ProductId"
+                                               class="icon-btn view-btn" title="Xem chi tiết">
+                                                <i class="bi bi-search"></i>
+                                            </a>
 
-                                        <div class="overlay-buttons">
-
-                                            <!-- View detail -->
-                                            <a asp-action="Details"
-   asp-controller="Product"
-   asp-route-id="@p.ProductId"
-   class="icon-btn view-btn"
-   title="Xem chi tiết">
-    <i class="bi bi-search"></i>
-</a>
-                                            <!-- Add to cart -->
-                                           <a asp-controller="Cart"
-   asp-action="AddToCart"
-   asp-route-variantId="@p.ProductVariants.FirstOrDefault()?.VariantId"
-   class="icon-btn cart-btn"
-   title="Thêm vào giỏ">
-    <i class="bi bi-bag"></i>
-</a>
+                                            <button type="button"
+                                                    class="icon-btn cart-btn add-to-cart-btn"
+                                                    data-variant-id="@(product.ProductVariants?.FirstOrDefault()?.VariantId ?? 0)"
+                                                    data-product-name="@product.ProductName"
+                                                    data-price="@(product.ProductVariants?.FirstOrDefault()?.Price ?? 0m)"
+                                                    data-image="@(mainImg?.ImageUrl ?? "/images/no-image.jpg")"
+                                                    title="Thêm vào giỏ">
+                                                <i class="bi bi-bag"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="card-body text-center">
-
-                                    <h5 class="card-title product-title">
-                                        @p.ProductName
-                                    </h5>
-
-                                    <p class="product-price">
-
+                                    <h5 class="card-title product-title mb-2">@product.ProductName</h5>
+                                    <p class="product-price mb-0">
                                         @if (price > 0)
                                         {
-                                            @price.ToString("N0") <small>đ</small>
+                                            <span>@price.ToString("N0")</span>
+
+                                            <small> đ</small>
                                         }
                                         else
                                         {
@@ -192,4 +140,41 @@
             }
         </div>
     </div>
+
+    <!-- Success modal -->
+    <div class="modal fade" id="addToCartSuccessModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header bg-success text-white rounded-top-4">
+                    <h5 class="modal-title" id="addToCartModalLabel">
+                        <i class="bi bi-check-circle-fill me-2"></i>Thêm vào giỏ hàng thành công!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <img id="modalProductImage" src="" alt="Sản phẩm" class="img-fluid rounded mb-3" style="max-height: 180px; object-fit: contain;">
+                    <h5 id="modalProductName" class="mb-3"></h5>
+                    <p class="mb-2">
+                        Size: <strong id="modalSize">-</strong>
+                        × <strong id="modalQuantity">1</strong>
+                    </p>
+                    <p class="text-danger fw-bold fs-5 mb-0">
+                        <span id="modalPrice">0</span> đ
+                    </p>
+                </div>
+                <div class="modal-footer justify-content-center border-0 pb-4">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        Tiếp tục mua sắm
+                    </button>
+                    <a href="@Url.Action("Index", "Cart")" class="btn btn-primary px-4">
+                        <i class="bi bi-cart-check me-2"></i>Xem giỏ hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+@section Scripts {
+    <script src="~/js/Product.js" asp-append-version="true"></script>
+    
+}

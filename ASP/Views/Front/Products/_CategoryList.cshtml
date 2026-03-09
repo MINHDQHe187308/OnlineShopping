@@ -1,0 +1,21 @@
+﻿@model IEnumerable<ASP.Models.Domains.Category>
+
+@{
+    var allUrl = ViewData["AllUrl"]?.ToString();
+}
+
+<div class="list-group list-group-flush">
+
+    <a href="@allUrl" class="list-group-item list-group-item-action py-3">
+        <i class="bi bi-grid-3x3-gap me-2"></i>Tất cả sản phẩm
+    </a>
+
+    @foreach (var cat in Model)
+    {
+        <a href="@Url.Action("Index", "Product", new { category = cat.CategoryId })"
+           class="list-group-item list-group-item-action py-3">
+            @cat.CategoryName
+        </a>
+    }
+
+</div>

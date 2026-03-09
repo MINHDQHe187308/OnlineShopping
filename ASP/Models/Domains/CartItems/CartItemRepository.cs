@@ -33,6 +33,10 @@ namespace ASP.Models.Domains
                 _context.CartItems.Add(item);
             }
         }
+        public void Delete(CartItem item)
+        {
+            _context.CartItems.Remove(item);
+        }
     }
 
    

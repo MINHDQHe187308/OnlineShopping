@@ -1,45 +1,208 @@
-﻿let currentPrice = @Model.CurrentPrice;
+﻿
+let currentPrice = 0;
+let currentVariantId = 0;
+let productName = "";
+let mainImageUrl = "";
 
-// Change main image
+
 function changeMainImage(thumb) {
-    document.getElementById('mainImg').src = thumb.dataset.full;
+    const mainImg = document.getElementById('mainImg');
+    if (!mainImg) return;
+
+    mainImg.src = thumb.dataset.full;
     document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
     thumb.classList.add('active');
 }
 
-// Change quantity & update total
+
 function changeQty(delta) {
-    const qtyInput = document.getElementById('quantity');
-    let qty = parseInt(qtyInput.value) || 1;
+    const input = document.getElementById('quantity');
+    if (!input) return;
+
+    let qty = parseInt(input.value) || 1;
     qty = Math.max(1, qty + delta);
-    qtyInput.value = qty;
+    input.value = qty;
     updateTotalPrice();
 }
 
-// Update total price
+
 function updateTotalPrice() {
-    const qty = parseInt(document.getElementById('quantity').value) || 1;
+    const input = document.getElementById('quantity');
+    const totalEl = document.getElementById('totalPrice');
+    if (!input || !totalEl) return;
+
+    const qty = parseInt(input.value) || 1;
     const total = currentPrice * qty;
-    document.getElementById('totalPrice').textContent = total.toLocaleString('vi-VN') + ' đ';
+    totalEl.textContent = total.toLocaleString('vi-VN') + ' đ';
 }
 
-// Size selection - update price
-document.querySelectorAll('.size-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
 
-        currentPrice = parseFloat(btn.dataset.price) || 0;
-        document.getElementById('currentPrice').textContent = currentPrice.toLocaleString('vi-VN') + ' đ';
-        updateTotalPrice();
+async function updateCartCount() {
+    try {
+        const res = await fetch('/Cart/GetCartCount');
+        if (!res.ok) return;
+        const count = await res.json();
+
+
+        const badges = document.querySelectorAll('.cart-badge, .cart-count-badge, #cartCount, .badge-cart');
+        badges.forEach(badge => {
+            badge.textContent = count;
+        });
+    } catch (err) {
+        console.error('Lỗi cập nhật số giỏ hàng:', err);
+    }
+}
+
+
+function setupListAddToCart() {
+    document.addEventListener('click', async function (e) {
+        const btn = e.target.closest('.add-to-cart-btn');
+        if (!btn) return;
+
+        e.preventDefault();
+
+        const variantId = parseInt(btn.dataset.variantId);
+        const qty = 1; 
+        const price = parseFloat(btn.dataset.price) || 0;
+        const name = btn.dataset.productName || "Sản phẩm";
+        const img = btn.dataset.image || "/images/no-image.jpg";
+
+        if (variantId <= 0) {
+            alert('Sản phẩm này hiện không có biến thể hợp lệ!');
+            return;
+        }
+
+        try {
+            const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+            const token = tokenElement ? tokenElement.value : null;
+
+            const response = await fetch('/Cart/AddToCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { 'RequestVerificationToken': token })
+                },
+                body: JSON.stringify({ variantId: variantId, quantity: qty })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(errText || 'Có lỗi xảy ra khi thêm vào giỏ');
+            }
+
+            // Cập nhật badge
+            await updateCartCount();
+
+            // Hiển thị modal thành công
+            const modalEl = document.getElementById('addToCartSuccessModal');
+            if (modalEl) {
+                document.getElementById('modalProductImage').src = img;
+                document.getElementById('modalProductName').textContent = name;
+                document.getElementById('modalSize').textContent = "Mặc định"; // Có thể cải thiện nếu có size
+                document.getElementById('modalQuantity').textContent = qty;
+                document.getElementById('modalPrice').textContent = (price * qty).toLocaleString('vi-VN');
+
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            } else {
+                alert(`Đã thêm "${name}" vào giỏ hàng!`);
+            }
+
+        } catch (err) {
+            alert('Không thể thêm sản phẩm: ' + err.message);
+            console.error(err);
+        }
     });
-});
+}
 
-// Add to cart (placeholder - sau này thay bằng AJAX)
-document.getElementById('addToCart').addEventListener('click', () => {
-    const selectedSize = document.querySelector('.size-btn.active')?.dataset.size || 'Không chọn';
-    const qty = document.getElementById('quantity').value;
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Khởi tạo cho trang CHI TIẾT sản phẩm
+    const dataEl = document.getElementById('product-data');
+    if (dataEl) {
+        currentPrice = parseFloat(dataEl.dataset.price) || 0;
+        currentVariantId = parseInt(dataEl.dataset.variantId) || 0;
+        productName = dataEl.dataset.name || "";
+        mainImageUrl = dataEl.dataset.imageUrl || "/images/no-image.jpg";
 
-    alert(`Đã thêm vào giỏ:\nSản phẩm: ${@Model.Product.ProductName}\nSize: ${selectedSize}\nSố lượng: ${qty}\nGiá: ${currentPrice.toLocaleString('vi-VN')} đ`);
-    // Thực tế: gửi fetch POST đến /Cart/Add
+        updateTotalPrice();
+
+        // Sự kiện chọn size (trang chi tiết)
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                currentPrice = parseFloat(btn.dataset.price) || 0;
+                currentVariantId = parseInt(btn.dataset.variantId) || 0;
+
+                const priceEl = document.getElementById('currentPrice');
+                if (priceEl) {
+                    priceEl.textContent = currentPrice.toLocaleString('vi-VN') + ' đ';
+                }
+
+                updateTotalPrice();
+            });
+        });
+
+       
+        const addBtn = document.getElementById('addToCart');
+        if (addBtn) {
+            addBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                const qtyInput = document.getElementById('quantity');
+                const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+
+                const activeSize = document.querySelector('.size-btn.active');
+                const sizeText = activeSize ? activeSize.textContent.trim() : 'Không chọn';
+
+                if (currentVariantId <= 0) {
+                    alert('Vui lòng chọn kích thước!');
+                    return;
+                }
+
+                try {
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+                    const response = await fetch('/Cart/AddToCart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(token && { 'RequestVerificationToken': token })
+                        },
+                        body: JSON.stringify({ variantId: currentVariantId, quantity: qty })
+                    });
+
+                    if (!response.ok) {
+                        const errText = await response.text();
+                        throw new Error(errText || 'Có lỗi xảy ra');
+                    }
+
+                    // Modal thành công
+                    const modalEl = document.getElementById('addToCartSuccessModal');
+                    if (modalEl) {
+                        document.getElementById('modalProductImage').src = mainImageUrl;
+                        document.getElementById('modalProductName').textContent = productName;
+                        document.getElementById('modalSize').textContent = sizeText;
+                        document.getElementById('modalQuantity').textContent = qty;
+                        document.getElementById('modalPrice').textContent = (currentPrice * qty).toLocaleString('vi-VN');
+
+                        const modal = new bootstrap.Modal(modalEl);
+                        modal.show();
+                    }
+
+                    updateCartCount();
+
+                } catch (err) {
+                    alert('Không thể thêm vào giỏ: ' + err.message);
+                    console.error(err);
+                }
+            });
+        }
+    }
+
+    setupListAddToCart();
+
+  
+    updateCartCount();
 });

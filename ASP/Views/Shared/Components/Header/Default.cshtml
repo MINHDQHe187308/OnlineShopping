@@ -28,7 +28,13 @@
         {
             return "bi bi-bag";   
         }
-
+        if (key.Contains("cart") ||
+        key.Contains("giỏ hàng") ||
+        urlLower.Contains("cart/index") ||
+        urlLower.Contains("/cart"))
+        {
+            return "bi bi-cart"; 
+        }
        
         if (key.Contains("delivery") || key.Contains("ship") || key.Contains("transport"))
             return "fas fa-truck";
