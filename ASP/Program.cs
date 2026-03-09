@@ -7,6 +7,8 @@ using ASP.Models.Admin.Menus;
 using ASP.Models.Admin.Roles;
 using ASP.Models.Admin.ThemeOptions;
 using ASP.Models.ASPModel;
+using ASP.Models.Domain;
+using ASP.Models.Domains;
 using ASP.Policies;
 using ASP.SeedData;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +20,6 @@ using Microsoft.Extensions.Options;
 using OfficeOpenXml;
 using ReflectionIT.Mvc.Paging;
 using Serilog;
-using ASP.Models.Domains;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,7 +95,9 @@ builder.Services.AddScoped<ThemeOptionRepositoryInterface, ThemeOptionRepository
 builder.Services.AddScoped<AuthRepositoryInterface, AuthRepository>();
 builder.Services.AddScoped<MenuRepositoryInterface, MenuRepository>();
 builder.Services.AddScoped<ProductRepositoryInterface, ProductRepository>();
-builder.Services.AddScoped<CategoryRepositoryInterface, CategoryRepository>();  
+builder.Services.AddScoped<CategoryRepositoryInterface, CategoryRepository>();
+builder.Services.AddScoped<CartRepositoyInterface, CartRepository>();
+builder.Services.AddScoped<CartItemRepositoryInterface, CartItemRepository>();
 //builder.Services.AddScoped<UserPolicyAuthorizationHandler>();
 
 //builder.Services.AddTransient<EmailServiceInterface, GmailSmtpService>();

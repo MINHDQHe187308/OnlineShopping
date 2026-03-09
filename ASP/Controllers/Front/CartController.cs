@@ -18,11 +18,19 @@ namespace ASP.Controllers.Front
             _cartItemRepo = cartItemRepo;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
+            int customerId = 2; 
+            var cart = await _cartRepo.GetCartWithItemsAsync(customerId);
 
+            if (cart == null)
+            {             
+                return RedirectToAction("Index", "Product");
+            }
+    
+            ViewBag.CartItemCount = cart.CartItems?.Sum(ci => ci.Quantity) ?? 0;
+            return View("~/Views/Front/Carts/Index.cshtml", cart);
+        }
         public async Task<IActionResult> AddToCart(int variantId)
         {
             int customerId = 2;

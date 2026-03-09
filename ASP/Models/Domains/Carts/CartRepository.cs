@@ -38,7 +38,15 @@ namespace ASP.Models.Domain
         {
             await _context.SaveChangesAsync();
         }
-    }
 
-    
+        public async Task<Cart> GetCartWithItemsAsync(int customerId)
+        {
+            return await _context.Carts
+                .Include(c => c.CartItems)
+                    .ThenInclude(ci => ci.ProductVariant)
+                        .ThenInclude(v => v.Product)
+                            .ThenInclude(p => p.ProductImages)
+                .FirstOrDefaultAsync(c => c.CustomerId == customerId);
+        }
+    }
 }

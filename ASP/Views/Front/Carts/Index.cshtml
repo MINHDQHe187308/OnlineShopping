@@ -1,0 +1,169 @@
+﻿@model ASP.Models.Domains.Cart
+
+@{
+    ViewData["Title"] = "Giỏ hàng của bạn";
+    Layout = "~/Views/Shared/Layout/Front/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<div class="container py-5" style="font-family:'Roboto', sans-serif;">
+
+    
+
+    @if (Model?.CartItems == null || !Model.CartItems.Any())
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="bi bi-cart-x fs-1 d-block mb-3"></i>
+            <h4>Giỏ hàng của bạn đang trống</h4>
+
+            <a asp-controller="Product"
+               asp-action="Index"
+               class="btn btn-primary mt-3">
+                Tiếp tục mua sắm
+            </a>
+        </div>
+    }
+    else
+    {
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in Model.CartItems)
+                    {
+                        var variant = item.ProductVariant;
+                        var product = variant?.Product;
+                        var price = variant?.Price ?? 0;
+
+                        <tr data-price="@price">
+
+                            <td>
+
+                                <div class="d-flex align-items-center">
+
+                                    <img src="@(product?.ProductImages?.FirstOrDefault(i => i.IsMain)?.ImageUrl ?? "/images/no-image.jpg")"
+                                         style="width:120px;height:120px;object-fit:cover"
+                                         class="me-3 rounded">
+
+                                    <div>
+                                        <p class="mb-1">@product?.ProductName</p>
+
+                                        <small class="text-muted">
+
+                                            @if (variant?.Color != null)
+                                            {
+                                                <span>Màu: @variant.Color</span>
+                                            }
+
+                                            @if (variant?.Size != null)
+                                            {
+                                                <span> - Size: @variant.Size</span>
+                                            }
+
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="price">
+                                @price.ToString("N0") đ
+                            </td>
+
+                            <td>
+
+                                <div class="d-flex align-items-center">
+
+                                    <button class="btn btn-sm btn-outline-secondary minus">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+
+                                    <input type="number"
+                                           value="@item.Quantity"
+                                           min="1"
+                                           class="form-control text-center mx-2 quantity"
+                                           style="width:70px">
+
+                                    <button class="btn btn-sm btn-outline-secondary plus">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                            <td class="subtotal">
+                                @((price * item.Quantity).ToString("N0")) đ
+                            </td>
+
+                            <td>
+
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-4">
+
+            <a asp-controller="Product"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+
+                ← Tiếp tục mua sắm
+
+            </a>
+
+            <div class="text-end">
+
+                <h4>
+
+                    Tổng tiền:
+                    <span id="cartTotal">
+                        @Model.CartItems.Sum(i => i.Quantity * (i.ProductVariant?.Price ?? 0)).ToString("N0") đ
+                    </span>
+
+                </h4>
+
+                <a href="#"
+                   class="btn btn-lg text-white mt-2"
+                   style="background:black">
+
+                    <i class="bi bi-credit-card me-2"></i>
+                    Thanh toán ngay
+
+                </a>
+
+            </div>
+
+        </div>
+
+    }
+
+</div>
+ <script src="~/js/Cart.js"></script>
