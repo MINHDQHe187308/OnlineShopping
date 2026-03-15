@@ -1,4 +1,4 @@
-﻿namespace ASP.ConfigCommon
+namespace ASP.ConfigCommon
 {
     public class Permissions
     {
@@ -133,6 +133,37 @@
                     new ActionDetail() { Pkey = "Create", Pvalue = "Tạo mới" },
                     new ActionDetail() { Pkey = "Update", Pvalue = "Cập nhật" },
                     new ActionDetail() { Pkey = "Delete", Pvalue = "Xóa" },
+                }
+            });
+
+            // Product Variants
+            permissions.Add(new PermissionDetail()
+            {
+                Ptitle = "Biến thể sản phẩm",
+                Pname = APP_NAME + "ProductVariants",
+                Picon = "nav-icon fas fa-cubes",
+                Pcan = "ASPProductVariantsView",
+                Proute = "admin.productvariants",
+                Pcontroller = "ProductVariant",
+                Pdetail = new List<ActionDetail>() {
+                    new ActionDetail() { Pkey = "View", Pvalue = "Xem" },
+                    new ActionDetail() { Pkey = "Create", Pvalue = "Tạo mới" },
+                    new ActionDetail() { Pkey = "Update", Pvalue = "Cập nhật" },
+                    new ActionDetail() { Pkey = "Delete", Pvalue = "Xóa" },
+                }
+            });
+
+            // Orders
+            permissions.Add(new PermissionDetail()
+            {
+                Ptitle = "Đơn hàng",
+                Pname = APP_NAME + "Orders",
+                Picon = "fas fa-shopping-cart",
+                Pcan = "ASPOrdersView",
+                Proute = "admin.orders",
+                Pcontroller = "Order",
+                Pdetail = new List<ActionDetail>() {
+                    new ActionDetail() { Pkey = "View", Pvalue = "Xem" }
                 }
             });
 
