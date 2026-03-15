@@ -1,4 +1,4 @@
-﻿using ASP.BaseCommon;
+using ASP.BaseCommon;
 using ASP.Hubs;
 using ASP.Models.Admin.Accounts;
 using ASP.Models.Admin.Auths;
@@ -98,6 +98,9 @@ builder.Services.AddScoped<ProductRepositoryInterface, ProductRepository>();
 builder.Services.AddScoped<CategoryRepositoryInterface, CategoryRepository>();
 builder.Services.AddScoped<CartRepositoyInterface, CartRepository>();
 builder.Services.AddScoped<CartItemRepositoryInterface, CartItemRepository>();
+builder.Services.AddScoped<ProductVariantRepositoryInterface, ProductVariantRepository>();
+builder.Services.AddScoped<OrderRepositoryInterface, OrderRepository>();
+builder.Services.AddScoped<OrderDetailRepositoryInterface, OrderDetailRepository>();
 //builder.Services.AddScoped<UserPolicyAuthorizationHandler>();
 
 //builder.Services.AddTransient<EmailServiceInterface, GmailSmtpService>();
@@ -200,4 +203,5 @@ app.UseEndpoints(endpoints =>
 #endregion
 
 app.MapHub<OrderHub>("/orderHub");
+app.MapHub<AdminHub>("/adminHub");
 app.Run();
