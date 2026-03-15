@@ -1,0 +1,83 @@
+﻿@model ASP.Models.Domains.Product
+
+@{
+    ViewData["Title"] = "Thêm sản phẩm";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+
+<div class="content-wrapper">
+
+    <section class="content-header">
+        <h3>Thêm sản phẩm</h3>
+    </section>
+
+    <section class="content">
+
+        <div class="box box-primary card-body">
+
+            <form method="post" asp-action="Create">
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <!-- Tên -->
+                <div class="form-group">
+                    <label>Tên sản phẩm</label>
+                    <input asp-for="ProductName" class="form-control" />
+                    <span asp-validation-for="ProductName" class="text-danger"></span>
+                </div>
+
+                <!-- Category -->
+                <div class="form-group">
+                    <label>Danh mục</label>
+
+                    <select asp-for="CategoryId"
+                            class="form-control"
+                            asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "CategoryName"))">
+                        <option value="">-- Chọn danh mục --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label>Mô tả</label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                </div>
+
+                <!-- Quantity -->
+                <div class="form-group">
+                    <label>Số lượng</label>
+                    <input asp-for="Quantity" class="form-control" />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                </div>
+
+                <!-- Status -->
+                <div class="form-group">
+                    <label>Trạng thái</label>
+                    <select asp-for="IsActive" class="form-control">
+                        <option value="true">Hoạt động</option>
+                        <option value="false">Ẩn</option>
+                   </select>
+                </div>
+
+                <input type="hidden" name="filter" value="@ViewBag.Filter" />
+                <input type="hidden" name="page" value="@ViewBag.Page" />
+
+                <div class="text-right">
+                    <a class="btn btn-secondary"
+                       asp-action="Index"
+                       asp-route-filter="@ViewBag.Filter"
+                       asp-route-page="@ViewBag.Page">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                    <button class="btn btn-success" type="submit">
+                        Thêm
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

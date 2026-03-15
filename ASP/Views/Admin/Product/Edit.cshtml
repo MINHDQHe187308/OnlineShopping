@@ -1,0 +1,119 @@
+﻿@model ASP.Models.Domains.Product
+
+@{
+    ViewData["Title"] = "Sửa sản phẩm";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+
+<div class="content-wrapper">
+
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/product">
+                                <i class="fas fa-box"></i> Sản phẩm
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active">Sửa</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+
+            <div class="box box-primary card-body">
+
+                <form method="post" asp-action="Edit" asp-route-id="@Model.ProductId" class="form-horizontal">
+
+                    <input asp-for="ProductId" type="hidden" />
+
+                    <!-- Hiển thị tất cả lỗi -->
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="box-body">
+
+                        <!-- Tên sản phẩm -->
+                        <div class="form-group">
+                            <label asp-for="ProductName" class="control-label"></label>
+                            <input asp-for="ProductName" class="form-control" />
+                            <span asp-validation-for="ProductName" class="text-danger"></span>
+                        </div>
+
+                        <!-- Danh mục -->
+                        <div class="form-group">
+                            <label asp-for="CategoryId" class="control-label">Danh mục</label>
+
+                            <select asp-for="CategoryId"
+                                    class="form-control"
+                                    asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "CategoryName"))">
+                                <option value="">-- Chọn danh mục --</option>
+                            </select>
+
+                        </div>
+
+                        <!-- Mô tả -->
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label"></label>
+                            <textarea asp-for="Description" class="form-control"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <!-- Số lượng -->
+                        <div class="form-group">
+                            <label asp-for="Quantity" class="control-label"></label>
+                            <input asp-for="Quantity" class="form-control" />
+                            <span asp-validation-for="Quantity" class="text-danger"></span>
+                        </div>
+
+                        <!-- Trạng thái -->
+                        <div class="form-group">
+                            <label asp-for="IsActive" class="control-label">Trạng thái</label>
+
+                            <select asp-for="IsActive" class="form-control">
+                                <option value="true">Hoạt động</option>
+                                <option value="false">Ẩn</option>
+                            </select>
+
+                            <span asp-validation-for="IsActive" class="text-danger"></span>
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" name="filter" value="@ViewBag.Filter" />
+                    <input type="hidden" name="page" value="@ViewBag.Page" />
+
+                    <div class="box-footer">
+                        <div class="text-right">
+
+                            <a class="btn btn-secondary"
+                               asp-action="Index"
+                               asp-route-filter="@ViewBag.Filter"
+                               asp-route-page="@ViewBag.Page">
+                                <i class="fas fa-arrow-left"></i> Quay lại
+                            </a>
+
+                            <button class="btn btn-success" type="submit">
+                                <i class="fas fa-save"></i> Lưu
+                            </button>
+
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    </section>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
