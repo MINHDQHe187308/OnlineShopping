@@ -1,0 +1,125 @@
+@using ASP.BaseCommon
+@using ASP.Policies
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model IEnumerable<ASP.Models.Domains.Category>
+
+@{
+    ViewData["Title"] = "Quản lý Danh mục";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+
+<style>
+    #example1 thead th {
+        vertical-align: middle;
+        text-align: center;
+    }
+</style>
+<div class="content-wrapper" style="min-height: 422px;">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPCategoriesCreate)).Succeeded)
+                            {
+                                <a class="btn btn-success add-button" asp-route="admin.categories.create"><i class="fas fa-plus-square"></i> Thêm mới</a>
+                            }
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a asp-route="admin.dashboard"><i class="fas fa-home"></i> Home</a></li>
+                                <li class="breadcrumb-item active">Danh mục</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-xs-12">
+                    <div class="box">
+                        <div class="clearfix box-body p-2">
+                            <table id="example1" class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" style="width: 5%">#</th>
+                                        <th>Tên danh mục</th>
+                                        <th style="width: 15%">Tác vụ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 0;
+                                    }
+                                    @if(Model != null)
+                                    {
+                                        @foreach (var item in Model)
+                                        {
+                                            count++;
+                                            <tr>
+                                                <td class="text-center">@count</td>
+                                                <td>@item.CategoryName</td>
+                                                <td>
+                                                    @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPCategoriesUpdate)).Succeeded)
+                                                    {
+                                                        <a asp-route="admin.categories.edit" asp-route-id="@item.CategoryId" class="badge badge-primary" title="Sửa!"><i class="fas fa-edit"></i> Sửa</a>
+                                                    }
+                                                    @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPCategoriesDelete)).Succeeded)
+                                                    {
+                                                        <a onclick="return confirm('Bạn muốn Xóa danh mục này?')" asp-route="admin.categories.delete" asp-route-id="@item.CategoryId" title="Xóa!" class="badge badge-danger"><i class="fas fa-trash-alt"></i> Xóa</a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            // Establish SignalR connection
+            var connection = new signalR.HubConnectionBuilder()
+                .withUrl("/adminHub")
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            // Listen to Create
+            connection.on("CategoryCreated", function (category) {
+                console.log("Category created: " + category.categoryName);
+                window.location.reload();
+            });
+
+            // Listen to Update
+            connection.on("CategoryUpdated", function (category) {
+                console.log("Category updated: " + category.categoryName);
+                window.location.reload();
+            });
+
+            // Listen to Delete
+            connection.on("CategoryDeleted", function (id) {
+                console.log("Category deleted: " + id);
+                window.location.reload();
+            });
+
+            connection.start().then(function () {
+                console.log("Connected to AdminHub successfully (Categories).");
+            }).catch(function (err) {
+                return console.error("AdminHub connection error: " + err.toString());
+            });
+        });
+    </script>
+}

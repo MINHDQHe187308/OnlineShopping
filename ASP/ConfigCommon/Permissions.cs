@@ -153,6 +153,23 @@ namespace ASP.ConfigCommon
                 }
             });
 
+            // Categories
+            permissions.Add(new PermissionDetail()
+            {
+                Ptitle = "Danh mục",
+                Pname = APP_NAME + "Categories",
+                Picon = "nav-icon fas fa-list",
+                Pcan = "ASPCategoriesView",
+                Proute = "admin.categories",
+                Pcontroller = "Category",
+                Pdetail = new List<ActionDetail>() {
+                    new ActionDetail() { Pkey = "View", Pvalue = "Xem" },
+                    new ActionDetail() { Pkey = "Create", Pvalue = "Tạo mới" },
+                    new ActionDetail() { Pkey = "Update", Pvalue = "Cập nhật" },
+                    new ActionDetail() { Pkey = "Delete", Pvalue = "Xóa" },
+                }
+            });
+
             // Orders
             permissions.Add(new PermissionDetail()
             {
