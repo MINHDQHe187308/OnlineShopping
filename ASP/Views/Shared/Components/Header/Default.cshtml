@@ -226,6 +226,11 @@
                                 <i class="fas fa-user-circle me-1"></i> Hello (@User.Identity.Name)
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="openProfile()">
+                                        <i class="fas fa-user me-1"></i> View Profile
+                                    </a>
+                                </li>
                                 <li><a class="dropdown-item" href="~/admin"><i class="fas fa-cog me-1"></i> Admin page</a></li>
                                 <li><a class="dropdown-item" asp-route="admin.auth.logout"><i class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
                             </ul>
@@ -236,3 +241,36 @@
         </div>
     </nav>
 </header>
+<div class="modal fade" id="profileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">User Profile</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="profileContent">
+                Loading...
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<script>
+    function openProfile(){
+
+        fetch('/Account/MyProfile')
+        .then(res => res.text())
+        .then(html => {
+
+            document.getElementById("profileContent").innerHTML = html;
+
+            var modal = new bootstrap.Modal(document.getElementById('profileModal'));
+            modal.show();
+
+        });
+
+    }
+</script>

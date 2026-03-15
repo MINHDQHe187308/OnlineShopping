@@ -1,0 +1,63 @@
+﻿.user-profile-simple {
+    background: #ffffff;
+    border-radius: 16px;
+}
+
+.avatar-lg {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.list-group-item {
+    border: none !important;
+    transition: background-color 0.2s;
+}
+
+    .list-group-item:hover {
+        background-color: rgba(59, 130, 246, 0.05) !important;
+    }
+
+.bi {
+    width: 24px;
+    text-align: center;
+}
+
+@media (max-width: 576px) {
+    .avatar-lg {
+        width: 130px;
+        height: 130px;
+    }
+}
+.user-profile-compact {
+    font-size: 0.95rem;
+    background: #fff;
+    border-radius: 12px;
+}
+
+.avatar-compact {
+    width: 90px;
+    height: 90px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.list-group-item {
+    border: none !important;
+    padding: 0.45rem 1rem !important;
+}
+
+    .list-group-item small {
+        font-size: 0.75rem;
+        line-height: 1;
+    }
+
+.bi {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+h5 {
+    font-size: 1.25rem;
+}

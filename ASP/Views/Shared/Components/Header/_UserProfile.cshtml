@@ -1,0 +1,55 @@
+﻿@model ASP.Models.Admin.Accounts.ApplicationUser
+
+<div class="user-profile-compact p-3">
+    <div class="text-center mb-3">
+        <img src="~/assets/users/@(Model.Avatar ?? "default-avatar.png")"
+             alt="@(Model.FullName ?? Model.UserName)"
+             class="avatar-compact rounded-circle shadow"
+             style="width: 90px; height: 90px; object-fit: cover; border: 3px solid #fff;" />
+        <h5 class="mt-2 mb-1 fw-bold">@(Model.FullName ?? "—")</h5>
+        <p class="text-muted small mb-0">@Model.UserName</p>
+    </div>
+
+    <div class="list-group list-group-flush border rounded shadow-sm small">
+        <div class="list-group-item px-3 py-2 d-flex align-items-center">
+            <i class="bi bi-at text-primary me-2"></i>
+            <div>
+                <small class="text-muted">Username</small>
+                <div>@Model.UserName</div>
+            </div>
+        </div>
+
+        <div class="list-group-item px-3 py-2 d-flex align-items-center bg-light">
+            <i class="bi bi-person text-primary me-2"></i>
+            <div>
+                <small class="text-muted">Họ tên</small>
+                <div>@(Model.FullName ?? "Chưa cập nhật")</div>
+            </div>
+        </div>
+
+        <div class="list-group-item px-3 py-2 d-flex align-items-center">
+            <i class="bi bi-envelope text-primary me-2"></i>
+            <div>
+                <small class="text-muted">Email</small>
+                <div>
+                    <a href="mailto:@Model.Email" class="text-dark text-decoration-none">@Model.Email</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="list-group-item px-3 py-2 d-flex align-items-center bg-light">
+            <i class="bi bi-telephone text-primary me-2"></i>
+            <div>
+                <small class="text-muted">SĐT</small>
+                <div>@(string.IsNullOrWhiteSpace(Model.PhoneNumber) ? "Chưa cập nhật" : Model.PhoneNumber)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary px-4" data-bs-dismiss="modal">
+            Đóng
+        </button>
+    </div>
+</div>
+

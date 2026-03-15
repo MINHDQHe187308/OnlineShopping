@@ -1,15 +1,16 @@
-﻿using System;
+﻿using ASP.BaseCommon;
+using ASP.Models.Admin.Accounts;
+using ASP.Models.ASPModel;
+using ASP.Policies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using ASP.Policies;
-using ASP.BaseCommon;
-using ASP.Models.Admin.Accounts;
-using ASP.Models.ASPModel;
 
 namespace ASP.Controllers.Admin
 {
@@ -21,12 +22,14 @@ namespace ASP.Controllers.Admin
         public AccountRepositoryInterface user;
         public BaseController baseController;
         protected string photosPath;
-        public AccountController(IAuthorizationService authService, ASPDbContext context, AccountRepositoryInterface user, BaseController baseController)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public AccountController(IAuthorizationService authService, ASPDbContext context, AccountRepositoryInterface user, BaseController baseController, UserManager<ApplicationUser> userManager)
         {
             _authService = authService;
             _context = context;
             this.user = user;
             this.baseController = baseController;
+            _userManager = userManager;
         }
         [HttpGet]
         [Route("admin/Account", Name = "admin.accounts")]
@@ -231,5 +234,18 @@ namespace ASP.Controllers.Admin
             return RedirectToAction(nameof(Index));
         }
         //
+        [HttpGet]
+        [Route("Account/MyProfile")]
+        public async Task<IActionResult> MyProfile()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (currentUser == null)
+            {
+                return Unauthorized();
+            }
+
+            return PartialView("~/Views/Shared/Components/Header/_UserProfile.cshtml", currentUser);
+        }
     }
 }
