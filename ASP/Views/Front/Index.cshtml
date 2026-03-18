@@ -1,0 +1,60 @@
+﻿@using ASP.Models.ViewModels
+@model CheckoutViewModel
+
+<h2>Checkout</h2>
+
+<form asp-action="PlaceOrder" method="post">
+
+    <h3>Shipping Info</h3>
+    <div>
+        <label>Full Name</label>
+        <input asp-for="FullName" class="form-control" required />
+    </div>
+
+    <div>
+        <label>Address</label>
+        <input asp-for="Address" class="form-control" required />
+    </div>
+
+    <div>
+        <label>Phone</label>
+        <input asp-for="Phone" class="form-control" required />
+    </div>
+
+    <h3>Cart</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CartItems)
+            {
+                <tr>
+                    <td>@item.ProductVariant.SKU</td>
+                    <td>@item.ProductVariant.Price</td>
+                    <td>@item.Quantity</td>
+                    <td>@(item.Quantity* item.ProductVariant.Price)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Total: @Model.TotalAmount</h3>
+
+    <h3>Payment</h3>
+    <select asp-for="PaymentMethod" class="form-control">
+        <option value="COD">Cash On Delivery</option>
+        <option value="VNPay">VNPay</option>
+    </select>
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">
+        Place Order
+    </button>
+</form>

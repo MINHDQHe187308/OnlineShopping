@@ -34,7 +34,7 @@ namespace ASP.Controllers.Front
             var cart = await _cartRepo.GetCartWithItemsAsync(userId);
 
             if (cart == null)
-                return RedirectToAction("Index", "Product");
+                return Content("Cart is empty");
 
             ViewBag.CartItemCount = cart.CartItems?.Sum(ci => ci.Quantity) ?? 0;
 

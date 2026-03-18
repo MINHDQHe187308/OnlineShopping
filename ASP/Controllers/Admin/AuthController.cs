@@ -44,8 +44,7 @@ namespace ASP.Controllers.Admin
             Login login = new Login();
             login.ReturnUrl = returnUrl;
             //
-            var chkLogged = _userManager.FindByNameAsync(_userManager.GetUserName(User));//.Result.UserName
-            if (chkLogged.Exception == null)
+            if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 if (login.ReturnUrl != null)
                 {
