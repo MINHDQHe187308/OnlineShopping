@@ -4,6 +4,7 @@ using ASP.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ASP.Controllers.Front
 {
@@ -20,13 +21,15 @@ namespace ASP.Controllers.Front
         // GET: Checkout page
         public async Task<IActionResult> Index()
         {
-            Console.WriteLine("It is running!");
-            var userId = User.Identity.Name;
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var cart = await _context.Carts
-                .Include(c => c.CartItems)
-                .ThenInclude(ci => ci.ProductVariant)
-                .FirstOrDefaultAsync(c => c.UserId == userId);
+    .Include(c => c.CartItems)
+        .ThenInclude(ci => ci.ProductVariant)
+            .ThenInclude(pv => pv.Product)
+                .ThenInclude(p => p.ProductImages) // <--- Lấy danh sách ảnh ở đây
+    .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (cart == null || !cart.CartItems.Any())
                 return RedirectToAction("Index", "Cart");
@@ -80,7 +83,7 @@ namespace ASP.Controllers.Front
                 _context.OrderDetails.Add(orderDetail);
             }
 
-            
+
             _context.CartItems.RemoveRange(cart.CartItems);
 
             await _context.SaveChangesAsync();

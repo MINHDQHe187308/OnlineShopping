@@ -129,8 +129,9 @@
             background: #222;
         }
 </style>
-<input type="text" placeholder="Thêm địa chỉ"
+
 <div class="checkout-container">
+
     <!-- Breadcrumb -->
     <nav class="breadcrumb-custom mb-4">
         Giỏ hàng <span class="mx-2">›</span>
@@ -157,7 +158,11 @@
             <form>
                 <div class="mb-4">
                     <label class="form-label">Địa chỉ</label>
-                    <input type="text" class="form-control form-control-lg" placeholder="Nhập địa chỉ chi tiết..." />
+                    <div style="display: flex">
+                        <input type="text" class="form-control form-control-lg" style="margin-right: 5px;" placeholder="Nhập địa chỉ chi tiết..." />
+                        <button type="submit">Thay đổi</button>
+                    </div>
+                    
                 </div>
 
                 <div class="row g-3 mb-4">
@@ -220,7 +225,7 @@
                 </div>
 
                 <div class="d-flex justify-content-between mt-5">
-                    <a href="#" class="btn btn-outline-secondary btn-lg px-4">
+                    <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
                         ← Quay lại giỏ hàng
                     </a>
                     <button type="button" class="btn btn-complete-order">
@@ -233,36 +238,76 @@
         <!-- Bên phải: Tóm tắt đơn hàng -->
         <div class="col-lg-5">
             <div class="summary-box">
-                <h2 class="section-title">Đơn hàng của bạn (1 sản phẩm)</h2>
+                <h2 class="section-title">Đơn hàng của bạn (@Model.CartItems.Count sản phẩm)</h2>
 
-                <div class="product-item">
-                    <div class="position-relative me-3">
-                        <img src="https://via.placeholder.com/80x80?text=Ao+Khoac" alt="Sản phẩm" style="border-radius:8px;">
-                        <span class="quantity-badge">1</span>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1">Áo khoác kaki hai lớp mangto</h6>
-                        <small class="text-muted">Màu: Đen - Size: M</small>
-                    </div>
-                    <strong class="ms-3">425,000đ</strong>
-                </div>
+                @using System.Linq
+                @foreach (var item in Model.CartItems)
+                {
+                    <div class="product-item d-flex align-items-center mb-3">
+                        <div class="position-relative me-3">
+                            @{
+                                // Ép kiểu sang IEnumerable để LINQ hoạt động ổn định trên HashSet
+                                var images = item.ProductVariant?.Product?.ProductImages as IEnumerable<ASP.Models.Domains.ProductImage>;
+                                // Lấy ảnh đầu tiên an toàn
+                                var firstImageObj = images?.FirstOrDefault();
+                                var fileName = firstImageObj?.ImageUrl;
 
+                                // Nếu không có ảnh thì dùng mặc định
+                                if (string.IsNullOrEmpty(fileName)) { fileName = "default.jpg"; }
+                            }
+
+                            @* Dùng Url.Content để đảm bảo đường dẫn chính xác *@
+                            <img src="@Url.Content("~" + fileName)"
+                                 alt="Sản phẩm"
+                                 style="border-radius:8px; width:80px; height:80px; object-fit:cover;"
+                                 onerror="this.onerror=null; this.src='@Url.Content("~/images/default.jpg")';">
+
+                            <span class="quantity-badge" style="position: absolute; top: -10px; right: -10px; background: #dc3545; color: #fff; border-radius: 50%; padding: 2px 8px; font-size: 12px; font-weight: bold;">
+                                @item.Quantity
+                            </span>
+                        </div>
+
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">@item.ProductVariant.Product?.ProductName</h6>
+
+                            @* SỬA LỖI: Hiển thị Màu và Size thay vì lặp lại tên sản phẩm *@
+                            <small class="text-muted">
+                                @if (!string.IsNullOrEmpty(item.ProductVariant.Color))
+                                {
+                                    <span>Màu: @item.ProductVariant.Color</span>
+                                }
+                                @if (!string.IsNullOrEmpty(item.ProductVariant.Color) && !string.IsNullOrEmpty(item.ProductVariant.Size))
+                                {
+                                    <span> - </span>
+                                }
+                                @if (!string.IsNullOrEmpty(item.ProductVariant.Size))
+                                {
+                                    <span>Size: @item.ProductVariant.Size</span>
+                                }
+                            </small>
+                        </div>
+
+                        <strong class="ms-3">@((item.Quantity * item.ProductVariant.Price).ToString("N0"))đ</strong>
+                    </div>
+                }
                 <hr class="my-4" />
 
                 <div class="d-flex justify-content-between total-line mb-3">
                     <span>Tạm tính</span>
-                    <span>425,000đ</span>
+                    <span>@Model.TotalAmount.ToString("N0")đ</span>
                 </div>
+
                 <div class="d-flex justify-content-between total-line mb-3">
                     <span>Phí vận chuyển</span>
-                    <span>—</span>
+                    @* Bạn có thể để cứng 0 hoặc logic tính phí tại đây *@
+                    <span>Miễn phí</span>
                 </div>
 
                 <hr class="my-4" />
 
                 <div class="d-flex justify-content-between grand-total">
                     <span>Tổng cộng</span>
-                    <strong>VND 425,000đ</strong>
+                    <strong style="font-size: 1.25rem;">VND @Model.TotalAmount.ToString("N0")đ</strong>
                 </div>
 
                 <div class="mt-4">
