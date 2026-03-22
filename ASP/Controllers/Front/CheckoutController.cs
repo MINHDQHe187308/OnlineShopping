@@ -36,9 +36,11 @@ namespace ASP.Controllers.Front
             var shippingAddress = await _context.ShippingAddresses
                 .Where(s => s.UserId.Equals(cart.UserId))
                 .ToListAsync();
-
+            var defaultAddress = _context.ShippingAddresses
+                .Where( s=> s.IsDefault)
+                .FirstOrDefault(s=>s.UserId.Equals(cart.UserId));
             var user = await _userManager.GetUserAsync(User);
-            
+
             if (cart == null || !cart.CartItems.Any())
                 return RedirectToAction("Index", "Cart");
 
@@ -46,6 +48,7 @@ namespace ASP.Controllers.Front
             {
                 CartItems = cart.CartItems.ToList(),
                 Addresses = shippingAddress,
+                Address = defaultAddress,
                 user = user,
                 TotalAmount = cart.CartItems.Sum(x => x.Quantity * x.ProductVariant.Price)
             };
@@ -57,7 +60,7 @@ namespace ASP.Controllers.Front
         [HttpPost]
         public async Task<IActionResult> PlaceOrder(CheckoutViewModel model)
         {
-            var userId = User.Identity.Name;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
@@ -65,13 +68,23 @@ namespace ASP.Controllers.Front
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (cart == null || !cart.CartItems.Any())
-                return RedirectToAction("Index");
+            {
+                throw new Exception("Cart is null");
+            }
+
 
             // 1. Create Order
+            string formAddress = Request.Form["address"];
+            string formCity = Request.Form["city"];
+            string formWard = Request.Form["ward"];
+            var shippingAddress = _context.ShippingAddresses
+                .FirstOrDefault(a => a.UserId == userId && a.AddressLine == formAddress && a.City == formCity);
             var order = new Order
             {
                 UserId = userId,
                 OrderDate = DateTime.Now,
+                CreatedBy = cart.User.FullName,
+                ShippingAddress = shippingAddress,
                 Status = "Pending",
                 TotalAmount = cart.CartItems.Sum(x => x.Quantity * x.ProductVariant.Price)
             };
@@ -103,7 +116,7 @@ namespace ASP.Controllers.Front
 
         public IActionResult Success()
         {
-            return View();
+            return View("~/Views/Front/Checkout/Success.cshtml");
         }
     }
 }

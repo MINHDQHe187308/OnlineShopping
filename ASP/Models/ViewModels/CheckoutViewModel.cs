@@ -9,6 +9,7 @@ namespace ASP.Models.ViewModels
         public List<CartItem> CartItems { get; set; }
 
         public List<ShippingAddress> Addresses { get; set; }
+        public ShippingAddress Address { get; set; }
 
         public ApplicationUser user { get; set; }
 

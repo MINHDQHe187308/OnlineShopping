@@ -159,11 +159,11 @@
 
             <h2 class="section-title">Thông tin giao hàng</h2>
 
-            <form>
+            <form asp-controller="Checkout" asp-action="PlaceOrder" method="post">
                 <div class="mb-4">
                     <label class="form-label">Địa chỉ</label>
                     <div style="display: flex">
-                        <input type="text" id="address" readonly class="form-control form-control-lg" style="margin-right: 5px;" placeholder="Nhập địa chỉ chi tiết..." />
+                        <input type="text" id="address" value="@Model.Address.AddressLine" name="address" readonly class="form-control form-control-lg" style="margin-right: 5px;" placeholder="Nhập địa chỉ chi tiết..." />
                         <button type="button"
                                 class="btn btn-outline-primary"
                                 data-bs-toggle="modal"
@@ -177,19 +177,24 @@
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label class="form-label">Tỉnh / Thành phố</label>
-                        <input type="text" id="city" readonly class="form-control form-control-lg">
+                        <input type="text" id="city" value="@Model.Address.City" name="city" readonly class="form-control form-control-lg">
 
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Quận / Huyện</label>
-                        <input type="text" id="ward" readonly class="form-control form-control-lg">
+                        <input type="text" id="district" name="district" value="@Model.Address.District" readonly class="form-control form-control-lg">
+
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Phường / Xã</label>
+                        <input type="text" id="ward" name="ward" value="@Model.Address.Ward" readonly class="form-control form-control-lg">
 
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label">Số điện thoại</label>
-                    <input type="tel" id="tel" readonly class="form-control form-control-lg" placeholder="Ví dụ: 0987654321" />
+                    <input type="tel" id="tel" value="@Model.Address.User.PhoneNumber" readonly class="form-control form-control-lg" placeholder="Ví dụ: 0987654321" />
                 </div>
 
                 <div class="mb-5">
@@ -230,7 +235,7 @@
                     <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
                         ← Quay lại giỏ hàng
                     </a>
-                    <button type="button" class="btn btn-complete-order">
+                    <button type="submit" class="btn btn-complete-order">
                         Hoàn tất đơn hàng
                     </button>
                 </div>
@@ -347,7 +352,7 @@
                                        data-phone="@add.User.PhoneNumber">
                                 <div class="flex-grow-1">
                                     <div class="d-flex justify-content-between">
-                                        <strong>@add.FullName <span class="text-muted fw-normal ms-2">@add.Phone</span></strong>
+                                        <strong>@add.FullName <span class="text-muted fw-normal ms-2">@add.User.PhoneNumber</span></strong>
                                         <a href="#" class="text-primary text-decoration-none small">Cập nhật</a>
                                     </div>
                                     <div class="text-muted small mt-1">
@@ -397,7 +402,8 @@
                         console.log(this.dataset);
 
                         document.getElementById("city").value = this.dataset.city;
-                        document.getElementById("ward").value = this.dataset.district;
+                        document.getElementById("district").value = this.dataset.district;
+                        document.getElementById("ward").value = this.dataset.ward;
                         document.getElementById("address").value = this.dataset.address;
                         document.getElementById("tel").value = this.dataset.phone;
 
