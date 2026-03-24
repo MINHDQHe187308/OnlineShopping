@@ -91,6 +91,17 @@ namespace ASP.Policies
             new OperationAuthorizationRequirement { Name = "ASPProductVariantsDelete" };
         #endregion
 
+        #region Categories policies
+        public static OperationAuthorizationRequirement ASPCategoriesView =
+            new OperationAuthorizationRequirement { Name = "ASPCategoriesView" };
+        public static OperationAuthorizationRequirement ASPCategoriesCreate =
+            new OperationAuthorizationRequirement { Name = "ASPCategoriesCreate" };
+        public static OperationAuthorizationRequirement ASPCategoriesUpdate =
+            new OperationAuthorizationRequirement { Name = "ASPCategoriesUpdate" };
+        public static OperationAuthorizationRequirement ASPCategoriesDelete =
+            new OperationAuthorizationRequirement { Name = "ASPCategoriesDelete" };
+        #endregion
+
         #region Orders policies
         public static OperationAuthorizationRequirement ASPOrdersView =
             new OperationAuthorizationRequirement { Name = "ASPOrdersView" };
