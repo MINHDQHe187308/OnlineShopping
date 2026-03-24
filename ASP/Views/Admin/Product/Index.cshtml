@@ -16,7 +16,7 @@
                     <a class="btn btn-success"
                        asp-action="Create"
                        asp-route-filter="@Model.RouteValue["filter"]"
-                       asp-route-categoryId="@Model.RouteValue["categoryId"]"
+                       asp-route-categoryIdSearch="@Model.RouteValue["categoryIdSearch"]"
                        asp-route-page="@Model.PageIndex">
                         <i class="fas fa-plus-square"></i> Thêm mới
                     </a>
@@ -47,7 +47,7 @@
 
                         <div class="col-md-4">
                             <label>Category</label>
-                            <select class="form-control" name="categoryId">
+                            <select class="form-control" name="categoryIdSearch">
                                 <option value="">All</option>
 
                                 @foreach (var c in ViewBag.Categories)
@@ -123,7 +123,7 @@
                                 <a asp-action="Edit"
                                    asp-route-id="@item.ProductId"
                                    asp-route-filter="@Model.RouteValue["filter"]"
-                                   asp-route-categoryId="@Model.RouteValue["categoryId"]"
+                                   asp-route-categoryIdSearch="@Model.RouteValue["categoryIdSearch"]"
                                    asp-route-page="@Model.PageIndex"
                                    class="badge badge-primary">
                                     <i class="fas fa-edit"></i> Edit
@@ -133,7 +133,17 @@
                                    class="badge badge-info">
                                     <i class="fas fa-eye"></i> View
                                 </a> *@
-                                
+
+                                <a asp-controller="ProductImage"
+                                   asp-action="Index"
+                                   asp-route-productId="@item.ProductId"
+                                   asp-route-filter="@Model.RouteValue["filter"]"
+                                   asp-route-categoryIdSearch="@Model.RouteValue["categoryIdSearch"]"
+                                   asp-route-page="@Model.PageIndex"
+                                   class="badge badge-warning">
+                                    <i class="fas fa-image"></i> Images
+                                </a>
+
                                 <a href="#"
                                    onclick="deleteProduct(@item.ProductId)"
                                    class="badge badge-danger">

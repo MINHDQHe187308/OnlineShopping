@@ -1,0 +1,211 @@
+﻿@model IEnumerable<ASP.Models.Domains.ProductImage>
+
+@{
+    ViewData["Title"] = "Product Images";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+
+<div class="content-wrapper">
+
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <a class="btn btn-success"
+                       asp-action="Create"
+                       asp-route-productId="@ViewBag.ProductId"
+                       asp-route-filter="@ViewBag.Filter"
+                       asp-route-categoryIdSearch="@ViewBag.categoryIdSearch"
+                       asp-route-page="@ViewBag.Page">
+                        <i class="fas fa-plus-square"></i> Thêm ảnh
+                    </a>
+
+                    <a class="btn btn-secondary"
+                       asp-controller="Product"
+                       asp-action="Index"
+                       asp-route-filter="@ViewBag.Filter"
+                       asp-route-categoryIdSearch="@ViewBag.categoryIdSearch"
+                       asp-route-page="@ViewBag.Page">
+                        Back
+                    </a>
+                </div>
+
+                <div class="col-md-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item">
+                            <a asp-route="admin.dashboard">
+                                <i class="fas fa-home"></i> Home
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Product" asp-action="Index">
+                                Product
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active">Images</li>
+                    </ol>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <section class="content">
+
+        <div class="container-fluid">
+
+            <div id="toastMessage"
+                 style="position:fixed;top:20px;right:20px;z-index:9999;display:none"
+                 class="alert alert-danger">
+            </div>
+
+            <h3>Images of @ViewBag.ProductName</h3>
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Image</th>
+                        <th>Main</th>
+                        <th width="200">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @{
+                        int count = 0;
+                    }
+
+                    @foreach (var item in Model)
+                    {
+                        count++;
+                        <tr>
+                            <td>@count</td>
+                            <td>
+                                <img src="@item.ImageUrl" width="100" />
+                            </td>
+
+                            <td>
+                                @if (item.IsMain)
+                                {
+                                    <span class="badge badge-success">
+                                        Main
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-secondary">
+                                        Normal
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                @if (!item.IsMain)
+                                {
+                                    <a href="#"
+                                       onclick="setMain(@item.ProductImageId)"
+                                       class="badge badge-warning">
+                                        Set Main
+                                    </a>
+                                }
+                                <a href="#"
+                                   onclick="deleteImage(@item.ProductImageId)"
+                                   class="badge badge-danger">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        function deleteImage(id)
+        {
+            if (!confirm("Delete image?"))
+                return;
+
+            fetch("/admin/productimage/delete/" + id,{
+                method:"POST"
+            })
+            .then(res=>res.json())
+            .then(data=>{
+
+                if(data.success)
+                {
+                    showSuccess("Xóa ảnh thành công")
+
+                    setTimeout(function(){
+                        location.reload()
+                    },1200)
+                }
+                else
+                {
+                    showError(data.message)
+                }
+
+            })
+        }
+
+        function setMain(id)
+        {
+            fetch("/admin/productimage/setmain/" + id,{
+                method:"POST"
+            })
+            .then(res=>res.json())
+            .then(data=>{
+
+                if(data.success)
+                {
+                    showSuccess("Đã đặt ảnh chính")
+
+                    setTimeout(function(){
+                        location.reload()
+                    },1200)
+                }
+                else
+                {
+                    showError(data.message)
+                }
+
+            })
+        }
+
+
+        function showError(message)
+        {
+            var toast = document.getElementById("toastMessage");
+
+            toast.className = "alert alert-danger";
+            toast.innerText = message;
+            toast.style.display = "block";
+
+            setTimeout(function(){
+                toast.style.display = "none";
+            },5000);
+        }
+
+        function showSuccess(message)
+        {
+            var toast = document.getElementById("toastMessage");
+
+            toast.className = "alert alert-success";
+            toast.innerText = message;
+            toast.style.display = "block";
+        }
+
+    </script>
+
+}

@@ -16,7 +16,7 @@ namespace ASP.Controllers.Admin
         }
 
         [Route("")]
-        public IActionResult Index(string? filter, int? categoryId, int page = 1)
+        public IActionResult Index(string? filter, int? categoryIdSearch, int page = 1)
         {
             var query = _context.Products
                 .Include(x => x.Category)
@@ -28,32 +28,43 @@ namespace ASP.Controllers.Admin
                 query = query.Where(x => x.ProductName.Contains(filter));
             }
 
-            if (categoryId != null && categoryId > 0)
+            if (categoryIdSearch != null && categoryIdSearch > 0)
             {
-                query = query.Where(x => x.CategoryId == categoryId);
+                query = query.Where(x => x.CategoryId == categoryIdSearch);
             }
 
-            var model = PagingList.Create(query, 10, page);
+            int pageSize = 10;
 
-            model.RouteValue = new RouteValueDictionary 
+            int totalItems = query.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            if (page > totalPages && totalPages > 0)
+            {
+                page = totalPages;
+            }
+
+            var model = PagingList.Create(query, pageSize, page);
+
+            model.RouteValue = new RouteValueDictionary
             {
                 { "filter", filter },
-                { "categoryId", categoryId }
+                { "categoryIdSearch", categoryIdSearch }
             };
 
             ViewBag.Categories = _context.Categories.ToList();
-            ViewBag.CategoryId = categoryId;
+            ViewBag.categoryIdSearch = categoryIdSearch;
 
             return View("~/Views/Admin/Product/Index.cshtml", model);
         }
 
+
         [HttpGet]
         [Route("create")]
-        public IActionResult Create(string? filter, int? categoryId, int page = 1)
+        public IActionResult Create(string? filter, int? categoryIdSearch, int page = 1)
         {
             ViewBag.Categories = _context.Categories.ToList();
             ViewBag.Filter = filter;
-            ViewBag.CategoryId = categoryId;
+            ViewBag.categoryIdSearch = categoryIdSearch;
             ViewBag.Page = page;
 
 
@@ -62,7 +73,7 @@ namespace ASP.Controllers.Admin
 
         [HttpPost]
         [Route("create")]
-        public IActionResult Create(Product product, string? filter, int? categoryId, int page = 1)
+        public IActionResult Create(Product product, string? filter, int? categoryIdSearch, int page = 1)
         {
             // bỏ validate navigation
             ModelState.Remove("Category");
@@ -77,7 +88,7 @@ namespace ASP.Controllers.Admin
                 return RedirectToAction("Index", new
                 {
                     filter = filter,
-                    categoryId = categoryId,
+                    categoryIdSearch = categoryIdSearch,
                     page = page
                 });
             }
@@ -85,13 +96,13 @@ namespace ASP.Controllers.Admin
             ViewBag.Categories = _context.Categories.ToList();
             ViewBag.Filter = filter;
             ViewBag.Page = page;
-            ViewBag.CategoryId = categoryId;
+            ViewBag.categoryIdSearch = categoryIdSearch;
             return View("~/Views/Admin/Product/Create.cshtml", product);
         }
 
         [HttpGet]
         [Route("edit/{id}")]
-        public IActionResult Edit(int id, string? filter, int? categoryId, int page = 1)
+        public IActionResult Edit(int id, string? filter, int? categoryIdSearch, int page = 1)
         {
             var product = _context.Products
                 .FirstOrDefault(x => x.ProductId == id);
@@ -103,7 +114,7 @@ namespace ASP.Controllers.Admin
 
             ViewBag.Categories = _context.Categories.ToList();
             ViewBag.Filter = filter;
-            ViewBag.CategoryId = categoryId;
+            ViewBag.categoryIdSearch = categoryIdSearch;
             ViewBag.Page = page;
 
             return View("~/Views/Admin/Product/Edit.cshtml", product);
@@ -111,26 +122,34 @@ namespace ASP.Controllers.Admin
 
         [HttpPost]
         [Route("edit/{id}")]
-        public IActionResult Edit(int id, Product model, string? filter, int? categoryId, int page = 1)
+        public IActionResult Edit(int id, Product model, string? filter, int? categoryIdSearch, int page = 1)
         {
             //System.Diagnostics.Debug.WriteLine("POST RUNNING");
 
             ModelState.Remove("Category");
             ModelState.Remove("ProductImages");
             ModelState.Remove("ProductVariants");
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Categories = _context.Categories.ToList();
-                ViewBag.Filter = filter;
-                ViewBag.CategoryId = categoryId;
-                ViewBag.Page = page;
-                return View("~/Views/Admin/Product/Edit.cshtml", model);
-            }
 
             var product = _context.Products.FirstOrDefault(x => x.ProductId == id);
 
             if (product == null)
                 return NotFound();
+
+            bool hasImage = _context.ProductImages.Any(x => x.ProductId == id);
+
+            if (model.IsActive && !hasImage)
+            {
+                ModelState.AddModelError("IsActive", "Sản phẩm phải có ít nhất 1 ảnh trước khi kích hoạt.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categories = _context.Categories.ToList();
+                ViewBag.Filter = filter;
+                ViewBag.categoryIdSearch = categoryIdSearch;
+                ViewBag.Page = page;
+                return View("~/Views/Admin/Product/Edit.cshtml", model);
+            }
 
             product.ProductName = model.ProductName;
             product.CategoryId = model.CategoryId;
@@ -143,7 +162,7 @@ namespace ASP.Controllers.Admin
             return RedirectToAction("Index", new
             {
                 filter = filter,
-                categoryId = categoryId,
+                categoryIdSearch = categoryIdSearch,
                 page = page
             });
         }

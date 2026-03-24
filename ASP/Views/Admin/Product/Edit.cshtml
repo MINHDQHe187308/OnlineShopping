@@ -86,7 +86,7 @@
                     </div>
 
                     <input type="hidden" name="filter" value="@ViewBag.Filter" />
-                    <input type="hidden" name="categoryId" value="@ViewBag.CategoryId" />
+                    <input type="hidden" name="categoryIdSearch" value="@ViewBag.categoryIdSearch" />
                     <input type="hidden" name="page" value="@ViewBag.Page" />
 
                     <div class="box-footer">
@@ -95,7 +95,7 @@
                             <a class="btn btn-secondary"
                                asp-action="Index"
                                asp-route-filter="@ViewBag.Filter"
-                               asp-route-categoryId="@ViewBag.CategoryId"
+                               asp-route-categoryIdSearch="@ViewBag.categoryIdSearch"
                                asp-route-page="@ViewBag.Page">
                                 <i class="fas fa-arrow-left"></i> Quay lại
                             </a>

@@ -52,23 +52,24 @@
                 </div>
 
                 <!-- Status -->
-                <div class="form-group">
+                @* <div class="form-group">
                     <label>Trạng thái</label>
                     <select asp-for="IsActive" class="form-control">
                         <option value="true">Hoạt động</option>
                         <option value="false">Ẩn</option>
                    </select>
-                </div>
+                </div> *@
+                <input type="hidden" name="IsActive" value="false" />
 
                 <input type="hidden" name="filter" value="@ViewBag.Filter" />
                 <input type="hidden" name="page" value="@ViewBag.Page" />
-                <input type="hidden" name="categoryId" value="@ViewBag.CategoryId" />
+                <input type="hidden" name="categoryIdSearch" value="@ViewBag.categoryIdSearch" />
 
                 <div class="text-right">
                     <a class="btn btn-secondary"
                        asp-action="Index"
                        asp-route-filter="@ViewBag.Filter"
-                       asp-route-categoryId="@ViewBag.CategoryId"
+                       asp-route-categoryIdSearch="@ViewBag.categoryIdSearch"
                        asp-route-page="@ViewBag.Page">
                         <i class="fas fa-arrow-left"></i> Quay lại
                     </a>
