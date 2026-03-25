@@ -1,0 +1,80 @@
+﻿@model ASP.Models.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "Cập nhật địa chỉ";
+    Layout = "~/Views/Shared/Layout/Front/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Chỉnh sửa địa chỉ giao hàng</h5>
+                </div>
+                <div class="card-body p-4">
+                    @* Form gửi về ShippingController, Action Update *@
+                    <form asp-controller="Shipping" asp-action="Update" method="post" >
+                        @* Quan trọng: Cần AddressId ẩn để Controller biết đang cập nhật bản ghi nào *@
+                        <input type="hidden" asp-for="Address.AddressId" />
+                        <input type="hidden" asp-for="Address.UserId" />
+                        <input type="hidden" asp-for="Address.Phone" />
+                        <input type="hidden" asp-for="Address.FullName" />
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Address.City" class="form-label fw-bold">Tỉnh/Thành phố</label>
+                                <input asp-for="Address.City" class="form-control" placeholder="Ví dụ: Hà Nội" />
+                                <span asp-validation-for="Address.City" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Address.District" class="form-label fw-bold">Quận/Huyện</label>
+                                <input asp-for="Address.District" class="form-control" placeholder="Ví dụ: Cầu Giấy" />
+                                <span asp-validation-for="Address.District" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Address.Ward" class="form-label fw-bold">Phường/Xã</label>
+                                <input asp-for="Address.Ward" class="form-control" placeholder="Ví dụ: Dịch Vọng" />
+                                <span asp-validation-for="Address.Ward" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label asp-for="Address.AddressLine" class="form-label fw-bold">Địa chỉ chi tiết (Số nhà, tên đường...)</label>
+                                <textarea asp-for="Address.AddressLine" class="form-control" rows="3" placeholder="Nhập địa chỉ cụ thể của bạn"></textarea>
+                                <span asp-validation-for="Address.AddressLine" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <div class="form-check form-switch">
+                                    <input asp-for="Address.IsDefault" class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                                    <label class="form-check-label" asp-for="Address.IsDefault">Đặt làm địa chỉ nhận hàng mặc định</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            @* Nút quay lại trang danh sách *@
+                            <a asp-controller="Checkout" asp-action="Index" class="text-decoration-none text-muted">
+                                <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+                            </a>
+
+                            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow-sm">
+                                <i class="fas fa-save me-1"></i> Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* Client-side validation: Giúp báo lỗi ngay lập tức mà không cần load lại trang *@
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

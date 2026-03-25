@@ -24,25 +24,29 @@ namespace ASP.Controllers.Front
         // GET: Checkout page
         public async Task<IActionResult> Index()
         {
-
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            // 1. Lấy giỏ hàng trước
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
                 .ThenInclude(ci => ci.ProductVariant)
                 .ThenInclude(pv => pv.Product)
                 .ThenInclude(p => p.ProductImages)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
-            var shippingAddress = await _context.ShippingAddresses
-                .Where(s => s.UserId.Equals(cart.UserId))
-                .ToListAsync();
-            var defaultAddress = _context.ShippingAddresses
-                .Where( s=> s.IsDefault)
-                .FirstOrDefault(s=>s.UserId.Equals(cart.UserId));
-            var user = await _userManager.GetUserAsync(User);
 
+            // 2. KIỂM TRA NULL NGAY LẬP TỨC
             if (cart == null || !cart.CartItems.Any())
                 return RedirectToAction("Index", "Cart");
+
+            // 3. Bây giờ mới lấy các dữ liệu khác dựa trên userId
+            var shippingAddress = await _context.ShippingAddresses
+                .Where(s => s.UserId == userId)
+                .ToListAsync();
+
+            var defaultAddress = shippingAddress.FirstOrDefault(s => s.IsDefault)
+                                 ?? shippingAddress.FirstOrDefault();
+
+            var user = await _userManager.GetUserAsync(User);
 
             var vm = new CheckoutViewModel
             {
@@ -50,7 +54,7 @@ namespace ASP.Controllers.Front
                 Addresses = shippingAddress,
                 Address = defaultAddress,
                 user = user,
-                TotalAmount = cart.CartItems.Sum(x => x.Quantity * x.ProductVariant.Price)
+                TotalAmount = cart.CartItems.Sum(x => x.Quantity * (x.ProductVariant?.Price ?? 0))
             };
 
             return View("~/Views/Front/Checkout/Index.cshtml", vm);

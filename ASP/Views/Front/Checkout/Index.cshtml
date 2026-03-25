@@ -353,7 +353,7 @@
                                 <div class="flex-grow-1">
                                     <div class="d-flex justify-content-between">
                                         <strong>@add.FullName <span class="text-muted fw-normal ms-2">@add.User.PhoneNumber</span></strong>
-                                        <a href="#" class="text-primary text-decoration-none small">Cập nhật</a>
+                                        <a asp-controller="Shipping" asp-action="Index" asp-route-id="@add.AddressId" class="text-primary text-decoration-none small">Cập nhật</a>
                                     </div>
                                     <div class="text-muted small mt-1">
                                         @add.AddressLine, @add.District, @add.Ward, @add.City
