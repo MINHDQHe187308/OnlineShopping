@@ -177,7 +177,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Controllers\Front\" />
 		<Folder Include="DTO\" />
 		<Folder Include="Logs\" />
 		<Folder Include="Models\Front\" />
