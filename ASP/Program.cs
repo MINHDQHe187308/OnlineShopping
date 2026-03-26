@@ -201,4 +201,5 @@ app.UseEndpoints(endpoints =>
 #endregion
 
 app.MapHub<OrderHub>("/orderHub");
+app.MapHub<ProductHub>("/productHub");
 app.Run();
