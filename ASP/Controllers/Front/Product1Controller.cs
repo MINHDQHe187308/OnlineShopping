@@ -7,11 +7,11 @@ using OfficeOpenXml;
 using Microsoft.AspNetCore.Authorization;
 namespace ASP.Controllers.Front
 {
-    public class ProductController : Controller
+    public class Product1Controller : Controller
     {
         private readonly ProductRepositoryInterface _productRepository;
         private readonly ProductImageRepositoryInterface _productImageRepository;
-        public ProductController(ProductRepositoryInterface productRepository, ProductImageRepositoryInterface productImageRepository    )
+        public Product1Controller(ProductRepositoryInterface productRepository, ProductImageRepositoryInterface productImageRepository    )
         {
             _productRepository = productRepository;
             _productImageRepository = productImageRepository;
