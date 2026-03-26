@@ -60,6 +60,8 @@ namespace ASP.Controllers.Front
             _context.ShippingAddresses.Add(newAddress);
             await _context.SaveChangesAsync();
 
+            TempData["SuccessMessage"] = "Thêm địa chỉ mới thành công!";
+
             return RedirectToAction("Index", "Checkout");
         }
     }

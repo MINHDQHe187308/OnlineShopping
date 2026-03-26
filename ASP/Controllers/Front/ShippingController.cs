@@ -78,8 +78,8 @@ namespace ASP.Controllers.Front
 
             _context.ShippingAddresses.Update(existing);
             await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index", "Shipping", new { id = existing.AddressId });
+            TempData["SuccessMessage"] = "Cập nhật địa chỉ thành công!";
+            return RedirectToAction("Index", "Checkout", new { id = existing.AddressId });
         }
     }
 }

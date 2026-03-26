@@ -386,6 +386,24 @@
 
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        var message = '@Html.Raw(TempData["SuccessMessage"])';
+            if (message) {
+                Swal.fire({
+                    title: 'Thành công!',
+                    text: message,
+                    icon: 'success',
+                    timer: 3000, 
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end' 
+                });
+            }
+        });
+    </script>
     <script>
         // Chỉ để demo chọn phương thức (giao diện)
         document.querySelectorAll('.payment-method').forEach(item => {
