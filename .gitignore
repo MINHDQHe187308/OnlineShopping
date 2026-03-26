@@ -2,3 +2,6 @@ bin/
 obj/
 .vs/
 *.user
+/ASP/Migrations/20260315100846_InitCreate.cs
+/ASP/Migrations/20260315100846_InitCreate.Designer.cs
+/ASP/Migrations/ASPDbContextModelSnapshot.cs
