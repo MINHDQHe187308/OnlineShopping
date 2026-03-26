@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace ASP.Policies
 {
@@ -78,6 +78,33 @@ namespace ASP.Policies
             new OperationAuthorizationRequirement { Name = "ASPLeadtimeUpdate" };
         public static OperationAuthorizationRequirement ASPLeadtimeDelete =
             new OperationAuthorizationRequirement { Name = "ASPLeadtimeDelete" };
+        #endregion
+
+        #region Product variants policies
+        public static OperationAuthorizationRequirement ASPProductVariantsView =
+            new OperationAuthorizationRequirement { Name = "ASPProductVariantsView" };
+        public static OperationAuthorizationRequirement ASPProductVariantsCreate =
+            new OperationAuthorizationRequirement { Name = "ASPProductVariantsCreate" };
+        public static OperationAuthorizationRequirement ASPProductVariantsUpdate =
+            new OperationAuthorizationRequirement { Name = "ASPProductVariantsUpdate" };
+        public static OperationAuthorizationRequirement ASPProductVariantsDelete =
+            new OperationAuthorizationRequirement { Name = "ASPProductVariantsDelete" };
+        #endregion
+
+        #region Categories policies
+        public static OperationAuthorizationRequirement ASPCategoriesView =
+            new OperationAuthorizationRequirement { Name = "ASPCategoriesView" };
+        public static OperationAuthorizationRequirement ASPCategoriesCreate =
+            new OperationAuthorizationRequirement { Name = "ASPCategoriesCreate" };
+        public static OperationAuthorizationRequirement ASPCategoriesUpdate =
+            new OperationAuthorizationRequirement { Name = "ASPCategoriesUpdate" };
+        public static OperationAuthorizationRequirement ASPCategoriesDelete =
+            new OperationAuthorizationRequirement { Name = "ASPCategoriesDelete" };
+        #endregion
+
+        #region Orders policies
+        public static OperationAuthorizationRequirement ASPOrdersView =
+            new OperationAuthorizationRequirement { Name = "ASPOrdersView" };
         #endregion
     }
 }

@@ -1,0 +1,166 @@
+@using ASP.Models.ViewModels.OrderDetails
+@model OrderDetailViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng #" + Model.OrderId;
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+
+<div class="content-wrapper" style="min-height: 422px;">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a asp-route="admin.dashboard">
+                                        <i class="fas fa-home"></i> Home
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <a asp-route="admin.orders">Đơn hàng</a>
+                                </li>
+                                <li class="breadcrumb-item active">Chi tiết đơn #@Model.OrderId</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-xs-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Thông tin đơn hàng #@Model.OrderId</h3>
+                            <div class="box-tools pull-right">
+                                <a asp-route="admin.orders" class="btn btn-default btn-sm">
+                                    <i class="fas fa-arrow-left"></i> Quay lại
+                                </a>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4>Thông tin khách hàng</h4>
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td style="width: 150px;"><strong>Tên khách hàng:</strong></td>
+                                            <td>@Model.UserName</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Email:</strong></td>
+                                            <td>@Model.UserEmail</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Số điện thoại:</strong></td>
+                                            <td>@Model.UserPhone</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4>Thông tin đơn hàng</h4>
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td style="width: 150px;"><strong>Mã đơn hàng:</strong></td>
+                                            <td>#@Model.OrderId</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Ngày đặt hàng:</strong></td>
+                                            <td>@Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Trạng thái:</strong></td>
+                                            <td>
+                                                <span class="badge badge-@(Model.Status == "Completed" ? "success" : Model.Status == "Pending" ? "warning" : "info")">
+                                                    @Model.Status
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Tổng tiền:</strong></td>
+                                            <td><strong>@Model.TotalAmount.ToString("N0") VNĐ</strong></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <h4>Địa chỉ giao hàng</h4>
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td style="width: 150px;"><strong>Địa chỉ:</strong></td>
+                                            <td>
+                                                @(Model.ShippingAddress ?? "N/A")
+                                                @if (!string.IsNullOrEmpty(Model.ShippingCity))
+                                                {
+                                                    <text>, @Model.ShippingCity</text>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.ShippingCountry))
+                                                {
+                                                    <text>, @Model.ShippingCountry</text>
+                                                }
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <h4>Chi tiết sản phẩm</h4>
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" style="width: 60px;">Ảnh</th>
+                                                <th>Sản phẩm</th>
+                                                <th>Biến thể</th>
+                                                <th class="text-center" style="width: 80px;">Số lượng</th>
+                                                <th class="text-right" style="width: 120px;">Đơn giá</th>
+                                                <th class="text-right" style="width: 120px;">Thành tiền</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.OrderDetails)
+                                            {
+                                                <tr>
+                                                    <td class="text-center">
+                                                        @if (!string.IsNullOrEmpty(item.ProductImage))
+                                                        {
+                                                            <img src="@item.ProductImage" alt="@item.ProductName" style="width: 50px; height: 50px; object-fit: cover;" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="fas fa-image" style="font-size: 30px; color: #ccc;"></i>
+                                                        }
+                                                    </td>
+                                                    <td>@item.ProductName</td>
+                                                    <td>@item.VariantName</td>
+                                                    <td class="text-center">@item.Quantity</td>
+                                                    <td class="text-right">@item.UnitPrice.ToString("N0")</td>
+                                                    <td class="text-right">@item.TotalPrice.ToString("N0")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="5" class="text-right"><strong>Tổng cộng:</strong></td>
+                                                <td class="text-right"><strong>@Model.TotalAmount.ToString("N0") VNĐ</strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

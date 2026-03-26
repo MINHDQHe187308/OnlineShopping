@@ -1,0 +1,231 @@
+﻿@using ReflectionIT.Mvc.Paging
+@addTagHelper *, ReflectionIT.Mvc.Paging
+@model PagingList<ASP.Models.Domains.Product>
+
+@{
+    ViewData["Title"] = "Products";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+
+<div class="content-wrapper">
+
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="btn btn-success"
+                       asp-action="Create"
+                       asp-route-filter="@Model.RouteValue["filter"]"
+                       asp-route-categoryIdSearch="@Model.RouteValue["categoryIdSearch"]"
+                       asp-route-page="@Model.PageIndex">
+                        <i class="fas fa-plus-square"></i> Thêm mới
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a asp-route="admin.dashboard"><i class="fas fa-home"></i> Home</a></li>
+                        <li class="breadcrumb-item active">Product</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <form method="get" asp-controller="Product" asp-action="Index">
+                <fieldset>
+                    <legend>Bộ lọc</legend>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Tên sản phẩm</label>
+                            <input class="form-control"
+                                   name="filter"
+                                   value="@Model.RouteValue["filter"]"
+                                   placeholder="Search product..." />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Category</label>
+                            <select class="form-control" name="categoryIdSearch">
+                                <option value="">All</option>
+
+                                @foreach (var c in ViewBag.Categories)
+                                {
+                                    <option value="@c.CategoryId"
+                                            selected="@(ViewBag.CategoryId == c.CategoryId)">
+                                        @c.CategoryName
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-3" style="margin-top:30px">
+                            <button class="btn btn-info">
+                                <i class="fas fa-search"></i> Tìm kiếm
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-eraser"></i> Clear
+                            </a>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+
+            <br />
+
+            <div id="toastMessage"
+                 style="position:fixed;top:20px;right:20px;z-index:9999;display:none"
+                 class="alert alert-danger">
+            </div>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ảnh</th>
+                        <th>@Html.SortableHeaderFor(x => x.ProductName)</th>
+                        <th>Category</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th width="200">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int count = 0;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        count++;
+                        <tr>
+                            <td>@count</td>
+                            <td>
+                                @if (item.ProductImages != null && item.ProductImages.Any())
+                                {
+                                    <img src="@item.ProductImages.First().ImageUrl" width="60" />
+                                }
+                            </td>
+                            <td>@item.ProductName</td>
+                            <td>@item.Category?.CategoryName</td>
+                            <td>@item.Quantity</td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge badge-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">Inactive</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.ProductId"
+                                   asp-route-filter="@Model.RouteValue["filter"]"
+                                   asp-route-categoryIdSearch="@Model.RouteValue["categoryIdSearch"]"
+                                   asp-route-page="@Model.PageIndex"
+                                   class="badge badge-primary">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                @* <a asp-action="Details"
+                                   asp-route-id="@item.ProductId"
+                                   class="badge badge-info">
+                                    <i class="fas fa-eye"></i> View
+                                </a> *@
+
+                                <a asp-controller="ProductImage"
+                                   asp-action="Index"
+                                   asp-route-productId="@item.ProductId"
+                                   asp-route-filter="@Model.RouteValue["filter"]"
+                                   asp-route-categoryIdSearch="@Model.RouteValue["categoryIdSearch"]"
+                                   asp-route-page="@Model.PageIndex"
+                                   class="badge badge-warning">
+                                    <i class="fas fa-image"></i> Images
+                                </a>
+
+                                <a href="#"
+                                   onclick="deleteProduct(@item.ProductId)"
+                                   class="badge badge-danger">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <section class="sct-pagination">
+                <span>
+                    Page @Model.PageIndex / @Model.PageCount
+                    (Total: @Model.TotalRecordCount)
+                </span>
+                <div class="pagination pagination-sm m-0 float-right">
+                    <nav>
+                        <vc:pager paging-list="@Model" />
+                    </nav>
+                </div>
+            </section>
+
+        </div>
+    </section>
+</div>
+
+
+
+@section Scripts {
+
+    <script>
+
+        function deleteProduct(id)
+        {
+            if (!confirm("Delete product?"))
+                return;
+
+            fetch("/admin/product/delete/" + id, {
+                method: "POST"
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.success)
+                {
+                    showSuccess("Xóa sản phẩm thành công");
+
+                    setTimeout(function(){
+                        location.reload();
+                    },1500);
+                }
+                else
+                {
+                    showError(data.message);
+                }
+
+            });
+        }
+
+        function showError(message)
+        {
+            var toast = document.getElementById("toastMessage");
+
+            toast.className = "alert alert-danger";
+            toast.innerText = message;
+            toast.style.display = "block";
+
+            setTimeout(function(){
+                toast.style.display = "none";
+            },5000);
+        }
+
+        function showSuccess(message)
+        {
+            var toast = document.getElementById("toastMessage");
+
+            toast.className = "alert alert-success";
+            toast.innerText = message;
+            toast.style.display = "block";
+        }
+
+    </script>
+
+}

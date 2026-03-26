@@ -1,0 +1,123 @@
+@using ASP.Models.ViewModels.Orders
+@using ReflectionIT.Mvc.Paging
+@addTagHelper *, ReflectionIT.Mvc.Paging
+@model PagingList<OrderListItem>
+
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+
+<div class="content-wrapper" style="min-height: 422px;">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a asp-route="admin.dashboard">
+                                        <i class="fas fa-home"></i> Home
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item active">Đơn hàng</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-xs-12">
+                    <div class="box">
+                        <div class="clearfix box-body p-2">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <form method="get" class="search-form">
+                                        <div class="form-row">
+                                            <div class="col-md-3 mb-2">
+                                                <label for="status">Trạng thái</label>
+                                                @Html.DropDownList(
+                                                    "status",
+                                                    new SelectList((IEnumerable<SelectListItem>)ViewBag.StatusList, "Value", "Text"),
+                                                    "-- Tất cả --",
+                                                    new { @class = "form-control" })
+                                            </div>
+                                            <div class="col-md-3 mb-2">
+                                                <label for="fromDate">Từ ngày</label>
+                                                <input type="date" class="form-control" id="fromDate" name="fromDate" value="@(Model.RouteValue["fromDate"])">
+                                            </div>
+                                            <div class="col-md-3 mb-2">
+                                                <label for="toDate">Đến ngày</label>
+                                                <input type="date" class="form-control" id="toDate" name="toDate" value="@(Model.RouteValue["toDate"])">
+                                            </div>
+                                            <div class="col-md-3 mb-2">
+                                                <label for="psize">Số bản ghi/trang</label>
+                                                <select asp-items="@ASP.BaseCommon.BaseController.BasePageSize()" asp-for="@Model.RouteValue["psize"]" class="form-control" name="psize">
+                                                    <option value="">-- Any --</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row mt-2">
+                                            <div class="col-md-12 text-right">
+                                                <button type="submit" class="btn btn-info">
+                                                    <i class="fas fa-search"></i> Lọc
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">@Html.SortableHeaderFor(m => m.OrderId)</th>
+                                        <th>@Html.SortableHeaderFor(m => m.UserName)</th>
+                                        <th>@Html.SortableHeaderFor(m => m.OrderDate)</th>
+                                        <th>@Html.SortableHeaderFor(m => m.TotalAmount)</th>
+                                        <th>@Html.SortableHeaderFor(m => m.Status)</th>
+                                        <th class="text-center">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.OrderId</td>
+                                            <td>@item.UserName</td>
+                                            <td>@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>@item.TotalAmount.ToString("N0")</td>
+                                            <td>@item.Status</td>
+                                            <td class="text-center">
+                                                <a asp-route="admin.orders.details" asp-route-id="@item.OrderId" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i> Chi tiết
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                            <section class="sct-pagination">
+                                <span class="page-count">Trang @Model.PageIndex / @Model.PageCount</span>
+                                <span>, &nbsp;&nbsp;Tổng số bản ghi: @Model.TotalRecordCount</span>
+                                <div class="pagination pagination-sm m-0 float-right">
+                                    <nav aria-label="Orders navigation bottom">
+                                        <vc:pager paging-list="@Model" />
+                                    </nav>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+

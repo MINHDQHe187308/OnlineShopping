@@ -1,0 +1,44 @@
+@model ASP.Models.Domains.Category
+@{
+    ViewData["Title"] = "Danh mục - Chỉnh sửa";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+<div class="content-wrapper" style="min-height: 422px;">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-route="admin.categories"><i class="fa fa-list"></i> Danh mục</a></li>
+                        <li class="breadcrumb-item active"> Chỉnh sửa</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="box box-primary card-body">
+                <form autocomplete="off" method="POST" asp-route="admin.categories.update" asp-route-id="@Model.CategoryId" accept-charset="UTF-8">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="CategoryId" />
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="CategoryName">Tên danh mục</label>
+                                    <input asp-for="CategoryName" placeholder="Tên danh mục ..." class="form-control" />
+                                    <span asp-validation-for="CategoryName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer text-right">
+                        <a class="btn btn-default" asp-route="admin.categories"><i class="fas fa-arrow-circle-left"></i> Quay lại</a>
+                        <button class="btn btn-primary" type="submit"><i class="fas fa-save"></i> Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>

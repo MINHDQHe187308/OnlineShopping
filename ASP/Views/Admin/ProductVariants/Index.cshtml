@@ -1,0 +1,173 @@
+@using ASP.BaseCommon
+@using ASP.Policies
+@using ReflectionIT.Mvc.Paging
+@addTagHelper *, ReflectionIT.Mvc.Paging
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model PagingList<ASP.Models.Domains.ProductVariant>
+
+@{
+    ViewData["Title"] = "Biến thể sản phẩm";
+    Layout = "../Shared/Layout/Admin/_Layout";
+}
+
+<div class="content-wrapper" style="min-height: 422px;">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPProductVariantsCreate)).Succeeded)
+                            {
+                                <a class="btn btn-success add-button" asp-route="admin.productvariants.create"><i class="fas fa-plus-square"></i> Thêm mới</a>
+                            }
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a asp-route="admin.dashboard"><i class="fas fa-home"></i> Home</a></li>
+                                <li class="breadcrumb-item active">Biến thể sản phẩm</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-xs-12">
+                    <div class="box">
+                        <div class="clearfix box-body p-2">
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <form method="get" class="search-form">
+                                        <div class="form-row">
+                                            <div class="col-md-4 mb-2">
+                                                <label for="searchString">Tìm kiếm</label>
+                                                <input type="text" class="form-control" id="searchString" name="searchString" 
+                                                       placeholder="Tên sản phẩm, SKU, Size, Color..." 
+                                                       value="@Model.RouteValue["searchString"]">
+                                            </div>
+                                            <div class="col-md-3 mb-2">
+                                                <label for="psize">Số bản ghi/trang</label>
+                                                <select asp-items="@ASP.BaseCommon.BaseController.BasePageSize()" asp-for="@Model.RouteValue["psize"]" class="form-control" name="psize">
+                                                    <option value="">-- Any --</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-5 mb-2 d-flex align-items-end">
+                                                <button type="submit" class="btn btn-info mr-2">
+                                                    <i class="fas fa-search"></i> Tìm kiếm
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">@Html.SortableHeaderFor(m => m.VariantId)</th>
+                                        <th>Sản phẩm</th>
+                                        <th>@Html.SortableHeaderFor(m => m.SKU)</th>
+                                        <th>@Html.SortableHeaderFor(m => m.Size)</th>
+                                        <th>@Html.SortableHeaderFor(m => m.Color)</th>
+                                        <th>@Html.SortableHeaderFor(m => m.Price)</th>
+                                        <th>@Html.SortableHeaderFor(m => m.QuantityVariants)</th>
+                                        <th>@Html.SortableHeaderFor(m => m.IsActive)</th>
+                                        <th class="text-center">Tác vụ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@item.VariantId</td>
+                                            <td>@(item.Product != null ? item.Product.ProductName : "N/A")</td>
+                                            <td>@item.SKU</td>
+                                            <td>@item.Size</td>
+                                            <td>@item.Color</td>
+                                            <td>@item.Price.ToString("N0")</td>
+                                            <td>@item.QuantityVariants</td>
+                                            <td>
+                                                @if (item.IsActive)
+                                                {
+                                                    <span class="badge badge-success">Kích hoạt</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">Đã khóa</span>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPProductVariantsUpdate)).Succeeded)
+                                                {
+                                                    <a asp-route="admin.productvariants.edit" asp-route-id="@item.VariantId" class="btn btn-sm btn-primary" title="Sửa">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                }
+                                                @if ((await AuthorizationService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPProductVariantsDelete)).Succeeded)
+                                                {
+                                                    <a onclick="return confirm('Bạn muốn Xóa bản ghi này?')" 
+                                                       asp-route="admin.productvariants.delete" asp-route-id="@item.VariantId" 
+                                                       class="btn btn-sm btn-danger" title="Xóa">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                            <section class="sct-pagination">
+                                <span class="page-count">Trang @Model.PageIndex / @Model.PageCount</span>
+                                <span>, &nbsp;&nbsp;Tổng số bản ghi: @Model.TotalRecordCount</span>
+                                <div class="pagination pagination-sm m-0 float-right">
+                                    <nav aria-label="Product Variants navigation">
+                                        <vc:pager paging-list="@Model" />
+                                    </nav>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var connection = new signalR.HubConnectionBuilder()
+                .withUrl("/adminHub")
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            connection.on("VariantCreated", function (variant) {
+                console.log("Variant created for product: " + variant.productId);
+                window.location.reload();
+            });
+
+            connection.on("VariantUpdated", function (variant) {
+                console.log("Variant updated for product: " + variant.productId);
+                window.location.reload();
+            });
+
+            connection.on("VariantDeleted", function (variantId, productId) {
+                console.log("Variant deleted: " + variantId + " for product: " + productId);
+                window.location.reload();
+            });
+
+            connection.start().then(function () {
+                console.log("Connected to AdminHub successfully (Product Variants).");
+            }).catch(function (err) {
+                return console.error("AdminHub connection error: " + err.toString());
+            });
+        });
+    </script>
+}
