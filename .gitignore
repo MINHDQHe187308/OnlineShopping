@@ -1,4 +1,9 @@
+# .NET / Visual Studio
 bin/
 obj/
-.vs/
 *.user
+*.suo
+*.userprefs
+*.cache
+*.tmp
+ASP/ASP.csproj.Backup.tmp
