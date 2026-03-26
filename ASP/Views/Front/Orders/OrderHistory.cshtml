@@ -1,0 +1,165 @@
+﻿@model List<ASP.Models.Domains.Order>
+@{
+    ViewData["Title"] = "Lịch sử đơn hàng";
+    Layout = "~/Views/Shared/Layout/Front/_Layout.cshtml";
+}
+
+<style>
+    .nav-tabs .nav-link {
+        color: #495057;
+        font-weight: 500;
+        border: none;
+        border-bottom: 3px solid transparent;
+    }
+
+        .nav-tabs .nav-link.active {
+            color: #ee4d2d;
+            border-bottom-color: #ee4d2d;
+            background: none;
+        }
+
+    .order-item-card {
+        display: block;
+    }
+    /* Mặc định hiện tất cả */
+    .status-badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 4px;
+    }
+</style>
+
+<div class="container py-5">
+    <h2 class="fw-bold mb-4 text-center">ĐƠN HÀNG CỦA TÔI</h2>
+
+    <ul class="nav nav-tabs nav-justified mb-4 bg-white shadow-sm sticky-top" style="top: 70px; z-index: 1020;">
+        <li class="nav-item">
+            <a class="nav-link active" href="javascript:void(0)" onclick="filterOrders('All', this)">Tất cả</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0)" onclick="filterOrders('Pending', this)">Chờ xử lý</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0)" onclick="filterOrders('Success', this)">Hoàn thành</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0)" onclick="filterOrders('Canceled', this)">Đã hủy</a>
+        </li>
+    </ul>
+
+    <div id="order-list">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="text-center py-5 bg-white shadow-sm rounded">
+                <p class="text-muted">Bạn chưa có đơn hàng nào.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var order in Model)
+            {
+                @* Thêm data-status để JS lọc *@
+                <div class="card mb-4 shadow-sm border-0 order-item-card" data-status="@order.Status">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3 border-bottom">
+                        <div>
+                            <span class="fw-bold text-uppercase">#@order.OrderId</span>
+                            <span class="text-muted ms-2 small">@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        <div class="text-end">
+                            @{
+                                string badgeClass = order.Status switch
+                                {
+                                                    "Pending" => "bg-warning text-dark",
+                                                    "Success" => "bg-success text-white",
+                                                    "Canceled" => "bg-danger text-white",
+                                    _ => "bg-secondary text-white"
+                                };
+                            }
+                            <span class="status-badge @badgeClass">@order.Status.ToUpper()</span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        @foreach (var item in order.OrderDetails)
+                        {
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="@Url.Content("~" + (item.ProductVariant?.Product?.ProductImages?.FirstOrDefault()?.ImageUrl ?? "/images/default.jpg"))"
+                                     class="rounded border" style="width: 80px; height: 80px; object-fit: cover;">
+                                <div class="ms-3 flex-grow-1">
+                                    <h6 class="mb-0 fw-bold">@item.ProductVariant?.Product?.ProductName</h6>
+                                    <p class="mb-0 text-muted small">Phân loại: @item.ProductVariant?.Color, @item.ProductVariant?.Size</p>
+                                    <div class="small">@item.Quantity</div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="text-danger fw-bold">@item.UnitPrice.ToString("N0")đ</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-footer bg-white py-3 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                @if (order.Status == "Pending")
+                                {
+                                    <button onclick="updateStatus(@order.OrderId, 'Success')" class="btn btn-sm btn-success me-2">Đã nhận hàng</button>
+                                    <button onclick="updateStatus(@order.OrderId, 'Canceled')" class="btn btn-sm btn-outline-danger">Hủy đơn</button>
+                                }
+                            </div>
+                            <div class="text-end">
+                                <span class="me-2 text-muted">Tổng số tiền:</span>
+                                <span class="fs-4 fw-bold text-danger">@order.TotalAmount.ToString("N0")đ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Hàm lọc đơn hàng theo Tab
+        function filterOrders(status, element) {
+            // Đổi active tab
+            document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active'));
+            element.classList.add('active');
+
+            const cards = document.querySelectorAll('.order-item-card');
+            cards.forEach(card => {
+                if (status === 'All' || card.getAttribute('data-status') === status) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Hàm cập nhật trạng thái (giữ nguyên logic cũ)
+        function updateStatus(orderId, newStatus) {
+            let msg = newStatus === 'Success' ? 'Xác nhận đã nhận hàng?' : 'Bạn muốn hủy đơn hàng này?';
+
+            Swal.fire({
+                title: 'Thông báo',
+                text: msg,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: newStatus === 'Success' ? '#198754' : '#dc3545',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Bỏ qua'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post('/Order/UpdateStatus', { orderId: orderId, status: newStatus }, function (res) {
+                        if (res.success) {
+                            Swal.fire('Thành công', res.message, 'success').then(() => location.reload());
+                        } else {
+                            Swal.fire('Lỗi', res.message, 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}
