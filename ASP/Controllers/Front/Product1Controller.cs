@@ -11,13 +11,15 @@ namespace ASP.Controllers.Front
     {
         private readonly ProductRepositoryInterface _productRepository;
         private readonly ProductImageRepositoryInterface _productImageRepository;
-        public Product1Controller(ProductRepositoryInterface productRepository, ProductImageRepositoryInterface productImageRepository    )
+        private readonly ASP.Models.ASPModel.ASPDbContext _context;
+        public Product1Controller(ProductRepositoryInterface productRepository, ProductImageRepositoryInterface productImageRepository, ASP.Models.ASPModel.ASPDbContext context)
         {
             _productRepository = productRepository;
             _productImageRepository = productImageRepository;
+            _context = context;
         }
 
-      
+
         public IActionResult RemoteStore()
         {
             try
@@ -37,16 +39,112 @@ namespace ASP.Controllers.Front
             }
         }
 
-        public IActionResult Index(int? category = null)
+        public IActionResult Index(
+           string? keyword,
+           int? category,
+           string? size,
+           string? color,
+           decimal? minPrice,
+           decimal? maxPrice,
+           string? sort)
         {
-            var products = _productRepository.GetAllProducts1();
-            if (category.HasValue)
+            var query = _productRepository.QueryProducts();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
             {
-                products = products.Where(p => p.CategoryId == category.Value).ToList();
+                keyword = keyword.Trim();
+                query = query.Where(p =>
+                    p.ProductName.Contains(keyword) ||
+                    (p.Description != null && p.Description.Contains(keyword)));
             }
 
+            if (category.HasValue)
+            {
+                query = query.Where(p => p.CategoryId == category.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(size))
+            {
+                query = query.Where(p => p.ProductVariants.Any(v => v.Size == size));
+            }
+
+            if (!string.IsNullOrWhiteSpace(color))
+            {
+                query = query.Where(p => p.ProductVariants.Any(v => v.Color == color));
+            }
+
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p => p.ProductVariants.Any(v => v.Price >= minPrice.Value));
+            }
+
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p => p.ProductVariants.Any(v => v.Price <= maxPrice.Value));
+            }
+
+            switch (sort)
+            {
+                case "price_asc":
+                    query = query.OrderBy(p => p.ProductVariants.Min(v => (decimal?)v.Price) ?? 0);
+                    break;
+
+                case "price_desc":
+                    query = query.OrderByDescending(p => p.ProductVariants.Max(v => (decimal?)v.Price) ?? 0);
+                    break;
+
+                case "newest":
+                    query = query.OrderByDescending(p => p.ProductId);
+                    break;
+
+                case "popular":
+                    query = query
+                        .OrderByDescending(p => _context.OrderDetails
+                            .Where(od => od.ProductVariant.ProductId == p.ProductId)
+                            .Sum(od => (int?)od.Quantity) ?? 0);
+                    break;
+
+                case "order_count":
+                    query = query
+                        .OrderByDescending(p => _context.OrderDetails
+                            .Count(od => od.ProductVariant.ProductId == p.ProductId));
+                    break;
+
+                default:
+                    query = query.OrderByDescending(p => p.ProductId);
+                    break;
+            }
+
+            var allProducts = query.ToList();
+
+            var sizeOptions = allProducts
+                .SelectMany(p => p.ProductVariants ?? new List<ProductVariant>())
+                .Where(v => !string.IsNullOrWhiteSpace(v.Size))
+                .Select(v => v.Size!)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+
+            var colorOptions = allProducts
+                .SelectMany(p => p.ProductVariants ?? new List<ProductVariant>())
+                .Where(v => !string.IsNullOrWhiteSpace(v.Color))
+                .Select(v => v.Color!)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+
+            ViewBag.Keyword = keyword;
             ViewBag.SelectedCategory = category;
-            return View("~/Views/Front/Products/Index.cshtml", products);
+            ViewBag.SelectedSize = size;
+            ViewBag.SelectedColor = color;
+            ViewBag.MinPrice = minPrice;
+            ViewBag.MaxPrice = maxPrice;
+            ViewBag.Sort = sort;
+
+            ViewBag.SizeOptions = sizeOptions;
+            ViewBag.ColorOptions = colorOptions;
+
+            return View("~/Views/Front/Products/Index.cshtml", allProducts);
         }
 
         public async Task<IActionResult> Details(int id)

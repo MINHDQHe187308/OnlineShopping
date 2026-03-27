@@ -6,16 +6,25 @@
 
 <div class="list-group list-group-flush">
 
-    <a href="@allUrl" class="list-group-item list-group-item-action py-3">
-        <i class="bi bi-grid-3x3-gap me-2"></i>Tất cả sản phẩm
+    <a href="@Url.Action("Index", "Product1")"
+   class="list-group-item list-group-item-action py-3">
+    <i class="bi bi-grid-3x3-gap me-2"></i>Tất cả sản phẩm
     </a>
 
     @foreach (var cat in Model)
     {
-        <a href="@Url.Action("Index", "Product1", new { category = cat.CategoryId })"
-           class="list-group-item list-group-item-action py-3">
-            @cat.CategoryName
-        </a>
+       <a href="@Url.Action("Index", "Product1", new {
+        category = cat.CategoryId,
+        keyword = ViewBag.Keyword,
+        size = ViewBag.SelectedSize,
+        color = ViewBag.SelectedColor,
+        minPrice = ViewBag.MinPrice,
+        maxPrice = ViewBag.MaxPrice,
+        sort = ViewBag.Sort
+        })"
+        class="list-group-item list-group-item-action py-3 @(ViewBag.SelectedCategory != null && (int)ViewBag.SelectedCategory == cat.CategoryId ? "active" : "")">
+        @cat.CategoryName
+       </a>
     }
 
 </div>

@@ -73,6 +73,173 @@
 
         <!-- Product grid -->
         <div class="col-lg-9">
+            <!-- Product filter -->
+            <form method="get" asp-controller="Product1" asp-action="Index" class="mb-4">
+                <div class="card shadow-sm rounded-4 border-0">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">Tìm kiếm</label>
+                                <input type="text"
+                                       name="keyword"
+                                       value="@ViewBag.Keyword"
+                                       class="form-control"
+                                       placeholder="Tên sản phẩm hoặc từ khóa..." />
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold">Size</label>
+                                <select name="size" class="form-select">
+                                    <option value="">Tất cả size</option>
+                                    @foreach (var item in (List<string>)ViewBag.SizeOptions ?? new List<string>())
+                                    {
+                                        if ((string?)ViewBag.SelectedSize == item)
+                                        {
+                                            <option value="@item" selected>@item</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item">@item</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold">Màu sắc</label>
+                                <select name="color" class="form-select">
+                                    <option value="">Tất cả màu</option>
+                                    @foreach (var item in (List<string>)ViewBag.ColorOptions ?? new List<string>())
+                                    {
+                                        if ((string?)ViewBag.SelectedColor == item)
+                                        {
+                                            <option value="@item" selected>@item</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item">@item</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold">Giá từ</label>
+                                <input type="number"
+                                       name="minPrice"
+                                       value="@ViewBag.MinPrice"
+                                       class="form-control"
+                                       min="0"
+                                       placeholder="0" />
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label fw-semibold">Đến</label>
+                                <input type="number"
+                                       name="maxPrice"
+                                       value="@ViewBag.MaxPrice"
+                                       class="form-control"
+                                       min="0"
+                                       placeholder="1000000" />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">Sắp xếp</label>
+                                <select name="sort" class="form-select">
+                                    <option value="">Mặc định</option>
+                                    @if ((string?)ViewBag.Sort == "newest")
+                                    {
+                                        <option value="newest" selected>Mới nhất</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="newest">Mới nhất</option>
+                                    }
+
+                                    @if ((string?)ViewBag.Sort == "price_asc")
+                                    {
+                                        <option value="price_asc" selected>Giá tăng dần</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="price_asc">Giá tăng dần</option>
+                                    }
+
+                                    @if ((string?)ViewBag.Sort == "price_desc")
+                                    {
+                                        <option value="price_desc" selected>Giá giảm dần</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="price_desc">Giá giảm dần</option>
+                                    }
+
+                                    @if ((string?)ViewBag.Sort == "popular")
+                                    {
+                                        <option value="popular" selected>Phổ biến nhất</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="popular">Phổ biến nhất</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-3 d-flex align-items-end">
+                                <input type="hidden" name="category" value="@ViewBag.SelectedCategory" />
+                                <button type="submit" class="btn btn-dark me-2">
+                                    <i class="bi bi-search me-1"></i>Áp dụng
+                                </button>
+                                <a asp-controller="Product1" asp-action="Index" class="btn btn-outline-secondary">
+                                    Reset
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            @if (!string.IsNullOrWhiteSpace(ViewBag.Keyword as string)
+                        || ViewBag.SelectedCategory != null
+                        || !string.IsNullOrWhiteSpace(ViewBag.SelectedSize as string)
+                        || !string.IsNullOrWhiteSpace(ViewBag.SelectedColor as string)
+                        || ViewBag.MinPrice != null
+                        || ViewBag.MaxPrice != null
+                        || !string.IsNullOrWhiteSpace(ViewBag.Sort as string))
+            {
+                <div class="alert alert-light border rounded-4 mb-4">
+                    <strong>Bộ lọc hiện tại:</strong>
+                    @if (!string.IsNullOrWhiteSpace(ViewBag.Keyword as string))
+                    {
+                        <span class="badge bg-dark me-2">Keyword: @ViewBag.Keyword</span>
+                    }
+                    @if (ViewBag.SelectedCategory != null)
+                    {
+                        <span class="badge bg-primary me-2">Category: @ViewBag.SelectedCategory</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(ViewBag.SelectedSize as string))
+                    {
+                        <span class="badge bg-success me-2">Size: @ViewBag.SelectedSize</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(ViewBag.SelectedColor as string))
+                    {
+                        <span class="badge bg-info text-dark me-2">Color: @ViewBag.SelectedColor</span>
+                    }
+                    @if (ViewBag.MinPrice != null)
+                    {
+                        <span class="badge bg-warning text-dark me-2">Min: @ViewBag.MinPrice</span>
+                    }
+                    @if (ViewBag.MaxPrice != null)
+                    {
+                        <span class="badge bg-warning text-dark me-2">Max: @ViewBag.MaxPrice</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(ViewBag.Sort as string))
+                    {
+                        <span class="badge bg-secondary me-2">Sort: @ViewBag.Sort</span>
+                    }
+                </div>
+            }
+
             @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
             {
                 <div class="col-12 mb-5">
