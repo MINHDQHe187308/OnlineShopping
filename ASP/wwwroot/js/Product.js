@@ -164,9 +164,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentPrice = parseFloat(btn.dataset.price) || 0;
                 currentVariantId = parseInt(btn.dataset.variantId) || 0;
 
+                const selectedColor = btn.dataset.color || 'Chưa có màu';
+
                 const priceEl = document.getElementById('currentPrice');
                 if (priceEl) {
                     priceEl.textContent = currentPrice.toLocaleString('vi-VN') + ' đ';
+                }
+
+                const colorEl = document.getElementById('currentColor');
+                if (colorEl) {
+                    colorEl.textContent = selectedColor;
                 }
 
                 updateTotalPrice();

@@ -155,11 +155,14 @@ namespace ASP.Controllers.Front
                 return NotFound();
             }
 
+            var defaultVariant = product.ProductVariants?.OrderBy(v => v.VariantId).FirstOrDefault();
+
             var viewModel = new ProductDetailViewModel
             {
                 Product = product,
                 Images = product.ProductImages?.ToList() ?? new List<ProductImage>(),
-                DefaultVariant = product.ProductVariants?.OrderBy(v => v.VariantId).FirstOrDefault(),
+                DefaultVariant = defaultVariant,
+                CurrentColor = defaultVariant?.Color ?? "Chưa có màu"
             };
 
             viewModel.MainImageUrl = product.ProductImages
