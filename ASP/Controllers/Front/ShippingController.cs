@@ -1,7 +1,9 @@
-﻿using ASP.Models.ASPModel;
+﻿using ASP.Hubs;
+using ASP.Models.ASPModel;
 using ASP.Models.Domains;
 using ASP.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using SkiaSharp;
 using System.Security.Claims;
@@ -10,11 +12,13 @@ namespace ASP.Controllers.Front
 {
     public class ShippingController : Controller
     {
+        private readonly IHubContext<AddressHub> _hubContext;
         private readonly ASPDbContext _context;
 
-        public ShippingController(ASPDbContext context)
+        public ShippingController(ASPDbContext context, IHubContext<AddressHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
         public async Task<IActionResult> Index(int id)
         {
@@ -79,6 +83,7 @@ namespace ASP.Controllers.Front
             _context.ShippingAddresses.Update(existing);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Cập nhật địa chỉ thành công!";
+            await _hubContext.Clients.All.SendAsync("AddressMessage", model.Address);
             return RedirectToAction("Index", "Checkout", new { id = existing.AddressId });
         }
     }

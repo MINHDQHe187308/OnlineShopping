@@ -112,6 +112,8 @@ builder.Services.AddScoped<ProductImageRepositoryInterface, ProductImageReposito
 builder.Services.AddSingleton<IAuthorizationHandler, UserPolicyAuthorizationHandler>();
 #endregion
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR(); 
+
 #region config login
 
 builder.Services.AddIdentity<ApplicationUser, Role>(options =>
@@ -192,6 +194,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
 app.UseRequestLocalization();
+
+
+app.MapHub<AddressHub>("/chatHub");
 //ResourceValidator.ValidateResourceKeys(typeof(Register));
 #region route config
 app.UseEndpoints(endpoints =>
