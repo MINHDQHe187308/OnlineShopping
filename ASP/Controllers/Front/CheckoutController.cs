@@ -27,7 +27,6 @@ namespace ASP.Controllers.Front
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // 1. Lấy giỏ hàng trước
             var cart = await _context.Carts           
                 .Include(c => c.CartItems)
                 .ThenInclude(ci => ci.ProductVariant)
@@ -35,11 +34,9 @@ namespace ASP.Controllers.Front
                 .ThenInclude(p => p.ProductImages)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
-            // 2. KIỂM TRA NULL NGAY LẬP TỨC
             if (cart == null || !cart.CartItems.Any())
                 return RedirectToAction("Index", "Cart");
 
-            // 3. Bây giờ mới lấy các dữ liệu khác dựa trên userId
             var shippingAddress = await _context.ShippingAddresses
                 .Where(s => s.UserId == userId)
                 .ToListAsync();
@@ -61,7 +58,6 @@ namespace ASP.Controllers.Front
             return View("~/Views/Front/Checkout/Index.cshtml", vm);
         }
 
-        // POST: Handle checkout
         [HttpPost]
         public async Task<IActionResult> PlaceOrder(CheckoutViewModel model)
         {
@@ -79,7 +75,6 @@ namespace ASP.Controllers.Front
             }
 
 
-            // 1. Create Order
             string formAddress = Request.Form["address"];
             string formCity = Request.Form["city"];
             string formWard = Request.Form["ward"];
@@ -98,7 +93,6 @@ namespace ASP.Controllers.Front
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            // 2. Create OrderDetails
             foreach (var item in cart.CartItems)
             {
                 var orderDetail = new OrderDetail
@@ -109,6 +103,8 @@ namespace ASP.Controllers.Front
                     UnitPrice = item.ProductVariant.Price
                 };
 
+                Product product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == item.ProductVariant.ProductId);
+                product.Quantity -= item.Quantity;
                 _context.OrderDetails.Add(orderDetail);
             }
 
