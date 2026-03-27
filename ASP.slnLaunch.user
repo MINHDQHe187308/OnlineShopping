@@ -8,9 +8,8 @@
         "DebugTarget": "IIS Express"
       },
       {
-        "Path": "OrderSyncWorker\\DensoWorkerService.csproj",
-        "Action": "Start",
-        "DebugTarget": "OrderSyncWorker"
+        "Path": "SeverFashionShop\\SeverFashionShop.csproj",
+        "Action": "Start"
       }
     ]
   }

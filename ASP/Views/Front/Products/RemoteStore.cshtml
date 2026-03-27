@@ -1,0 +1,53 @@
+﻿@using ASP.Models.Domains
+@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Dữ liệu từ Socket Server";
+    Layout = "../Shared/Layout/Front/_Layout";
+}
+
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Sản phẩm từ Remote Server (TCP/IP)</h3>
+            <span class="badge bg-light text-primary">IP: 127.0.0.1:5000</span>
+        </div>
+        <div class="card-body">
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-warning">@ViewBag.Message</div>
+            }
+
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Số lượng</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>@p.ProductId</td>
+                            <td><strong>@p.ProductName</strong></td>
+                            <td>
+                                @(p.Category?.CategoryName ?? "N/A")
+                            </td>
+                            <td>@p.Quantity</td>
+                            <td>
+                                <span class="badge bg-success">Đã nhận từ Server</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer text-end">
+            <a href="@Url.Action("Index", "Product1")" class="btn btn-secondary">Quay về DB Local</a>
+        </div>
+    </div>
+</div>
