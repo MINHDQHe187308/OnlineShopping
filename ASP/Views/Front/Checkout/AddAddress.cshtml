@@ -13,7 +13,6 @@
                 </div>
                 <div class="card-body p-4">
                     <form asp-controller="AddAddress" asp-action="Add" method="post">
-                        @* UserId cực kỳ quan trọng để lưu vào DB *@
                         <input type="hidden" asp-for="Address.UserId" />
 
                         <div class="row">
