@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ASP.Models.Domains;
-using System.Threading.Tasks;
+﻿using ASP.Models.Domains;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace ASP.Controllers.Front
 {
@@ -9,13 +10,16 @@ namespace ASP.Controllers.Front
     {
         private readonly CartRepositoyInterface _cartRepo;
         private readonly CartItemRepositoryInterface _cartItemRepo;
+        private readonly ASP.Models.ASPModel.ASPDbContext _context;
 
         public CartController(
             CartRepositoyInterface cartRepo,
-            CartItemRepositoryInterface cartItemRepo)
+            CartItemRepositoryInterface cartItemRepo,
+            ASP.Models.ASPModel.ASPDbContext context)
         {
             _cartRepo = cartRepo;
             _cartItemRepo = cartItemRepo;
+            _context = context;
         }
 
         private string GetUserId()
@@ -47,9 +51,41 @@ namespace ASP.Controllers.Front
             var userId = GetUserId();
 
             if (string.IsNullOrEmpty(userId))
-                return Unauthorized();
+                return Unauthorized(new { message = "Vui lòng đăng nhập" });
+
+            if (model.Quantity < 1)
+                return BadRequest(new { message = "Số lượng phải lớn hơn 0" });
+
+            var variant = await _context.ProductVariants
+                .Include(v => v.Product)
+                .FirstOrDefaultAsync(v => v.VariantId == model.VariantId);
+
+            if (variant == null)
+                return BadRequest(new { message = "Không tìm thấy biến thể sản phẩm" });
+
+            if (!variant.IsActive)
+                return BadRequest(new { message = "Biến thể này hiện không còn hoạt động" });
+
+            if (variant.Product == null || !variant.Product.IsActive)
+                return BadRequest(new { message = "Sản phẩm này hiện không còn hoạt động" });
+
+            if (variant.QuantityVariants <= 0)
+                return BadRequest(new { message = "Biến thể này đã hết hàng" });
 
             var cart = await _cartRepo.GetOrCreateCartAsync(userId);
+
+            var existingItem = await _context.CartItems
+                .FirstOrDefaultAsync(ci => ci.CartId == cart.CartId && ci.VariantId == model.VariantId);
+
+            var currentQtyInCart = existingItem?.Quantity ?? 0;
+
+            if (currentQtyInCart + model.Quantity > variant.QuantityVariants)
+            {
+                return BadRequest(new
+                {
+                    message = $"Số lượng vượt quá tồn kho. Chỉ còn {variant.QuantityVariants} sản phẩm."
+                });
+            }
 
             await _cartItemRepo.AddToCartAsync(
                 cart.CartId,
@@ -66,7 +102,7 @@ namespace ASP.Controllers.Front
             });
         }
 
-       
+
         [HttpGet]
         public async Task<IActionResult> GetCartCount()
         {

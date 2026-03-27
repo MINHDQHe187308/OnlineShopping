@@ -1,6 +1,7 @@
 ﻿
 let currentPrice = 0;
 let currentVariantId = 0;
+let currentStock = 0;
 let productName = "";
 let mainImageUrl = "";
 
@@ -141,16 +142,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dataEl) {
         currentPrice = parseFloat(dataEl.dataset.price) || 0;
         currentVariantId = parseInt(dataEl.dataset.variantId) || 0;
+        currentStock = parseInt(dataEl.dataset.stock) || 0;
         productName = dataEl.dataset.name || "";
         mainImageUrl = dataEl.dataset.imageUrl || "/images/no-image.jpg";
 
         updateTotalPrice();
+        updateStockUI();
         const qtyInput = document.getElementById('quantity');
         if (qtyInput) {
             qtyInput.addEventListener('input', () => {
-                if (parseInt(qtyInput.value) < 1 || isNaN(parseInt(qtyInput.value))) {
-                    qtyInput.value = 1;
+                let qty = parseInt(qtyInput.value);
+
+                if (isNaN(qty) || qty < 1) {
+                    qty = 1;
                 }
+
+                if (currentStock > 0 && qty > currentStock) {
+                    qty = currentStock;
+                }
+
+                qtyInput.value = qty;
                 updateTotalPrice();
             });
         }
@@ -163,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 currentPrice = parseFloat(btn.dataset.price) || 0;
                 currentVariantId = parseInt(btn.dataset.variantId) || 0;
+                currentStock = parseInt(btn.dataset.stock) || 0;
 
                 const selectedColor = btn.dataset.color || 'Chưa có màu';
 
@@ -176,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     colorEl.textContent = selectedColor;
                 }
 
+                updateStockUI();
                 updateTotalPrice();
             });
         });
@@ -248,6 +261,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (currentVariantId <= 0) {
                     showCartMessage('Vui lòng chọn kích thước!', false);
+                    return;
+                }
+                if (currentStock <= 0) {
+                    showCartMessage('Biến thể này hiện đã hết hàng!', false);
+                    return;
+                }
+
+                if (qty > currentStock) {
+                    showCartMessage(`Chỉ còn ${currentStock} sản phẩm trong kho!`, false);
                     return;
                 }
 
@@ -323,3 +345,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 });
+
+function updateStockUI() {
+    const stockEl = document.getElementById('stockStatus');
+    const addBtn = document.getElementById('addToCart');
+    const qtyInput = document.getElementById('quantity');
+
+    if (stockEl) {
+        if (currentStock > 0) {
+            stockEl.className = 'badge bg-success px-3 py-2 fs-6';
+            stockEl.textContent = `Còn hàng (${currentStock})`;
+        } else {
+            stockEl.className = 'badge bg-danger px-3 py-2 fs-6';
+            stockEl.textContent = 'Hết hàng';
+        }
+    }
+
+    if (addBtn) {
+        if (currentStock > 0) {
+            addBtn.disabled = false;
+            addBtn.textContent = 'THÊM VÀO GIỎ HÀNG';
+        } else {
+            addBtn.disabled = true;
+            addBtn.textContent = 'TẠM HẾT HÀNG';
+        }
+    }
+
+    if (qtyInput) {
+        if (currentStock <= 0) {
+            qtyInput.value = 1;
+            qtyInput.max = 1;
+        } else {
+            if (parseInt(qtyInput.value) > currentStock) {
+                qtyInput.value = currentStock;
+            }
+            qtyInput.max = currentStock;
+        }
+    }
+}

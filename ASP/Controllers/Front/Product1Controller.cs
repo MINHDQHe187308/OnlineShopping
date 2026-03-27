@@ -172,32 +172,41 @@ namespace ASP.Controllers.Front
         public async Task<IActionResult> Details(int id)
         {
             var product = await _productRepository.GetProductByIdAsync(id);
-            if (product == null)
+
+            if (product == null || !product.IsActive)
             {
                 return NotFound();
             }
 
-            var defaultVariant = product.ProductVariants?.OrderBy(v => v.VariantId).FirstOrDefault();
+            product.ProductVariants = product.ProductVariants?
+                .Where(v => v.IsActive)
+                .OrderBy(v => v.VariantId)
+                .ToList();
+
+            if (product.ProductVariants == null || !product.ProductVariants.Any())
+            {
+                return NotFound();
+            }
+
+            var defaultVariant = product.ProductVariants.FirstOrDefault();
 
             var viewModel = new ProductDetailViewModel
             {
                 Product = product,
                 Images = product.ProductImages?.ToList() ?? new List<ProductImage>(),
                 DefaultVariant = defaultVariant,
-                CurrentColor = defaultVariant?.Color ?? "Chưa có màu"
+                CurrentColor = defaultVariant?.Color ?? "Chưa có màu",
+                CurrentPrice = defaultVariant?.Price ?? 0
             };
 
-            viewModel.MainImageUrl = product.ProductImages
-                ?.FirstOrDefault(x => x.IsMain)?.ImageUrl
+            viewModel.MainImageUrl = product.ProductImages?
+                .FirstOrDefault(x => x.IsMain)?.ImageUrl
                 ?? product.ProductImages?.FirstOrDefault()?.ImageUrl
                 ?? "/images/no-image.jpg";
 
-            viewModel.CurrentPrice = viewModel.DefaultVariant?.Price ?? 0;
-
-           
-
-            return View("~/Views/Front/Products/ProductDetail.cshtml",viewModel);
+            return View("~/Views/Front/Products/ProductDetail.cshtml", viewModel);
         }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportProductsFromFile(IFormFile file)

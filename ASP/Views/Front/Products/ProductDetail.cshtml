@@ -10,9 +10,11 @@
 <div id="product-data"
      data-price="@Model.CurrentPrice"
      data-variant-id="@(Model.DefaultVariant?.VariantId ?? 0)"
+     data-stock="@(Model.DefaultVariant?.QuantityVariants ?? 0)"
      data-name="@Model.Product.ProductName"
      data-image-url="@Model.MainImageUrl">
 </div>
+
 <div class="container py-5" style="font-family: 'Roboto', sans-serif;">
     <div class="mb-4">
         <a asp-controller="Product1" asp-action="Index" class="btn btn-outline-secondary">
@@ -86,19 +88,29 @@
                     @Model.CurrentColor
                 </span>
             </div>
+            <div class="mb-4">
+                <h5 class="mb-2">Tồn kho</h5>
+                <span id="stockStatus" class="badge bg-success px-3 py-2 fs-6">
+                    @(Model.DefaultVariant != null && Model.DefaultVariant.QuantityVariants > 0
+                                        ? $"Còn hàng ({Model.DefaultVariant.QuantityVariants})"
+                                        : "Hết hàng")
+                </span>
+            </div>
             <!-- Size selection -->
             <div class="size-selection mb-4">
                 <h5 class="mb-3">Kích cỡ</h5>
                 <div class="btn-group flex-wrap gap-2" role="group">
                     @foreach (var variant in Model.Product.ProductVariants ?? new List<ProductVariant>())
                     {
-                        var isActive = variant.VariantId == Model.DefaultVariant?.VariantId;
+                        var isSelected = variant.VariantId == Model.DefaultVariant?.VariantId;
+
                         <button type="button"
-                                class="btn btn-outline-dark size-btn @(isActive ? "active" : "")"
+                                class="btn btn-outline-dark size-btn @(isSelected ? "active" : "")"
                                 data-size="@variant.Size"
                                 data-price="@variant.Price"
                                 data-variant-id="@variant.VariantId"
-                                data-color="@variant.Color">
+                                data-color="@variant.Color"
+                                data-stock="@variant.QuantityVariants">
                             @variant.Size
                         </button>
                     }
@@ -125,8 +137,12 @@
             <!-- Actions -->
             <div class="actions d-flex flex-column flex-sm-row gap-3">
                 @Html.AntiForgeryToken()
-                <button class="btn btn-warning btn-lg flex-grow-1 fw-bold py-3" id="addToCart">
-                    THÊM VÀO GIỎ HÀNG
+                <button class="btn btn-warning btn-lg flex-grow-1 fw-bold py-3"
+                        id="addToCart"
+                        @(Model.DefaultVariant == null || Model.DefaultVariant.QuantityVariants <= 0 ? "disabled" : "")>
+                    @(Model.DefaultVariant != null && Model.DefaultVariant.QuantityVariants > 0
+                                        ? "THÊM VÀO GIỎ HÀNG"
+                                        : "TẠM HẾT HÀNG")
                 </button>
                 <button class="btn btn-outline-danger btn-lg wishlist-btn px-4" title="Yêu thích">
                     <i class="bi bi-heart fs-4"></i>
