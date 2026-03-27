@@ -50,14 +50,50 @@ namespace ASP.Controllers.Admin
         public async Task<IActionResult> Create(int productId, string? imageName, IFormFile imageFile, string? filter, int? categoryIdSearch, int page = 1)
         {
             if (imageFile == null || imageFile.Length == 0)
-                return Json(new { success = false, message = "Please select image" });
+            {
+                ModelState.AddModelError("ImageFile", "Please select image");
+                ViewBag.ProductId = productId;
+                ViewBag.Filter = filter;
+                ViewBag.categoryIdSearch = categoryIdSearch;
+                ViewBag.Page = page;
+                return View("~/Views/Admin/ProductImage/Create.cshtml");
+            }
 
-            var extension = Path.GetExtension(imageFile.FileName);
+            var allowedTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+            if (!allowedTypes.Contains(imageFile.ContentType))
+            {
+                    ModelState.AddModelError("ImageFile", "Only JPG, PNG, GIF, or WEBP images are allowed.");
+                    ViewBag.ProductId = productId;
+                    ViewBag.Filter = filter;
+                    ViewBag.categoryIdSearch = categoryIdSearch;
+                    ViewBag.Page = page;
+                    return View("~/Views/Admin/ProductImage/Create.cshtml");
+            }
 
-            if (string.IsNullOrWhiteSpace(imageName))
+            var extension = Path.GetExtension(imageFile.FileName).ToLower();
+
+            //if (string.IsNullOrWhiteSpace(imageName))
+            //{
+            //    imageName = Guid.NewGuid().ToString();
+            //}
+
+            if (!string.IsNullOrWhiteSpace(imageName))
+            {
+                var invalidChars = Path.GetInvalidFileNameChars();
+                imageName = string.Concat(imageName.Where(c => !invalidChars.Contains(c)));
+
+                imageName = imageName.TrimEnd('.');
+
+                if (string.IsNullOrWhiteSpace(imageName))
+                    imageName = Guid.NewGuid().ToString();
+            }
+            else
             {
                 imageName = Guid.NewGuid().ToString();
             }
+
+            if (imageName.Length > 50)
+                imageName = imageName.Substring(0, 50);
 
             var fileName = imageName + extension;
 
