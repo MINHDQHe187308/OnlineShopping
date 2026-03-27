@@ -49,10 +49,21 @@ namespace ASP.Controllers.Admin
             var hasAccess = await _authService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPProductVariantsCreate);
             if (!hasAccess.Succeeded) return new ForbidResult();
 
-            var products = _productRepo.GetAllProducts();
+            var products = _productRepo.GetAllProducts1().OrderBy(p => p.ProductName);
             ViewBag.ProductsList = new SelectList(products, "ProductId", "ProductName");
 
             return View("../Admin/ProductVariants/Add", new ProductVariant { IsActive = true });
+        }
+
+        [HttpGet]
+        [Route("admin/ProductVariant/GetProducts")]
+        public IActionResult GetProducts()
+        {
+            var products = _productRepo.GetAllProducts1()
+                .OrderBy(p => p.ProductName)
+                .Select(p => new { p.ProductId, p.ProductName })
+                .ToList();
+            return Json(products);
         }
 
         [HttpPost]
@@ -67,12 +78,13 @@ namespace ASP.Controllers.Admin
             if (ModelState.IsValid)
             {
                 await _variantRepo.CreateVariantAsync(variant);
+                _productRepo.RecalculateQuantity(variant.ProductId);
                 TempData["mess-type"] = "success";
                 TempData["mess-detail"] = BaseController.BaseMessage("create_success");
                 return RedirectToAction(nameof(Index));
             }
 
-            var products = _productRepo.GetAllProducts();
+            var products = _productRepo.GetAllProducts1().OrderBy(p => p.ProductName);
             ViewBag.ProductsList = new SelectList(products, "ProductId", "ProductName", variant.ProductId);
             TempData["mess-type"] = "error";
             TempData["mess-detail"] = BaseController.BaseMessage("create_fails");
@@ -89,7 +101,7 @@ namespace ASP.Controllers.Admin
             var variant = await _variantRepo.GetVariantByIdAsync(id);
             if (variant == null) return NotFound();
 
-            var products = _productRepo.GetAllProducts();
+            var products = _productRepo.GetAllProducts1().OrderBy(p => p.ProductName);
             ViewBag.ProductsList = new SelectList(products, "ProductId", "ProductName", variant.ProductId);
 
             return View("../Admin/ProductVariants/Edit", variant);
@@ -108,13 +120,23 @@ namespace ASP.Controllers.Admin
             ModelState.Remove("Product");
             if (ModelState.IsValid)
             {
+                var oldVariant = await _variantRepo.GetVariantByIdAsync(id);
+                var oldProductId = oldVariant?.ProductId ?? variant.ProductId;
+
                 await _variantRepo.UpdateVariantAsync(variant);
+
+                if (oldProductId != variant.ProductId)
+                {
+                    _productRepo.RecalculateQuantity(oldProductId);
+                }
+                _productRepo.RecalculateQuantity(variant.ProductId);
+
                 TempData["mess-type"] = "success";
                 TempData["mess-detail"] = BaseController.BaseMessage("update_success");
                 return RedirectToAction(nameof(Index));
             }
 
-            var products = _productRepo.GetAllProducts();
+            var products = _productRepo.GetAllProducts1().OrderBy(p => p.ProductName);
             ViewBag.ProductsList = new SelectList(products, "ProductId", "ProductName", variant.ProductId);
             TempData["mess-type"] = "error";
             TempData["mess-detail"] = BaseController.BaseMessage("update_fails");
@@ -128,7 +150,16 @@ namespace ASP.Controllers.Admin
             var hasAccess = await _authService.AuthorizeAsync(User, new DocumentAuth(), PolicyOperations.ASPProductVariantsDelete);
             if (!hasAccess.Succeeded) return new ForbidResult();
 
+            var variant = await _variantRepo.GetVariantByIdAsync(id);
+            var productId = variant?.ProductId ?? 0;
+
             await _variantRepo.DeleteVariantAsync(id);
+
+            if (productId > 0)
+            {
+                _productRepo.RecalculateQuantity(productId);
+            }
+
             TempData["mess-type"] = "success";
             TempData["mess-detail"] = BaseController.BaseMessage("delete_success");
             return RedirectToAction(nameof(Index));

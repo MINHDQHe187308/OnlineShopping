@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.EntityFrameworkCore;
 using ASP.Models.ASPModel;
 using System.Net.Sockets;
@@ -216,6 +216,18 @@ namespace ASP.Models.Domains
         public List<Category> GetCategories()
         {
             return _context.Categories.ToList();
+        }
+
+        public void RecalculateQuantity(int productId)
+        {
+            var product = _context.Products
+                .Include(p => p.ProductVariants)
+                .FirstOrDefault(p => p.ProductId == productId);
+
+            if (product == null) return;
+
+            product.Quantity = product.ProductVariants?.Sum(v => v.QuantityVariants) ?? 0;
+            _context.SaveChanges();
         }
     }
 

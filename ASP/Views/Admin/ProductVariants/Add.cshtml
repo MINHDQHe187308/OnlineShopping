@@ -86,3 +86,25 @@
         </div>
     </section>
 </div>
+
+@section Scripts {
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var connection = new signalR.HubConnectionBuilder()
+                .withUrl("/adminHub")
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            connection.on("ProductUpdated", function () {
+                location.reload();
+            });
+
+            connection.start().then(function () {
+                console.log("Connected to AdminHub successfully (ProductVariant Add).");
+            }).catch(function (err) {
+                return console.error("AdminHub connection error: " + err.toString());
+            });
+        });
+    </script>
+}
