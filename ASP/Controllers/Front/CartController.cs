@@ -29,7 +29,7 @@ namespace ASP.Controllers.Front
             var userId = GetUserId();
 
             if (string.IsNullOrEmpty(userId))
-                return RedirectToAction("Login", "Account");
+                return Redirect("/Login");
 
             var cart = await _cartRepo.GetCartWithItemsAsync(userId);
 
@@ -82,7 +82,7 @@ namespace ASP.Controllers.Front
             return Json(count);
         }
 
-       
+
         [HttpPost]
         public async Task<IActionResult> RemoveItem([FromBody] RemoveItemModel model)
         {
@@ -112,6 +112,60 @@ namespace ASP.Controllers.Front
                 message = "Đã xoá sản phẩm"
             });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateItem([FromBody] UpdateCartItemModel model)
+        {
+            var userId = GetUserId();
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "Vui lòng đăng nhập" });
+
+            if (model.Quantity < 1)
+                return BadRequest(new { message = "Số lượng phải lớn hơn 0" });
+
+            var cart = await _cartRepo.GetCartWithItemsAsync(userId);
+
+            if (cart == null || !cart.CartItems.Any())
+                return BadRequest(new { message = "Giỏ hàng trống" });
+
+            var item = cart.CartItems.FirstOrDefault(x => x.CartItemId == model.CartItemId);
+
+            if (item == null)
+                return BadRequest(new { message = "Không tìm thấy sản phẩm trong giỏ" });
+
+            await _cartItemRepo.UpdateQuantityAsync(model.CartItemId, model.Quantity);
+            await _cartRepo.SaveChangesAsync();
+
+            return Ok(new
+            {
+                success = true,
+                message = "Cập nhật số lượng thành công"
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ClearCart()
+        {
+            var userId = GetUserId();
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "Vui lòng đăng nhập" });
+
+            var cart = await _cartRepo.GetCartWithItemsAsync(userId);
+
+            if (cart == null || !cart.CartItems.Any())
+                return BadRequest(new { message = "Giỏ hàng trống" });
+
+            await _cartItemRepo.ClearCartAsync(cart.CartId);
+            await _cartRepo.SaveChangesAsync();
+
+            return Ok(new
+            {
+                success = true,
+                message = "Đã xóa toàn bộ giỏ hàng"
+            });
+        }
     }
 
 
@@ -125,5 +179,10 @@ namespace ASP.Controllers.Front
     public class RemoveItemModel
     {
         public int CartItemId { get; set; }
+    }
+    public class UpdateCartItemModel
+    {
+        public int CartItemId { get; set; }
+        public int Quantity { get; set; }
     }
 }

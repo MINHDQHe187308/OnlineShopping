@@ -37,7 +37,24 @@ namespace ASP.Models.Domains
         {
             _context.CartItems.Remove(item);
         }
+        public async Task UpdateQuantityAsync(int cartItemId, int quantity)
+        {
+            var item = await _context.CartItems.FirstOrDefaultAsync(x => x.CartItemId == cartItemId);
+            if (item != null)
+            {
+                item.Quantity = quantity;
+            }
+        }
+
+        public async Task ClearCartAsync(int cartId)
+        {
+            var items = await _context.CartItems
+                .Where(x => x.CartId == cartId)
+                .ToListAsync();
+
+            _context.CartItems.RemoveRange(items);
+        }
     }
 
-   
+
 }

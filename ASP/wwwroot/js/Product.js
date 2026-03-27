@@ -25,6 +25,21 @@ function changeQty(delta) {
     updateTotalPrice();
 }
 
+function showCartMessage(message, isSuccess) {
+    const messageEl = document.getElementById('cart-message');
+    if (!messageEl) {
+        alert(message);
+        return;
+    }
+
+    messageEl.textContent = message;
+    messageEl.classList.remove('d-none', 'alert-success', 'alert-danger');
+    messageEl.classList.add(isSuccess ? 'alert-success' : 'alert-danger');
+
+    setTimeout(() => {
+        messageEl.classList.add('d-none');
+    }, 3000);
+}
 
 function updateTotalPrice() {
     const input = document.getElementById('quantity');
@@ -84,6 +99,11 @@ function setupListAddToCart() {
                 },
                 body: JSON.stringify({ variantId: variantId, quantity: qty })
             });
+
+            if (response.status === 401) {
+                window.location.href = '/Login';
+                return;
+            }
 
             if (!response.ok) {
                 const errText = await response.text();
@@ -154,6 +174,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
        
+        //const addBtn = document.getElementById('addToCart');
+        //if (addBtn) {
+        //    addBtn.addEventListener('click', async (e) => {
+        //        e.preventDefault();
+
+        //        const qtyInput = document.getElementById('quantity');
+        //        const qty = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+
+        //        const activeSize = document.querySelector('.size-btn.active');
+        //        const sizeText = activeSize ? activeSize.textContent.trim() : 'Không chọn';
+
+        //        if (currentVariantId <= 0) {
+        //            alert('Vui lòng chọn kích thước!');
+        //            return;
+        //        }
+
+        //        try {
+        //            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+        //            const response = await fetch('/Cart/AddToCart', {
+        //                method: 'POST',
+        //                headers: {
+        //                    'Content-Type': 'application/json',
+        //                    ...(token && { 'RequestVerificationToken': token })
+        //                },
+        //                body: JSON.stringify({ variantId: currentVariantId, quantity: qty })
+        //            });
+
+        //            if (!response.ok) {
+        //                const errText = await response.text();
+        //                throw new Error(errText || 'Có lỗi xảy ra');
+        //            }
+
+        //            // Modal thành công
+        //            const modalEl = document.getElementById('addToCartSuccessModal');
+        //            if (modalEl) {
+        //                document.getElementById('modalProductImage').src = mainImageUrl;
+        //                document.getElementById('modalProductName').textContent = productName;
+        //                document.getElementById('modalSize').textContent = sizeText;
+        //                document.getElementById('modalQuantity').textContent = qty;
+        //                document.getElementById('modalPrice').textContent = (currentPrice * qty).toLocaleString('vi-VN');
+
+        //                const modal = new bootstrap.Modal(modalEl);
+        //                modal.show();
+        //            }
+
+        //            updateCartCount();
+
+        //        } catch (err) {
+        //            alert('Không thể thêm vào giỏ: ' + err.message);
+        //            console.error(err);
+        //        }
+        //    });
+        //}
         const addBtn = document.getElementById('addToCart');
         if (addBtn) {
             addBtn.addEventListener('click', async (e) => {
@@ -166,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sizeText = activeSize ? activeSize.textContent.trim() : 'Không chọn';
 
                 if (currentVariantId <= 0) {
-                    alert('Vui lòng chọn kích thước!');
+                    showCartMessage('Vui lòng chọn kích thước!', false);
                     return;
                 }
 
@@ -182,28 +256,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         body: JSON.stringify({ variantId: currentVariantId, quantity: qty })
                     });
 
+                    if (response.status === 401) {
+                        window.location.href = '/Login';
+                        return;
+                    }
+
+                    const result = await response.json().catch(() => null);
+
                     if (!response.ok) {
-                        const errText = await response.text();
-                        throw new Error(errText || 'Có lỗi xảy ra');
+                        showCartMessage(result?.message || 'Không thể thêm vào giỏ hàng!', false);
+                        return;
                     }
 
-                    // Modal thành công
-                    const modalEl = document.getElementById('addToCartSuccessModal');
-                    if (modalEl) {
-                        document.getElementById('modalProductImage').src = mainImageUrl;
-                        document.getElementById('modalProductName').textContent = productName;
-                        document.getElementById('modalSize').textContent = sizeText;
-                        document.getElementById('modalQuantity').textContent = qty;
-                        document.getElementById('modalPrice').textContent = (currentPrice * qty).toLocaleString('vi-VN');
-
-                        const modal = new bootstrap.Modal(modalEl);
-                        modal.show();
-                    }
-
-                    updateCartCount();
+                    await updateCartCount();
+                    showCartMessage(result?.message || 'Đã thêm vào giỏ hàng!', true);
 
                 } catch (err) {
-                    alert('Không thể thêm vào giỏ: ' + err.message);
+                    showCartMessage('Không thể thêm vào giỏ hàng!', false);
                     console.error(err);
                 }
             });
