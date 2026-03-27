@@ -1,4 +1,5 @@
 ﻿using ASP.Models.ASPModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace ASP.Models.Domains
 {
@@ -68,7 +69,7 @@ namespace ASP.Models.Domains
         // lấy product
         public Product? GetProduct(int productId)
         {
-            return _context.Products.FirstOrDefault(x => x.ProductId == productId);
+            return _context.Products.Include(p => p.ProductVariants).FirstOrDefault(x => x.ProductId == productId);
         }
 
         // update product

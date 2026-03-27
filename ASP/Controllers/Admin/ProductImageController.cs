@@ -107,6 +107,56 @@ namespace ASP.Controllers.Admin
         }
 
 
+        //[HttpPost("delete/{id}")]
+        //public async Task<IActionResult> DeleteAsync(int id)
+        //{
+        //    var img = _repo.GetImageById(id);
+
+        //    if (img == null)
+        //        return Json(new { success = false, message = "Image not found" });
+
+        //    int productId = img.ProductId;
+
+        //    if (img.IsMain)
+        //    {
+        //        var anotherImage = _repo.GetImagesByProductId(productId)
+        //            .FirstOrDefault(x => x.ProductImageId != img.ProductImageId);
+
+        //        if (anotherImage != null)
+        //        {
+        //            anotherImage.IsMain = true;
+        //        }
+        //    }
+
+        //    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", img.ImageUrl.TrimStart('/'));
+
+        //    if (System.IO.File.Exists(filePath))
+        //    {
+        //        System.IO.File.Delete(filePath);
+        //    }
+
+        //    _repo.DeleteImage(img);
+        //    await _hub.Clients.All.SendAsync("ProductImageUpdated", productId);
+        //    await _hub.Clients.All.SendAsync("ProductUpdated", productId);
+
+        //    bool hasImage = _repo.HasAnyImage(productId);
+
+        //    if (!hasImage)
+        //    {
+        //        var product = _repo.GetProduct(productId);
+
+        //        if (product != null)
+        //        {
+        //            product.IsActive = false;
+        //            _repo.UpdateProduct(product);
+        //        }
+        //    }
+
+        //    return Json(new { success = true });
+        //}
+
+
+
         [HttpPost("delete/{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
@@ -117,11 +167,21 @@ namespace ASP.Controllers.Admin
 
             int productId = img.ProductId;
 
+            var product = _repo.GetProduct(productId);
+
+            if (product == null)
+                return Json(new { success = false, message = "Product not found" });
+
+            var images = _repo.GetImagesByProductId(productId);
+
+            if (product.ProductVariants.Any() && images.Count == 1)
+            {
+                return Json(new { success = false, message = "Cannot delete the last image of a product that has variants." });
+            }
+
             if (img.IsMain)
             {
-                var anotherImage = _repo.GetImagesByProductId(productId)
-                    .FirstOrDefault(x => x.ProductImageId != img.ProductImageId);
-
+                var anotherImage = images.FirstOrDefault(x => x.ProductImageId != img.ProductImageId);
                 if (anotherImage != null)
                 {
                     anotherImage.IsMain = true;
@@ -129,31 +189,26 @@ namespace ASP.Controllers.Admin
             }
 
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", img.ImageUrl.TrimStart('/'));
-
             if (System.IO.File.Exists(filePath))
             {
                 System.IO.File.Delete(filePath);
             }
 
             _repo.DeleteImage(img);
+
             await _hub.Clients.All.SendAsync("ProductImageUpdated", productId);
             await _hub.Clients.All.SendAsync("ProductUpdated", productId);
 
-            bool hasImage = _repo.HasAnyImage(productId);
 
-            if (!hasImage)
+            if (!_repo.HasAnyImage(productId))
             {
-                var product = _repo.GetProduct(productId);
-
-                if (product != null)
-                {
-                    product.IsActive = false;
-                    _repo.UpdateProduct(product);
-                }
+                product.IsActive = false;
+                _repo.UpdateProduct(product);
             }
 
             return Json(new { success = true });
         }
+
 
         [HttpPost("setmain/{id}")]
         public async Task<IActionResult> SetMainAsync(int id)
