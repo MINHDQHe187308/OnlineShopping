@@ -15,7 +15,6 @@ namespace ASP.Controllers.Front
             _context = context;
         }
 
-        // Trang danh sách lịch sử đơn hàng
         public async Task<IActionResult> History()
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -32,7 +31,6 @@ namespace ASP.Controllers.Front
 
             return View("~/Views/Front/Orders/OrderHistory.cshtml", orders);
         }
-        // API xử lý cập nhật trạng thái đơn hàng
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(int orderId, string status)
         {
@@ -41,13 +39,11 @@ namespace ASP.Controllers.Front
             if (order == null)
                 return Json(new { success = false, message = "Không tìm thấy đơn hàng." });
 
-            // Quy tắc: Nếu đã Success hoặc Canceled thì KHÔNG ĐƯỢC sửa
             if (order.Status == "Success" || order.Status == "Canceled")
             {
                 return Json(new { success = false, message = "Đơn hàng đã kết thúc, không thể thay đổi trạng thái!" });
             }
 
-            // Chỉ cho phép chuyển từ Pending sang Success hoặc Canceled
             if (order.Status == "Pending")
             {
                 if (status == "Success" || status == "Canceled")
