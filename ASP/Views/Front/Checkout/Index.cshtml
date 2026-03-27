@@ -144,9 +144,7 @@
     </nav>
     
     <div class="row g-5">
-        <!-- Bên trái: Thông tin giao hàng -->
         <div class="col-lg-7">
-            <!-- User info -->
             <div class="user-info">
                 <div class="d-flex align-items-center">
                     <i class="bi bi-person-circle fs-3 me-3 text-primary"></i>
@@ -202,7 +200,6 @@
                     <textarea class="form-control form-control-lg" rows="3" placeholder="Ghi chú cho shipper..."></textarea>
                 </div>
 
-                <!-- Phương thức vận chuyển -->
                 <h2 class="section-title">Phương thức vận chuyển</h2>
                 <div class="payment-method active d-flex align-items-center">
                     <i class="bi bi-truck payment-icon text-primary"></i>
@@ -213,7 +210,6 @@
                     <span class="ms-auto fw-bold">Miễn phí</span>
                 </div>
 
-                <!-- Phương thức thanh toán -->
                 <h2 class="section-title mt-5">Phương thức thanh toán</h2>
                 <div class="payment-method active d-flex align-items-center mb-3">
                     <i class="bi bi-box-seam payment-icon text-danger"></i>
@@ -242,7 +238,6 @@
             </form>
         </div>
 
-        <!-- Bên phải: Tóm tắt đơn hàng -->
         <div class="col-lg-5">
             <div class="summary-box">
                 <h2 class="section-title">Đơn hàng của bạn (@Model.CartItems.Count sản phẩm)</h2>
@@ -254,17 +249,13 @@
                     <div class="product-item d-flex align-items-center mb-3">
                         <div class="position-relative me-3">
                             @{
-                                // Ép kiểu sang IEnumerable để LINQ hoạt động ổn định trên HashSet
                                 var images = item.ProductVariant?.Product?.ProductImages;
-                                // Lấy ảnh đầu tiên an toàn
                                 var firstImageObj = images?.FirstOrDefault();
                                 var fileName = firstImageObj?.ImageUrl;
 
-                                // Nếu không có ảnh thì dùng mặc định
                                 if (string.IsNullOrEmpty(fileName)) { fileName = "default.jpg"; }
                             }
 
-                            @* Dùng Url.Content để đảm bảo đường dẫn chính xác *@
                             <img src="@Url.Content("~" + fileName)"
                                  alt="Sản phẩm"
                                  style="border-radius:8px; width:80px; height:80px; object-fit:cover;"
@@ -278,7 +269,6 @@
                         <div class="flex-grow-1">
                             <h6 class="mb-1">@item.ProductVariant.Product?.ProductName</h6>
 
-                            @* SỬA LỖI: Hiển thị Màu và Size thay vì lặp lại tên sản phẩm *@
                             <small class="text-muted">
                                 @if (!string.IsNullOrEmpty(item.ProductVariant.Color))
                                 {
@@ -307,7 +297,6 @@
 
                 <div class="d-flex justify-content-between total-line mb-3">
                     <span>Phí vận chuyển</span>
-                    @* Bạn có thể để cứng 0 hoặc logic tính phí tại đây *@
                     <span>Miễn phí</span>
                 </div>
 
@@ -387,6 +376,7 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -405,7 +395,6 @@
         });
     </script>
     <script>
-        // Chỉ để demo chọn phương thức (giao diện)
         document.querySelectorAll('.payment-method').forEach(item => {
             item.addEventListener('click', () => {
                 document.querySelectorAll('.payment-method').forEach(i => i.classList.remove('active'));
@@ -434,5 +423,18 @@
             });
 
         });
+                const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .build();
+
+        connection.on("AddressMessage", (data) => {
+            console.log("Dữ liệu đã được thay đổi từ tab khác!", data);
+
+            window.location.reload();
+
+        });
+        
+
+        connection.start();
     </script>
 }

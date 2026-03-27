@@ -14,6 +14,7 @@ namespace ASP.Models.ViewModels
         public ProductVariant? DefaultVariant { get; set; }
 
         public decimal CurrentPrice { get; set; }
-            
+
+        public string CurrentColor { get; set; } = "Chưa có màu";
     }
 }

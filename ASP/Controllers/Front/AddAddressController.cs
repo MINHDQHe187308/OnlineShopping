@@ -1,19 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ASP.Models.ViewModels;
-using ASP.Models.Domains;
-using System.Security.Claims;
+﻿using ASP.Hubs;
 using ASP.Models.ASPModel;
+using ASP.Models.Domains;
+using ASP.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ASP.Controllers.Front
 {
     public class AddAddressController : Controller
     {
         private readonly ASPDbContext _context;
+        private readonly IHubContext<AddressHub> _hubContext;
 
-        public AddAddressController(ASPDbContext context)
+        public AddAddressController(ASPDbContext context, IHubContext<AddressHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -61,6 +65,19 @@ namespace ASP.Controllers.Front
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Thêm địa chỉ mới thành công!";
+            var addressToSync = new
+            {
+                addressId = newAddress.AddressId,
+                fullName = newAddress.FullName,
+                phone = newAddress.Phone,
+                addressLine = newAddress.AddressLine,
+                city = newAddress.City,
+                district = newAddress.District,
+                ward = newAddress.Ward,
+                isDefault = newAddress.IsDefault
+            };
+
+            await _hubContext.Clients.All.SendAsync("AddressMessage", addressToSync);
 
             return RedirectToAction("Index", "Checkout");
         }
