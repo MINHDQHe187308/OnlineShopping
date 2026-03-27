@@ -91,6 +91,7 @@ namespace ASP.Controllers.Admin
                 _repo.Add(product);
 
                 await _hub.Clients.All.SendAsync("ProductUpdated", product.ProductId);
+                TempData["SuccessMessage"] = "Thêm sản phẩm thành công";
 
                 return RedirectToAction("Index", new
                 {
@@ -164,7 +165,8 @@ namespace ASP.Controllers.Admin
             product.IsActive = model.IsActive;
 
             _repo.Update(product);
-           await _hub.Clients.All.SendAsync("ProductUpdated", product.ProductId);
+            await _hub.Clients.All.SendAsync("ProductUpdated", product.ProductId);
+            TempData["SuccessMessage"] = "Cập nhật sản phẩm thành công";
 
             return RedirectToAction("Index", new
             {

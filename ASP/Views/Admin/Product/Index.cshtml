@@ -79,6 +79,8 @@
                  class="alert alert-danger">
             </div>
 
+
+
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -178,12 +180,49 @@
 
 @section Scripts {
     <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                showSuccess("@Html.Raw(TempData["SuccessMessage"])");
+            });
+        </script>
+    }
+
     <script>
+
+        let isDeleting = false;
+
+        function showToast(message, type)
+        {
+            const toast = document.getElementById("toastMessage");
+
+            toast.className = "alert alert-" + type;
+            toast.innerText = message;
+            toast.style.display = "block";
+
+            setTimeout(function(){
+                toast.style.display = "none";
+            },3000);
+        }
+
+        function showSuccess(message)
+        {
+            showToast(message, "success");
+        }
+
+        function showError(message)
+        {
+            showToast(message, "danger");
+        }
 
         function deleteProduct(id)
         {
             if (!confirm("Delete product?"))
                 return;
+
+            isDeleting = true;
 
             fetch("/admin/product/delete/" + id, {
                 method: "POST"
@@ -197,7 +236,7 @@
 
                     setTimeout(function(){
                         location.reload();
-                    },1500);
+                    },3000);
                 }
                 else
                 {
@@ -205,28 +244,6 @@
                 }
 
             });
-        }
-
-        function showError(message)
-        {
-            var toast = document.getElementById("toastMessage");
-
-            toast.className = "alert alert-danger";
-            toast.innerText = message;
-            toast.style.display = "block";
-
-            setTimeout(function(){
-                toast.style.display = "none";
-            },5000);
-        }
-
-        function showSuccess(message)
-        {
-            var toast = document.getElementById("toastMessage");
-
-            toast.className = "alert alert-success";
-            toast.innerText = message;
-            toast.style.display = "block";
         }
 
 
@@ -243,6 +260,8 @@
             });
 
         connection.on("ProductUpdated", function (productId) {
+
+             if(isDeleting) return;
 
             const rows = document.querySelectorAll("tr[data-product-id]");
 
