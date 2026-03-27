@@ -27,7 +27,7 @@ namespace ASP.Controllers.Front
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             // 1. Lấy giỏ hàng trước
-            var cart = await _context.Carts
+            var cart = await _context.Carts           
                 .Include(c => c.CartItems)
                 .ThenInclude(ci => ci.ProductVariant)
                 .ThenInclude(pv => pv.Product)
@@ -67,6 +67,7 @@ namespace ASP.Controllers.Front
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var cart = await _context.Carts
+                  .Include(c => c.User)
                 .Include(c => c.CartItems)
                 .ThenInclude(ci => ci.ProductVariant)
                 .FirstOrDefaultAsync(c => c.UserId == userId);

@@ -17,9 +17,29 @@ namespace ASP.Controllers.Front
             _productImageRepository = productImageRepository;
         }
 
+      
+        public IActionResult RemoteStore()
+        {
+            try
+            {
+          
+                var products = _productRepository.GetAllProducts();
+
+              
+                if (products == null) products = new List<Product>();
+
+                return View("~/Views/Front/Products/RemoteStore.cshtml", products);
+            }
+            catch (Exception ex)
+            {           
+                ViewBag.ErrorMessage = "Không thể kết nối tới Socket Server: " + ex.Message;
+                return View("~/Views/Front/Products/RemoteStore.cshtml", new List<Product>());
+            }
+        }
+
         public IActionResult Index(int? category = null)
         {
-            var products = _productRepository.GetAllProducts();
+            var products = _productRepository.GetAllProducts1();
             if (category.HasValue)
             {
                 products = products.Where(p => p.CategoryId == category.Value).ToList();

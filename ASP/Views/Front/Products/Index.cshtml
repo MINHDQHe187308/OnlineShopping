@@ -80,19 +80,19 @@
                         <div class="row align-items-center">
                             <div class="col-md-5">
                                
-                                <p class="text-muted small mb-md-0">Import sản phẩm , DownLoad TeamPlate Import <a href="@Url.Action("DownloadTemplate", "Product")" class="text-primary fw-bold text-decoration-none"></a></p>
+                                <p class="text-muted small mb-md-0">Import sản phẩm , DownLoad TeamPlate Import <a href="@Url.Action("DownloadTemplate", "Product1")" class="text-primary fw-bold text-decoration-none"></a></p>
                             </div>
                             <div class="col-md-7 text-end">
-                                <form asp-action="ImportProductsFromFile" asp-controller="Product" method="post" enctype="multipart/form-data">
+                                <form asp-action="ImportProductsFromFile" asp-controller="Product1" method="post" enctype="multipart/form-data">
                                     <div class="input-group">
                                         <input type="file" name="file" class="form-control border-dark-subtle shadow-none" accept=".xlsx, .xls" required>
                                         <button class="btn btn-dark px-4 fw-medium" type="submit" style="background-color: #000; border-color: #000;">
                                             <i class="bi bi-file-earmark-arrow-up me-2"></i>Import
                                         </button>
-                                        <a href="@Url.Action("DownloadTemplate", "Product")" class="btn btn-outline-dark px-3" title="Tải file mẫu">
+                                        <a href="@Url.Action("DownloadTemplate", "Product1")" class="btn btn-outline-dark px-3" title="Tải file mẫu">
                                             <i class="bi bi-download"></i>
                                         </a>
-                                        <a href="@Url.Action("ExportProductsToExcel", "Product")" class="btn btn-success px-3" title="Xuất dữ liệu Excel">
+                                        <a href="@Url.Action("ExportProductsToExcel", "Product1")" class="btn btn-success px-3" title="Xuất dữ liệu Excel">
                                             <i class="bi bi-download me-1"></i> Export
                                         </a>
                                     </div>
@@ -157,7 +157,7 @@
 
                                     <div class="image-overlay">
                                         <div class="overlay-buttons d-flex justify-content-center gap-3">
-                                            <a asp-action="Details" asp-controller="Product" asp-route-id="@product.ProductId"
+                                            <a asp-action="Details" asp-controller="Product1" asp-route-id="@product.ProductId"
                                                class="icon-btn view-btn" title="Xem chi tiết">
                                                 <i class="bi bi-search"></i>
                                             </a>
