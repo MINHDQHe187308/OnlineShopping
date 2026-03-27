@@ -20,7 +20,7 @@ namespace ASP.ProductServer
 
         static async Task Main(string[] args)
         {
-          
+
             _configuration = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -34,14 +34,14 @@ namespace ASP.ProductServer
                 return;
             }
 
-           
+
             var options = new DbContextOptionsBuilder<FaShionShopContext>()
                 .UseSqlServer(connectionString)
                 .Options;
 
             _dbContextFactory = new PooledDbContextFactory<FaShionShopContext>(options);
 
-          
+
             int port = 5000;
             TcpListener listener = new TcpListener(IPAddress.Any, port);
 
@@ -50,8 +50,8 @@ namespace ASP.ProductServer
                 listener.Start();
                 Console.WriteLine("==================================================");
                 Console.WriteLine($"TCP Product Server dang chay tren port {port}");
-                Console.WriteLine("IP: 127.0.0.1 ");            
-                Console.WriteLine("Port: 5000");            
+                Console.WriteLine("IP: 127.0.0.1 ");
+                Console.WriteLine("Port: 5000");
                 Console.WriteLine("==================================================\n");
 
                 while (true)
@@ -59,7 +59,7 @@ namespace ASP.ProductServer
                     TcpClient client = await listener.AcceptTcpClientAsync();
                     Console.WriteLine($"[{DateTime.Now}] Client ket noi tu: {client.Client.RemoteEndPoint}");
 
-                  
+
                     _ = Task.Run(() => HandleClientAsync(client));
                 }
             }
@@ -73,7 +73,7 @@ namespace ASP.ProductServer
             }
         }
 
-     
+
         private static async Task HandleClientAsync(TcpClient client)
         {
             using NetworkStream stream = client.GetStream();
@@ -109,117 +109,23 @@ namespace ASP.ProductServer
             }
         }
 
+
         private static async Task<string> ProcessRequestAsync(string request)
         {
-            try
+            if (!request.Equals("GET_PRODUCTS", StringComparison.OrdinalIgnoreCase))
             {
-                switch (request.ToUpper())
-                {
-                    case "GET_PRODUCTS":
-                        return await HandleGetProducts();
-
-                    case "GET_PRODUCTS_MANAGE":
-                        return await HandleGetProductManage();
-
-                    case "PING":
-                        return JsonSerializer.Serialize(new
-                        {
-                            success = true,
-                            message = "Server is running"
-                        });
-
-                    default:
-                        return JsonSerializer.Serialize(new
-                        {
-                            success = false,
-                            message = "Lenh khong hop le"
-                        });
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Loi server: {ex.Message}");
-
                 return JsonSerializer.Serialize(new
                 {
                     success = false,
-                    message = "Loi server: " + ex.Message
-                });
+                    message = "Lenh khong hop le chi ho tro: GET_PRODUCTS"
+                }, new JsonSerializerOptions { WriteIndented = true });
             }
-        }
 
-        private static async Task<string> HandleGetProductManage()
-        {
             try
             {
                 using var context = _dbContextFactory.CreateDbContext();
 
-                var products = await context.Products
-                    .Include(p => p.Category)
-                    .Include(p => p.ProductImages)
-                    .Include(p => p.ProductVariants)
-                    .ToListAsync();
 
-                var data = products.Select(p => new
-                {
-                    p.ProductId,
-                    p.ProductName,
-                    p.Quantity,
-                    p.CategoryId,
-                    p.Description,
-
-                    Category = p.Category == null ? null : new
-                    {
-                        p.Category.CategoryId,
-                        p.Category.CategoryName
-                    },
-
-                    ProductImages = p.ProductImages.Select(img => new
-                    {
-                        img.ProductImageId,
-                        img.ImageUrl,
-                        img.IsMain
-                    }),
-
-                    ProductVariants = p.ProductVariants.Select(v => new
-                    {
-                        v.VariantId,
-                        v.Price
-                    })
-                }).ToList();
-
-                var responseObj = new
-                {
-                    success = true,
-                    command = "GET_PRODUCTS_MANAGE",
-                    count = data.Count,
-                    productManage = data,
-                    timestamp = DateTime.Now
-                };
-
-                return JsonSerializer.Serialize(responseObj, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Loi khi lay du lieu Product: {ex.Message}");
-
-                return JsonSerializer.Serialize(new
-                {
-                    success = false,
-                    message = "Loi server: " + ex.Message
-                });
-            }
-        }
-
-        private static async Task<string> HandleGetProducts()
-        {
-            try
-            {
-                using var context = _dbContextFactory.CreateDbContext();
-              
                 var products = await context.Products
                     .Include(p => p.Category)
                     .Include(p => p.ProductImages)
@@ -227,7 +133,7 @@ namespace ASP.ProductServer
                     .OrderByDescending(p => p.ProductId)
                     .ToListAsync();
 
-              
+
                 var data = products.Select(p => new
                 {
                     p.ProductId,

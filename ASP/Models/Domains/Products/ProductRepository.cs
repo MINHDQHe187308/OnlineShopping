@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using ASP.Models.ASPModel;
 using System.Net.Sockets;
 using System.Text;
@@ -17,7 +18,7 @@ namespace ASP.Models.Domains
             _context = context;
         }
 
-       
+
         public IEnumerable<Product> GetAllProducts()
         {
             try
@@ -27,15 +28,15 @@ namespace ASP.Models.Domains
             catch (Exception ex)
             {
                 Console.WriteLine($"Lỗi khi lấy dữ liệu từ Server: {ex.Message}");
-              
+
                 return new List<Product>();
             }
         }
 
-       
+
         private async Task<IEnumerable<Product>> GetProductsFromServer()
         {
-            string serverIp = "127.0.0.1";   
+            string serverIp = "127.0.0.1";
             int serverPort = 5000;
 
             using TcpClient client = new TcpClient();
@@ -43,13 +44,13 @@ namespace ASP.Models.Domains
 
             using NetworkStream stream = client.GetStream();
 
-            
+
             string command = "GET_PRODUCTS";
             byte[] requestBytes = Encoding.UTF8.GetBytes(command);
             await stream.WriteAsync(requestBytes, 0, requestBytes.Length);
 
-            
-            byte[] buffer = new byte[65536]; 
+
+            byte[] buffer = new byte[65536];
             int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
 
             if (bytesRead == 0)
@@ -57,7 +58,7 @@ namespace ASP.Models.Domains
 
             string responseJson = Encoding.UTF8.GetString(buffer, 0, bytesRead).Trim();
 
-       
+
             var response = JsonSerializer.Deserialize<JsonResponse>(responseJson, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -66,7 +67,7 @@ namespace ASP.Models.Domains
             if (response?.success != true || response.products == null)
                 return new List<Product>();
 
-           
+
             var products = new List<Product>();
 
             foreach (var item in response.products)
@@ -76,10 +77,10 @@ namespace ASP.Models.Domains
                     ProductId = item.ProductId,
                     ProductName = item.ProductName,
                     Quantity = item.Quantity,
-                   
+
                 };
 
-                
+
                 if (!string.IsNullOrEmpty(item.Category) && item.Category != "N/A")
                 {
                     product.Category = new Category { CategoryName = item.Category };
@@ -139,105 +140,14 @@ namespace ASP.Models.Domains
         }
 
 
-        //public IQueryable<Product> GetProducts(string? filter, int? categoryId)
-        //{
-        //    var query = _context.Products
-        //        .Include(p => p.Category)
-        //        .Include(p => p.ProductImages)
-        //        .Include(p => p.ProductVariants)
-        //        .AsQueryable();
-
-        //    if (!string.IsNullOrEmpty(filter))
-        //    {
-        //        query = query.Where(p => p.ProductName.Contains(filter));
-        //    }
-
-        //    if (categoryId != null && categoryId > 0)
-        //    {
-        //        query = query.Where(p => p.CategoryId == categoryId);
-        //    }
-
-        //    return query;
-        //}
-
         public IQueryable<Product> GetProducts(string? filter, int? categoryId)
         {
-            string host = "127.0.0.1";
-            int port = 5000;
+            var query = _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductVariants)
+                .AsQueryable();
 
-            List<Product> products = new List<Product>();
-
-            using (TcpClient client = new TcpClient(host, port))
-            using (NetworkStream stream = client.GetStream())
-            {
-                string command = "GET_PRODUCTS_MANAGE";
-                byte[] request = Encoding.UTF8.GetBytes(command);
-
-                stream.Write(request, 0, request.Length);
-
-                MemoryStream ms = new MemoryStream();
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-
-                while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    ms.Write(buffer, 0, bytesRead);
-
-                    if (!stream.DataAvailable)
-                        break;
-                }
-
-                string json = Encoding.UTF8.GetString(ms.ToArray());
-
-                if (bytesRead > 0)
-                {
-                    //string json = Encoding.UTF8.GetString(buffer, 0, bytesRead).Trim();
-
-                    var response = JsonSerializer.Deserialize<JsonResponse>(json,
-                        new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        });
-
-                    if (response?.success == true && response.productManage != null)
-                    {
-                        foreach (var item in response.productManage)
-                        {
-                            var product = new Product
-                            {
-                                ProductId = item.ProductId,
-                                ProductName = item.ProductName,
-                                Quantity = item.Quantity,
-
-                                Category = item.Category == null ? null : new Category
-                                {
-                                    CategoryId = item.Category.CategoryId,
-                                    CategoryName = item.Category.CategoryName ?? ""
-                                },
-
-                                ProductImages = item.ProductImages?.Select(x => new ProductImage
-                                    {
-                                        ProductImageId = x.ProductImageId,
-                                        ImageUrl = x.ImageUrl ?? "",
-                                        IsMain = x.IsMain
-                                    }).ToList() ?? new List<ProductImage>(),
-
-                                ProductVariants = item.ProductVariants?.Select(v => new ProductVariant
-                                    {
-                                        VariantId = v.VariantId,
-                                        Price = v.Price
-                                        }).ToList() ?? new List<ProductVariant>()
-                                    };
-
-                            products.Add(product);
-                        }
-                    }
-                }
-            }
-
-            var query = products.AsQueryable();
-
-            // giữ nguyên logic filter như code cũ
             if (!string.IsNullOrEmpty(filter))
             {
                 query = query.Where(p => p.ProductName.Contains(filter));
@@ -245,7 +155,7 @@ namespace ASP.Models.Domains
 
             if (categoryId != null && categoryId > 0)
             {
-                query = query.Where(p => p.Category != null && p.Category.CategoryId == categoryId);
+                query = query.Where(p => p.CategoryId == categoryId);
             }
 
             return query;
@@ -288,15 +198,13 @@ namespace ASP.Models.Domains
         }
     }
 
-    
+
     public class JsonResponse
     {
         public bool success { get; set; }
         public string command { get; set; } = string.Empty;
         public int count { get; set; }
         public List<ProductDto> products { get; set; } = new();
-
-        public List<ProductManageDto> productManage { get; set; } = new();
         public DateTime timestamp { get; set; }
     }
 
@@ -308,36 +216,5 @@ namespace ASP.Models.Domains
         public decimal Price { get; set; }
         public string MainImage { get; set; } = string.Empty;
         public int Quantity { get; set; }
-    }
-
-    public class ProductManageDto
-    {
-        public int ProductId { get; set; }
-        public string? ProductName { get; set; }
-        public int Quantity { get; set; }
-        public int CategoryId { get; set; }
-
-        public CategoryDto? Category { get; set; }
-
-        public List<ProductImageDto>? ProductImages { get; set; }
-        public List<ProductVariantDto>? ProductVariants { get; set; }
-    }
-
-    public class ProductImageDto
-    {
-        public int ProductImageId { get; set; }
-        public string? ImageUrl { get; set; }
-        public bool IsMain { get; set; }
-    }
-
-    public class ProductVariantDto
-    {
-        public int VariantId { get; set; }
-        public decimal Price { get; set; }
-    }
-    public class CategoryDto
-    {
-        public int CategoryId { get; set; }
-        public string? CategoryName { get; set; }
     }
 }
