@@ -299,7 +299,7 @@
                     {
                         var activeVariant = product.ProductVariants?
                         .Where(v => v.IsActive)
-                        .OrderBy(v => v.VariantId)
+                        .OrderByDescending(v => v.VariantId)
                         .FirstOrDefault();
 
                         var price = activeVariant?.Price ?? 0m;

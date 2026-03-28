@@ -314,7 +314,7 @@ namespace ASP.Controllers.Front
         [Authorize(Roles = "Admin")]
         public IActionResult ExportProductsToExcel()
         {
-            var products = _productRepository.GetAllProducts();
+            var products = _productRepository.GetAllProducts1();
 
             using (var package = new ExcelPackage())
             {
