@@ -75,20 +75,51 @@ namespace ASP.Models.Domains
             }
         }
 
-        public async Task<bool> UpdateVariantAsync(ProductVariant variant)
+        public async Task<(bool Success, string? Message)> UpdateVariantAsync(ProductVariant variant)
         {
             try
             {
-                _context.ProductVariants.Update(variant);
+                var existingVariant = await _context.ProductVariants.FindAsync(variant.VariantId);
+                if (existingVariant == null) return (false, "Biến thể không tồn tại.");
+
+                bool isReferencedInOrders = await _context.OrderDetails.AnyAsync(od => od.VariantId == variant.VariantId);
+
+                if (isReferencedInOrders)
+                {
+                    bool hasRestrictedChanges = existingVariant.ProductId != variant.ProductId ||
+                                                existingVariant.SKU != variant.SKU ||
+                                                existingVariant.Price != variant.Price ||
+                                                existingVariant.Size != variant.Size ||
+                                                existingVariant.Color != variant.Color;
+
+                    if (hasRestrictedChanges)
+                    {
+                        return (false, "Không thể cập nhật: Biến thể đã có trong đơn hàng. Chỉ được phép cập nhật số lượng tồn kho và trạng thái.");
+                    }
+
+                    existingVariant.QuantityVariants = variant.QuantityVariants;
+                    existingVariant.IsActive = variant.IsActive;
+                }
+                else
+                {
+                    existingVariant.ProductId = variant.ProductId;
+                    existingVariant.SKU = variant.SKU;
+                    existingVariant.Price = variant.Price;
+                    existingVariant.IsActive = variant.IsActive;
+                    existingVariant.QuantityVariants = variant.QuantityVariants;
+                    existingVariant.Size = variant.Size;
+                    existingVariant.Color = variant.Color;
+                }
+
                 await _context.SaveChangesAsync();
-                
-                await _hubContext.Clients.All.SendAsync("VariantUpdated", variant);
-                
-                return true;
+
+                await _hubContext.Clients.All.SendAsync("VariantUpdated", existingVariant);
+
+                return (true, null);
             }
             catch
             {
-                return false;
+                return (false, "Đã xảy ra lỗi khi cập nhật biến thể.");
             }
         }
 

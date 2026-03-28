@@ -8,7 +8,7 @@ namespace ASP.Models.Domains
         Task<PagingList<ProductVariant>> GetAllByFilterAsync(string? searchString, int pageSize, int page, string? sort);
         Task<ProductVariant?> GetVariantByIdAsync(int id);
         Task<bool> CreateVariantAsync(ProductVariant variant);
-        Task<bool> UpdateVariantAsync(ProductVariant variant);
+        Task<(bool Success, string? Message)> UpdateVariantAsync(ProductVariant variant);
         Task<bool> DeleteVariantAsync(int id);
     }
 }

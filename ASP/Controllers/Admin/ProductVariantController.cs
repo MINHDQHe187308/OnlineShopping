@@ -123,7 +123,16 @@ namespace ASP.Controllers.Admin
                 var oldVariant = await _variantRepo.GetVariantByIdAsync(id);
                 var oldProductId = oldVariant?.ProductId ?? variant.ProductId;
 
-                await _variantRepo.UpdateVariantAsync(variant);
+                var (success, message) = await _variantRepo.UpdateVariantAsync(variant);
+
+                if (!success)
+                {
+                    var productList = _productRepo.GetAllProducts1().OrderBy(p => p.ProductName);
+                    ViewBag.ProductsList = new SelectList(productList, "ProductId", "ProductName", variant.ProductId);
+                    TempData["mess-type"] = "error";
+                    TempData["mess-detail"] = message ?? BaseController.BaseMessage("update_fails");
+                    return View("../Admin/ProductVariants/Edit", variant);
+                }
 
                 if (oldProductId != variant.ProductId)
                 {
