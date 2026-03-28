@@ -50,7 +50,7 @@ namespace ASP.Models.Admin.Auths
                     objUser.Avatar = null;
                     //
                     objUser.LevelManage = (int)EnumLevelManage.User;
-                    objUser.Status = (int)EnumStatusUser.Pending;
+                    objUser.Status = (int)EnumStatusUser.Active;
                     //
                     objUser.CreatedDate = DateTime.Now;
                     objUser.UpdatedDate = DateTime.Now;
