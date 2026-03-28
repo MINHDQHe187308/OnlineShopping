@@ -17,7 +17,7 @@
 
                         <div class="row">
                             <input type="hidden" asp-for="Address.FullName" class="form-control" />
-                            <input type="hidden" asp-for="Address.Phone" class="form-control" />
+                            
 
                             <div class="col-md-4 mb-3">
                                 <label asp-for="Address.City" class="form-label fw-bold">Tỉnh/Thành phố</label>
@@ -48,6 +48,12 @@
                                     <input asp-for="Address.IsDefault" class="form-check-input" type="checkbox">
                                     <label class="form-check-label" asp-for="Address.IsDefault">Đặt làm mặc định</label>
                                 </div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Address.Phone" class="form-label fw-bold">Số Điện Thoại</label>
+                                <input asp-for="Address.Phone" class="form-control" />
+                                <span asp-validation-for="Address.Phone" class="text-danger small"></span>
                             </div>
                         </div>
 
