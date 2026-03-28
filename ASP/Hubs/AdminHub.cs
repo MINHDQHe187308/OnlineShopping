@@ -5,6 +5,5 @@ namespace ASP.Hubs
 {
     public class AdminHub : Hub
     {
-        
     }
 }

@@ -65,7 +65,17 @@ namespace ASP.Models.Domains
                 _context.ProductVariants.Add(variant);
                 await _context.SaveChangesAsync();
                 
-                await _hubContext.Clients.All.SendAsync("VariantCreated", variant);
+                await _hubContext.Clients.All.SendAsync("VariantCreated", new
+                {
+                    variantId = variant.VariantId,
+                    productId = variant.ProductId,
+                    sku = variant.SKU,
+                    size = variant.Size,
+                    color = variant.Color,
+                    price = variant.Price,
+                    quantityVariants = variant.QuantityVariants,
+                    isActive = variant.IsActive
+                });
                 
                 return true;
             }
@@ -113,7 +123,17 @@ namespace ASP.Models.Domains
 
                 await _context.SaveChangesAsync();
 
-                await _hubContext.Clients.All.SendAsync("VariantUpdated", existingVariant);
+                await _hubContext.Clients.All.SendAsync("VariantUpdated", new
+                {
+                    variantId = existingVariant.VariantId,
+                    productId = existingVariant.ProductId,
+                    sku = existingVariant.SKU,
+                    size = existingVariant.Size,
+                    color = existingVariant.Color,
+                    price = existingVariant.Price,
+                    quantityVariants = existingVariant.QuantityVariants,
+                    isActive = existingVariant.IsActive
+                });
 
                 return (true, null);
             }
@@ -141,7 +161,17 @@ namespace ASP.Models.Domains
                     _context.ProductVariants.Update(variant);
                     await _context.SaveChangesAsync();
                     
-                    await _hubContext.Clients.All.SendAsync("VariantUpdated", variant);
+                    await _hubContext.Clients.All.SendAsync("VariantUpdated", new
+                    {
+                        variantId = variant.VariantId,
+                        productId = variant.ProductId,
+                        sku = variant.SKU,
+                        size = variant.Size,
+                        color = variant.Color,
+                        price = variant.Price,
+                        quantityVariants = variant.QuantityVariants,
+                        isActive = variant.IsActive
+                    });
                 }
                 else
                 {

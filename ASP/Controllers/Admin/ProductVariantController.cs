@@ -19,7 +19,10 @@ namespace ASP.Controllers.Admin
         private readonly ProductVariantRepositoryInterface _variantRepo;
         private readonly ProductRepositoryInterface _productRepo;
 
-        public ProductVariantController(IAuthorizationService authService, ProductVariantRepositoryInterface variantRepo, ProductRepositoryInterface productRepo)
+        public ProductVariantController(
+            IAuthorizationService authService,
+            ProductVariantRepositoryInterface variantRepo,
+            ProductRepositoryInterface productRepo)
         {
             _authService = authService;
             _variantRepo = variantRepo;
@@ -79,6 +82,7 @@ namespace ASP.Controllers.Admin
             {
                 await _variantRepo.CreateVariantAsync(variant);
                 _productRepo.RecalculateQuantity(variant.ProductId);
+
                 TempData["mess-type"] = "success";
                 TempData["mess-detail"] = BaseController.BaseMessage("create_success");
                 return RedirectToAction(nameof(Index));
